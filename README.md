@@ -19,6 +19,9 @@ Development of future versions of Marlin is ongoing. However, to keep issues sep
 
 Marlin development is being accelerated to catch up with a long list of issues. Check the Issues and Pull Requests links on the right to to see what we are currently working on.
 
+The Marlin development is currently revived. There's a long list of reported issues and pull requests, which we are working on currently.
+We are actively looking for testers. So please try the current development version and report new issues and feedback.
+
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/2224/badge.svg)](https://scan.coverity.com/projects/2224)
 [![Travis Build Status](https://travis-ci.org/MarlinFirmware/Marlin.svg)](https://travis-ci.org/MarlinFirmware/Marlin)
 
