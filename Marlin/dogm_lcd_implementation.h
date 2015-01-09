@@ -87,37 +87,38 @@ U8GLIB_DOGM128 u8g(DOGLCD_CS, DOGLCD_A0);	// HW-SPI Com: CS, A0
 
 static void lcd_implementation_init()
 {
-#ifdef LCD_PIN_BL
-	pinMode(LCD_PIN_BL, OUTPUT);	// Enable LCD backlight
-	digitalWrite(LCD_PIN_BL, HIGH);
-#endif
+  #ifdef LCD_PIN_BL // Enable LCD backlight
+    pinMode(LCD_PIN_BL, OUTPUT);
+	  digitalWrite(LCD_PIN_BL, HIGH);
+  #endif
 
-        u8g.setContrast(lcd_contrast);	
-	//  Uncomment this if you have the first generation (V1.10) of STBs board
-	//  pinMode(17, OUTPUT);	// Enable LCD backlight
-	//  digitalWrite(17, HIGH);
+  u8g.setContrast(lcd_contrast);	
+	// FIXME: remove this workaround
+  // Uncomment this if you have the first generation (V1.10) of STBs board
+	// pinMode(17, OUTPUT);	// Enable LCD backlight
+	// digitalWrite(17, HIGH);
+  
+#ifdef LCD_SCREEN_ROT_90
+	u8g.setRot90();   // Rotate screen by 90°
+#elif defined(LCD_SCREEN_ROT_180)
+	u8g.setRot180();	// Rotate screen by 180°
+#elif defined(LCD_SCREEN_ROT_270)
+	u8g.setRot270();	// Rotate screen by 270°
+#endif
 	
+  // FIXME: whats the purpose of the box? Maybe clear screen?
 	u8g.firstPage();
-	do {
+  do {
 		u8g.setFont(u8g_font_6x10_marlin);
 		u8g.setColorIndex(1);
 		u8g.drawBox (0, 0, u8g.getWidth(), u8g.getHeight());
 		u8g.setColorIndex(1);
-	   } while( u8g.nextPage() );
+	} while(u8g.nextPage());
 
-#ifdef LCD_SCREEN_ROT_90
-	u8g.setRot90();	// Rotate screen by 90°
-#endif
-
-#ifdef LCD_SCREEN_ROT_180
-	u8g.setRot180();	// Rotate screen by 180°
-#endif
-
-#ifdef LCD_SCREEN_ROT_270
-	u8g.setRot270();	// Rotate screen by 270°
-#endif
-
-   
+  // Show splashscreen
+  int off = (u8g.getWidth() - START_BMPWIDTH) / 2;
+  int txtX = (u8g.getWidth() - sizeof(STRING_SPLASH) - 1) / 2;
+  int txtY = u8g.getHeight() - 10;
 	u8g.firstPage();
 	do {
 			// RepRap init bmp
