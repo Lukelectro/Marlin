@@ -121,7 +121,7 @@ static void lcd_implementation_init()
 	u8g.firstPage();
 	do {
 			// RepRap init bmp
-			u8g.drawBitmapP(9,9,START_BMPBYTEWIDTH,START_BMPHEIGHT,start_bmp);
+			u8g.drawBitmapP(7,7,START_BMPBYTEWIDTH,START_BMPHEIGHT,start_bmp);
 			// Welcome message
 			
 			
