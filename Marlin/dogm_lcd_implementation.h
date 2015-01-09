@@ -121,11 +121,10 @@ static void lcd_implementation_init()
 	u8g.firstPage();
 	do {
 			// RepRap init bmp
-			u8g.drawBitmapP(0,0,START_BMPBYTEWIDTH,START_BMPHEIGHT,start_bmp);
+			u8g.drawBitmapP(9,9,START_BMPBYTEWIDTH,START_BMPHEIGHT,start_bmp);
 			// Welcome message
 			
-			u8g.setFont(u8g_font_6x10_marlin);
-			u8g.drawStr(64,28,"     MARLIN");
+			
 			
 			u8g.setFont(u8g_font_5x8);
 			u8g.drawStr(62,19,"V1.0.2");
