@@ -2188,7 +2188,7 @@ Fan_2 2
   #include "pins_SETHI.h"
 #elif MB(RAMPS_OLD)
   #include "pins_RAMPS_OLD.h"
-#elif MB(RAMPS_13_EFB) || MB(RAMPS_13_EEB) || MB(RAMPS_13_EFF) || MB(RAMPS_13_EEF)
+#elif IS_RAMPS
   #include "pins_RAMPS_13.h"
 #elif MB(DUEMILANOVE_328P)
   #include "pins_DUEMILANOVE_328P.h"
