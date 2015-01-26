@@ -2154,380 +2154,112 @@ Fan_2 2
 #define SDSS               53
 #define LED_PIN            13
 
+#ifndef PINS_H
+#define PINS_H
 
-#define FAN_PIN            7 // IO pin. Buffer needed
-#define PS_ON_PIN          12
-#define KILL_PIN           -1
+#include "boards.h"
 
-#define HEATER_0_PIN       9    // EXTRUDER 1
-#define HEATER_1_PIN       8    // EXTRUDER 2 (FAN On Sprinter)
-#define HEATER_2_PIN       -1
+// Preset optional pins
+#define X_MS1_PIN -1
+#define X_MS2_PIN -1
+#define Y_MS1_PIN -1
+#define Y_MS2_PIN -1
+#define Z_MS1_PIN -1
+#define Z_MS2_PIN -1
+#define E0_MS1_PIN -1
+#define E0_MS2_PIN -1
+#define E1_MS1_PIN -1
+#define E1_MS2_PIN -1
+#define DIGIPOTSS_PIN -1
+#define HEATER_3_PIN -1
+#define TEMP_3_PIN -1
 
-#if TEMP_SENSOR_0 == -1
-#define TEMP_0_PIN         8   // ANALOG NUMBERING
+#if MB(GEN7_CUSTOM)
+  #include "pins_GEN7_CUSTOM.h"
+#elif MB(GEN7_12)
+  #include "pins_GEN7_12.h"
+#elif MB(GEN7_13)
+  #include "pins_GEN7_13.h"
+#elif MB(GEN7_14)
+  #include "pins_GEN7_14.h"
+#elif MB(CHEAPTRONIC)
+  #include "pins_CHEAPTRONIC.h"
+#elif MB(SETHI)
+  #include "pins_SETHI.h"
+#elif MB(RAMPS_OLD)
+  #include "pins_RAMPS_OLD.h"
+#elif MB(RAMPS_13_EFB) || MB(RAMPS_13_EEB) || MB(RAMPS_13_EFF) || MB(RAMPS_13_EEF)
+  #include "pins_RAMPS_13.h"
+#elif MB(DUEMILANOVE_328P)
+  #include "pins_DUEMILANOVE_328P.h"
+#elif MB(GEN6)
+  #include "pins_GEN6.h"
+#elif MB(GEN6_DELUXE)
+  #include "pins_GEN6_DELUXE.h"
+#elif MB(SANGUINOLOLU_11)
+  #include "pins_SANGUINOLOLU_11.h"
+#elif MB(SANGUINOLOLU_12)
+  #include "pins_SANGUINOLOLU_12.h"
+#elif MB(MELZI)
+  #include "pins_MELZI.h"
+#elif MB(STB_11)
+  #include "pins_STB_11.h"
+#elif MB(AZTEEG_X1)
+  #include "pins_AZTEEG_X1.h"
+#elif MB(MELZI_1284)
+  #include "pins_MELZI_1284.h"
+#elif MB(AZTEEG_X3)
+  #include "pins_AZTEEG_X3.h"
+#elif MB(AZTEEG_X3_PRO)
+  #include "pins_AZTEEG_X3_PRO.h"
+#elif MB(ULTIMAKER)
+  #include "pins_ULTIMAKER.h"
+#elif MB(ULTIMAKER_OLD)
+  #include "pins_ULTIMAKER_OLD.h"
+#elif MB(ULTIMAIN_2)
+  #include "pins_ULTIMAIN_2.h"
+#elif MB(3DRAG)
+  #include "pins_3DRAG.h"
+#elif MB(K8200)
+  #include "pins_K8200.h"
+#elif MB(TEENSYLU)
+  #include "pins_TEENSYLU.h"
+#elif MB(RUMBA)
+  #include "pins_RUMBA.h"
+#elif MB(PRINTRBOARD)
+  #include "pins_PRINTRBOARD.h"
+#elif MB(BRAINWAVE)
+  #include "pins_BRAINWAVE.h"
+#elif MB(SAV_MKI)
+  #include "pins_SAV_MKI.h"
+#elif MB(TEENSY2)
+  #include "pins_TEENSY2.h"
+#elif MB(GEN3_PLUS)
+  #include "pins_GEN3_PLUS.h"
+#elif MB(GEN3_MONOLITHIC)
+  #include "pins_GEN3_MONOLITHIC.h"
+#elif MB(MEGATRONICS)
+  #include "pins_MEGATRONICS.h"
+#elif MB(MEGATRONICS_2)
+  #include "pins_MEGATRONICS_2.h"
+#elif MB(MEGATRONICS_1)
+  #include "pins_MEGATRONICS_1.h"
+#elif MB(OMCA_A)
+  #include "pins_OMCA_A.h"
+#elif MB(OMCA)
+  #include "pins_OMCA.h"
+#elif MB(RAMBO)
+  #include "pins_RAMBO.h"
+#elif MB(ELEFU_3)
+  #include "pins_ELEFU_3.h"
+#elif MB(5DPRINT)
+  #include "pins_5DPRINT.h"
+#elif MB(LEAPFROG)
+  #include "pins_LEAPFROG.h"
+#elif MB(99)
+  #include "pins_99.h"
 #else
-#define TEMP_0_PIN         13   // ANALOG NUMBERING
-
-#endif
-
-#define TEMP_1_PIN         15   // ANALOG NUMBERING
-#define TEMP_2_PIN         -1   // ANALOG NUMBERING
-#define HEATER_BED_PIN     10   // BED
-#define TEMP_BED_PIN       14   // ANALOG NUMBERING
-
-#define BEEPER 33     // Beeper on AUX-4
-
-
-#ifdef ULTRA_LCD
-
-  #ifdef NEWPANEL
-  //arduino pin which triggers an piezzo beeper
-
-    #define LCD_PINS_RS 16
-    #define LCD_PINS_ENABLE 17
-    #define LCD_PINS_D4 23
-    #define LCD_PINS_D5 25
-    #define LCD_PINS_D6 27
-    #define LCD_PINS_D7 29
-
-    //buttons are directly attached using AUX-2
-    #define BTN_EN1 59
-    #define BTN_EN2 64
-    #define BTN_ENC 43  //the click
-
-    #define BLEN_C 2
-    #define BLEN_B 1
-    #define BLEN_A 0
-
-    #define SDCARDDETECT -1   // Ramps does not use this port
-
-      //encoder rotation values
-    #define encrot0 0
-    #define encrot1 2
-    #define encrot2 3
-    #define encrot3 1
-#endif
-#endif //ULTRA_LCD
-
-#endif // MEGATRONICS
-
-/****************************************************************************************
-* MegaTronics v2.0
-*
-****************************************************************************************/
-#if MB(MEGATRONICS_2)
- #define KNOWN_BOARD 1
-
-
- #ifndef __AVR_ATmega2560__
- #error Oops! Make sure you have 'Arduino Mega' selected from the 'Tools -> Boards' menu.
- #endif
-
- #define LARGE_FLASH        true
-
- #define X_STEP_PIN 26
- #define X_DIR_PIN 27
- #define X_ENABLE_PIN 25
- #define X_MIN_PIN 37
- #define X_MAX_PIN 40 //2 //Max endstops default to disabled "-1", set to commented value to enable.
-
- #define Y_STEP_PIN 4 // A6
- #define Y_DIR_PIN 54 // A0
- #define Y_ENABLE_PIN 5
- #define Y_MIN_PIN 41
- #define Y_MAX_PIN 38 //15
-
- #define Z_STEP_PIN 56 // A2
- #define Z_DIR_PIN 60 // A6
- #define Z_ENABLE_PIN 55 // A1
- #define Z_MIN_PIN 18
- #define Z_MAX_PIN 19
-
- #define E0_STEP_PIN 35
- #define E0_DIR_PIN 36
- #define E0_ENABLE_PIN 34
-
- #define E1_STEP_PIN 29
- #define E1_DIR_PIN 39
- #define E1_ENABLE_PIN 28
-
- #define E2_STEP_PIN 23
- #define E2_DIR_PIN 24
- #define E2_ENABLE_PIN 22
-
- #define SDPOWER -1
- #define SDSS 53
- #define LED_PIN 13
-
- #define FAN_PIN 7
- #define FAN2_PIN 6
- #define PS_ON_PIN 12
- #define KILL_PIN -1
-
- #define HEATER_0_PIN 9 // EXTRUDER 1
- #define HEATER_1_PIN 8 // EXTRUDER 2
- #define HEATER_2_PIN -1
-
- #if TEMP_SENSOR_0 == -1
-   #define TEMP_0_PIN 4 // ANALOG NUMBERING
- #else
-   #define TEMP_0_PIN 13 // ANALOG NUMBERING
- #endif
-
-
- #if TEMP_SENSOR_1 == -1
-   #define TEMP_1_PIN 8 // ANALOG NUMBERING
- #else
-   #define TEMP_1_PIN 15 // ANALOG NUMBERING
- #endif
-
- #define TEMP_2_PIN -1 // ANALOG NUMBERING
-
- #define HEATER_BED_PIN 10 // BED
-
- #if TEMP_SENSOR_BED == -1
-   #define TEMP_BED_PIN 8 // ANALOG NUMBERING
- #else
-   #define TEMP_BED_PIN 14 // ANALOG NUMBERING
- #endif
-
- #define BEEPER 64
-
-
- #define LCD_PINS_RS 14
- #define LCD_PINS_ENABLE 15
- #define LCD_PINS_D4 30
- #define LCD_PINS_D5 31
- #define LCD_PINS_D6 32
- #define LCD_PINS_D7 33
-
-
- //buttons are directly attached using keypad
- #define BTN_EN1 61
- #define BTN_EN2 59
- #define BTN_ENC 43 //the click
-
- #define BLEN_C 2
- #define BLEN_B 1
- #define BLEN_A 0
-
- #define SDCARDDETECT -1  // Megatronics does not use this port
-
-   //encoder rotation values
- #define encrot0 0
- #define encrot1 2
- #define encrot2 3
- #define encrot3 1
-
-#endif // MEGATRONICS_2
-
-
-/****************************************************************************************
-* Minitronics v1.0
-*
-****************************************************************************************/
-#if MB(MEGATRONICS_1)
- #define KNOWN_BOARD 1
-
-
- #ifndef __AVR_ATmega1281__
- #error Oops! Make sure you have 'Minitronics ' selected from the 'Tools -> Boards' menu.
- #endif
-
- #define LARGE_FLASH        true
-
- #define X_STEP_PIN 48
- #define X_DIR_PIN 47
- #define X_ENABLE_PIN 49
- #define X_MIN_PIN 5
- #define X_MAX_PIN -1 //2 //Max endstops default to disabled "-1", set to commented value to enable.
-
- #define Y_STEP_PIN 39 // A6
- #define Y_DIR_PIN 40 // A0
- #define Y_ENABLE_PIN 38
- #define Y_MIN_PIN 2
- #define Y_MAX_PIN -1 //15
-
- #define Z_STEP_PIN 42 // A2
- #define Z_DIR_PIN 43 // A6
- #define Z_ENABLE_PIN 41 // A1
- #define Z_MIN_PIN 6
- #define Z_MAX_PIN -1
-
- #define E0_STEP_PIN 45
- #define E0_DIR_PIN 44
- #define E0_ENABLE_PIN 27
-
- #define E1_STEP_PIN 36
- #define E1_DIR_PIN 35
- #define E1_ENABLE_PIN 37
-
- #define E2_STEP_PIN -1
- #define E2_DIR_PIN -1
- #define E2_ENABLE_PIN -1
-
- #define SDPOWER -1
- #define SDSS 16
- #define LED_PIN 46
-
- #define FAN_PIN 9
- #define FAN2_PIN -1
- #define PS_ON_PIN -1
- #define KILL_PIN -1
-
- #define HEATER_0_PIN 7 // EXTRUDER 1
- #define HEATER_1_PIN 8 // EXTRUDER 2
- #define HEATER_2_PIN -1
-
-
- #define TEMP_0_PIN 7 // ANALOG NUMBERING
- #define TEMP_1_PIN 6 // ANALOG NUMBERING
- #define TEMP_2_PIN -1 // ANALOG NUMBERING
-
- #define HEATER_BED_PIN 3 // BED
- #define TEMP_BED_PIN 6 // ANALOG NUMBERING
-
- #define BEEPER -1
-
-
- #define LCD_PINS_RS -1
- #define LCD_PINS_ENABLE -1
- #define LCD_PINS_D4 -1
- #define LCD_PINS_D5 -1
- #define LCD_PINS_D6 -1
- #define LCD_PINS_D7 -1
-
-
- //buttons are directly attached using keypad
- #define BTN_EN1 -1
- #define BTN_EN2 -1
- #define BTN_ENC -1 //the click
-
- #define BLEN_C 2
- #define BLEN_B 1
- #define BLEN_A 0
-
- #define SDCARDDETECT -1  // Megatronics does not use this port
-
-   //encoder rotation values
- #define encrot0 0
- #define encrot1 2
- #define encrot2 3
- #define encrot3 1
-
-#endif // MEGATRONICS_1
-
-/****************************************************************************************
-* Cheaptronic v1.0
-*
-****************************************************************************************/
-#if MB(CHEAPTRONIC)
- #define KNOWN_BOARD 1
-
- #ifndef __AVR_ATmega2560__
- #error Oops! Make sure you have 'Arduino Mega' selected from the 'Tools -> Boards' menu.
- #endif
-
- #define LARGE_FLASH        true
-
- //X motor stepper
- #define X_STEP_PIN 14
- #define X_DIR_PIN 15
- #define X_ENABLE_PIN 24
-
- //X endstop
- #define X_MIN_PIN 3
- #define X_MAX_PIN -1
-
- //Y motor stepper
- #define Y_STEP_PIN 35
- #define Y_DIR_PIN 36
- #define Y_ENABLE_PIN 31
-
- //Y endstop
- #define Y_MIN_PIN 2
- #define Y_MAX_PIN -1
-
- //Z motor stepper
- #define Z_STEP_PIN 40
- #define Z_DIR_PIN 41
- #define Z_ENABLE_PIN 37
-
- //Z endstop
- #define Z_MIN_PIN 5
- #define Z_MAX_PIN -1
-
- //Extruder 0 stepper
- #define E0_STEP_PIN 26
- #define E0_DIR_PIN 28
- #define E0_ENABLE_PIN 25
-
- //Extruder 1 stepper
- #define E1_STEP_PIN 33
- #define E1_DIR_PIN 34
- #define E1_ENABLE_PIN 30
-
- #define SDPOWER -1
- #define SDSS -1
- #define LED_PIN -1
-
- //FAN
- #define FAN_PIN -1
-
- #define PS_ON_PIN -1
- #define KILL_PIN -1
-
- #define HEATER_0_PIN 19 // EXTRUDER 1
- #define HEATER_1_PIN 23 // EXTRUDER 2
- //HeatedBad
- #define HEATER_BED_PIN 22
- //Cheaptronic v1.0 hasent EXTRUDER 3
- #define HEATER_2_PIN -1
-
- //Temperature sensors
- #define TEMP_0_PIN 15
- #define TEMP_1_PIN 14
- #define TEMP_2_PIN -1
- #define TEMP_BED_PIN 13
-
- //Cheaptronic v1.0 dont support LCD
- #define LCD_PINS_RS -1
- #define LCD_PINS_ENABLE -1
- #define LCD_PINS_D4 -1
- #define LCD_PINS_D5 -1
- #define LCD_PINS_D6 -1
- #define LCD_PINS_D7 -1
-
- //Cheaptronic v1.0 dont support keypad
- #define BTN_EN1 -1
- #define BTN_EN2 -1
- #define BTN_ENC -1
-
- #define BLEN_C 2
- #define BLEN_B 1
- #define BLEN_A 0
-
- //Cheaptronic v1.0 does not use this port
- #define SDCARDDETECT -1
-
- //encoder rotation values
- #define encrot0 0
- #define encrot1 2
- #define encrot2 3
- #define encrot3 1
-
-#endif // CHEAPTRONIC
-
-
-#ifndef HEATER_3_PIN
-  #define HEATER_3_PIN -1
-#endif
-#ifndef TEMP_3_PIN
-  #define TEMP_3_PIN -1
-#endif
-
-#ifndef KNOWN_BOARD
-#error Unknown MOTHERBOARD value in configuration.h
+  #error Unknown MOTHERBOARD value set in Configuration.h
 #endif
 
 // List of pins which to ignore when asked to change by gcode, 0 and 1 are RX and TX, do not mess with those!
@@ -2543,7 +2275,7 @@ Fan_2 2
   #define _E2_PINS
 #endif
 #if EXTRUDERS > 3
-  #define _E3_PINS E3_STEP_PIN, E3_DIR_PIN, E3_ENABLE_PIN, HEATER_3_PIN,
+  #define _E3_PINS E3_STEP_PIN, E3_DIR_PIN, E3_ENABLE_PIN, HEATER_3_PIN, analogInputToDigitalPin(TEMP_3_PIN),
 #else
   #define _E3_PINS
 #endif
@@ -2590,8 +2322,10 @@ Fan_2 2
   #define Z_MIN_PIN          -1
 #endif
 
-#define SENSITIVE_PINS {0, 1, X_STEP_PIN, X_DIR_PIN, X_ENABLE_PIN, X_MIN_PIN, X_MAX_PIN, Y_STEP_PIN, Y_DIR_PIN, Y_ENABLE_PIN, Y_MIN_PIN, Y_MAX_PIN, Z_STEP_PIN, Z_DIR_PIN, Z_ENABLE_PIN, Z_MIN_PIN, Z_MAX_PIN, PS_ON_PIN, \
-                        HEATER_BED_PIN, FAN_PIN,                  \
-                        _E0_PINS _E1_PINS _E2_PINS _E3_PINS           \
-                        analogInputToDigitalPin(TEMP_0_PIN), analogInputToDigitalPin(TEMP_1_PIN), analogInputToDigitalPin(TEMP_2_PIN), analogInputToDigitalPin(TEMP_3_PIN), analogInputToDigitalPin(TEMP_BED_PIN) }
+#define SENSITIVE_PINS { 0, 1, X_STEP_PIN, X_DIR_PIN, X_ENABLE_PIN, X_MIN_PIN, X_MAX_PIN, Y_STEP_PIN, Y_DIR_PIN, Y_ENABLE_PIN, Y_MIN_PIN, Y_MAX_PIN, Z_STEP_PIN, Z_DIR_PIN, Z_ENABLE_PIN, Z_MIN_PIN, Z_MAX_PIN, PS_ON_PIN, \
+                        HEATER_BED_PIN, FAN_PIN, \
+                        _E0_PINS _E1_PINS _E2_PINS _E3_PINS \
+                        analogInputToDigitalPin(TEMP_BED_PIN) \
+                       }
+
 #endif //__PINS_H
