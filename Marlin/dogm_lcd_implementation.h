@@ -117,7 +117,8 @@ static void lcd_implementation_init()
 	} while(u8g.nextPage());
 
   // Show splashscreen
-  int off = (u8g.getWidth() - START_BMPWIDTH) / 2;
+  int offx = (u8g.getWidth() - START_BMPWIDTH) / 2;
+  int offy = (u8g.getHeight() - 18 - START_BMPHEIGHT) / 2;
   int txtX = (u8g.getWidth() - (sizeof(STRING_SPLASH) - 1)*5) / 2; // 5 is fontwidth in pixel
   int txtY = u8g.getHeight() - 10;
 	u8g.firstPage();
