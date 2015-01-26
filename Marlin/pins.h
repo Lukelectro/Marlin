@@ -19,6 +19,8 @@
 #define E1_MS1_PIN -1
 #define E1_MS2_PIN -1
 #define DIGIPOTSS_PIN -1
+#define HEATER_3_PIN -1
+#define TEMP_3_PIN -1
 
 #if MB(GEN7_CUSTOM)
 #define KNOWN_BOARD
@@ -2528,15 +2530,15 @@ Fan_2 2
 #error Unknown MOTHERBOARD value in configuration.h
 #endif
 
-//List of pins which to ignore when asked to change by gcode, 0 and 1 are RX and TX, do not mess with those!
-#define _E0_PINS E0_STEP_PIN, E0_DIR_PIN, E0_ENABLE_PIN, HEATER_0_PIN,
+// List of pins which to ignore when asked to change by gcode, 0 and 1 are RX and TX, do not mess with those!
+#define _E0_PINS E0_STEP_PIN, E0_DIR_PIN, E0_ENABLE_PIN, HEATER_0_PIN, analogInputToDigitalPin(TEMP_0_PIN),
 #if EXTRUDERS > 1
-  #define _E1_PINS E1_STEP_PIN, E1_DIR_PIN, E1_ENABLE_PIN, HEATER_1_PIN,
+  #define _E1_PINS E1_STEP_PIN, E1_DIR_PIN, E1_ENABLE_PIN, HEATER_1_PIN, analogInputToDigitalPin(TEMP_1_PIN),
 #else
   #define _E1_PINS
 #endif
 #if EXTRUDERS > 2
-  #define _E2_PINS E2_STEP_PIN, E2_DIR_PIN, E2_ENABLE_PIN, HEATER_2_PIN,
+  #define _E2_PINS E2_STEP_PIN, E2_DIR_PIN, E2_ENABLE_PIN, HEATER_2_PIN, analogInputToDigitalPin(TEMP_2_PIN),
 #else
   #define _E2_PINS
 #endif
