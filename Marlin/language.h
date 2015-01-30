@@ -2,6 +2,7 @@
 #define LANGUAGE_H
 
 #include "Configuration.h"
+#include "ultralcd_implementation_hitachi_HD44780.h"
 
 #define LANGUAGE_CONCAT(M)       #M
 #define GENERATE_LANGUAGE_INCLUDE(M)  LANGUAGE_CONCAT(language_##M.h)
