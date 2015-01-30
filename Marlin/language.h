@@ -178,8 +178,6 @@
 
 #define MSG_ERR_EEPROM_WRITE                "Error writing to EEPROM!"
 
-// LCD Menu Messages
-
 #include LANGUAGE_INCLUDE
 
 #endif //__LANGUAGE_H
