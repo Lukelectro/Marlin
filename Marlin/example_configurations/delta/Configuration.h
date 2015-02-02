@@ -3,9 +3,25 @@
 
 #include "boards.h"
 
+
+//===========================================================================
+//============================= Getting Started =============================
+//===========================================================================
+/*
+Here are some standard links for getting your machine calibrated:
+ * http://reprap.org/wiki/Calibration 
+ * http://youtu.be/wAL9d7FgInk
+ * http://calculator.josefprusa.cz
+ * http://reprap.org/wiki/Triffid_Hunter%27s_Calibration_Guide
+ * http://www.thingiverse.com/thing:5573
+ * https://sites.google.com/site/repraplogphase/calibration-of-your-reprap
+ * http://www.thingiverse.com/thing:298812
+*/
+
 // This configuration file contains the basic settings.
 // Advanced settings can be found in Configuration_adv.h
 // BASIC SETTINGS: select your board type, temperature sensor type, axis scaling, and endstop configuration
+
 
 //===========================================================================
 //============================= DELTA Printer ===============================
@@ -70,6 +86,7 @@
 // Define this to have the electronics keep the power supply off on startup. If you don't know what this is leave it.
 // #define PS_DEFAULT_OFF
 
+
 //===========================================================================
 //============================== Delta Settings =============================
 //===========================================================================
@@ -98,8 +115,9 @@
 // Effective horizontal distance bridged by diagonal push rods.
 #define DELTA_RADIUS (DELTA_SMOOTH_ROD_OFFSET-DELTA_EFFECTOR_OFFSET-DELTA_CARRIAGE_OFFSET)
 
+
 //===========================================================================
-//=============================Thermal Settings  ============================
+//============================= Thermal Settings ============================
 //===========================================================================
 //
 //--NORMAL IS 4.7kohm PULLUP!-- 1kohm pullup can be used on hotend sensor, using correct resistor and table
@@ -175,7 +193,12 @@
 //#define EXTRUDER_WATTS (12.0*12.0/6.7) //  P=I^2/R
 //#define BED_WATTS (12.0*12.0/1.1)      // P=I^2/R
 
-// PID settings:
+
+//===========================================================================
+//============================= PID Settings ================================
+//===========================================================================
+// PID Tuning Guide here: http://reprap.org/wiki/PID_Tuning
+
 // Comment the following line to disable PID and enable bang-bang.
 #define PIDTEMP
 #define BANG_MAX 255 // limits current to nozzle while in bang-bang mode; 255=full current
@@ -206,7 +229,10 @@
 //    #define  DEFAULT_Kd 440
 #endif // PIDTEMP
 
-// Bed Temperature Control
+
+//===========================================================================
+//============================= PID > Bed Temperature Control ===============
+//===========================================================================
 // Select PID or bang-bang with PIDTEMPBED. If bang-bang, BED_LIMIT_SWITCHING will enable hysteresis
 //
 // Uncomment this to enable PID on the bed. It uses the same frequency PWM as the extruder.
@@ -243,7 +269,6 @@
 #endif // PIDTEMPBED
 
 
-
 //this prevents dangerous Extruder moves, i.e. if the temperature is under the limit
 //can be software-disabled for whatever purposes by
 #define PREVENT_DANGEROUS_EXTRUDE
@@ -253,7 +278,11 @@
 #define EXTRUDE_MINTEMP 170
 #define EXTRUDE_MAXLENGTH (X_MAX_LENGTH+Y_MAX_LENGTH) //prevent extrusion of very large distances.
 
-/*================== Thermal Runaway Protection ==============================
+
+//===========================================================================
+//============================= Thermal Runaway Protection ==================
+//===========================================================================
+/*
 This is a feature to protect your printer from burn up in flames if it has
 a thermistor coming off place (this happened to a friend of mine recently and
 motivated me writing this feature).
@@ -288,11 +317,10 @@ your extruder heater takes 2 minutes to hit the target on heating.
 // Parameters for the bed heater
 //#define THERMAL_RUNAWAY_PROTECTION_BED_PERIOD 20 //in seconds
 //#define THERMAL_RUNAWAY_PROTECTION_BED_HYSTERESIS 2 // in degree Celsius
-//===========================================================================
 
 
 //===========================================================================
-//=============================Mechanical Settings===========================
+//============================= Mechanical Settings =========================
 //===========================================================================
 
 // coarse Endstop Settings
@@ -363,7 +391,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 #define min_software_endstops true // If true, axis won't move to coordinates less than HOME_POS.
 #define max_software_endstops true  // If true, axis won't move to coordinates greater than the defined lengths below.
 
-// Travel limits after homing
+// Travel limits after homing (units are in mm)
 #define X_MAX_POS 90
 #define X_MIN_POS -90
 #define Y_MAX_POS 90
@@ -374,7 +402,11 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 #define X_MAX_LENGTH (X_MAX_POS - X_MIN_POS)
 #define Y_MAX_LENGTH (Y_MAX_POS - Y_MIN_POS)
 #define Z_MAX_LENGTH (Z_MAX_POS - Z_MIN_POS)
+
+//===========================================================================
 //============================= Bed Auto Leveling ===========================
+//===========================================================================
+
 //Bed Auto Leveling is still not compatible with Delta Kinematics
 
 
@@ -419,7 +451,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 #define DEFAULT_EJERK                 5.0    // (mm/sec)
 
 //===========================================================================
-//=============================Additional Features===========================
+//============================= Additional Features =========================
 //===========================================================================
 
 // Custom M code points
