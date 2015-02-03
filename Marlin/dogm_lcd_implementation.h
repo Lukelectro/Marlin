@@ -114,8 +114,9 @@ static void lcd_implementation_init()
   #else
     int offy = DOG_CHAR_HEIGHT;
   #endif
-  int txtX = (u8g.getWidth() - (sizeof(STRING_SPLASH) - 1)*DOG_CHAR_WIDTH) / 2;
-  int txtY = u8g.getHeight() - DOG_CHAR_HEIGHT;
+
+  int txt1X = (u8g.getWidth() - (sizeof(STRING_SPLASH_LINE1) - 1)*DOG_CHAR_WIDTH) / 2;
+
 	u8g.firstPage();
 	do {
 			// RepRap init bmp
