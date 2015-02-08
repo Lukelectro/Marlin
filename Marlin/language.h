@@ -175,5 +175,6 @@
 #define MSG_ERR_EEPROM_WRITE                "Error writing to EEPROM!"
 
 #include LANGUAGE_INCLUDE
+#include "language_en.h"
 
 #endif //__LANGUAGE_H
