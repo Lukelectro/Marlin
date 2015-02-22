@@ -764,7 +764,7 @@ static void lcd_control_menu() {
         void copy_and_scalePID_d_E3() { copy_and_scalePID_d(2); }
         #if EXTRUDERS > 3
           void copy_and_scalePID_i_E4() { copy_and_scalePID_i(3); }
-          void copy_and_scalePID_d_E5() { copy_and_scalePID_d(3); }
+          void copy_and_scalePID_d_E4() { copy_and_scalePID_d(3); }
         #endif //EXTRUDERS > 3
       #endif //EXTRUDERS > 2
     #endif //EXTRUDERS > 1
