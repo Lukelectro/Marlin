@@ -1,4 +1,14 @@
-# Marlin 3D Printer Firmware
+# Marlin 3D Printer Firmware Package for Felix 2.0/3.0
+
+## Felix Modifications
+
+This is a snapshot of upstream Marlin from 20150301 modified to be
+used directly with Felix Electronic Boards and Printers. Dual-Head
+has been activated but is not tested. Neither are LCD and SDCARD
+since Ocotprint is in use here. A pull-request to have direct
+upstream hardware support has already been submitted.
+
+
 <img align="right" src="Documentation/Logo/Marlin%20Logo%20GitHub.png" />
 
  Additional documentation can be found in [our wiki](https://github.com/MarlinFirmware/Marlin/wiki/Main-Page).
