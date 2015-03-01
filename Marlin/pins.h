@@ -2264,6 +2264,8 @@ Fan_2 2
   #include "pins_HEPHESTOS.h"
 #elif MB(BAM_DICE_DUE)
   #include "pins_BAM_DICE_DUE.h"
+#elif MB(FELIX2)
+  #include "pins_FELIX2.h"
 #elif MB(99)
   #include "pins_99.h"
 #else
@@ -2335,3 +2337,4 @@ Fan_2 2
                        }
 
 #endif //__PINS_H
+
