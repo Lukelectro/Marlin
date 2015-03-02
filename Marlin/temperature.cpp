@@ -1,19 +1,19 @@
 /*
   temperature.c - temperature control
   Part of Marlin
-
+  
  Copyright (C) 2011 Camiel Gubbels / Erik van der Zalm
-
+ 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
  (at your option) any later version.
-
+ 
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
-
+ 
  You should have received a copy of the GNU General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -22,8 +22,8 @@
  This firmware is a mashup between Sprinter and grbl.
   (https://github.com/kliment/Sprinter)
   (https://github.com/simen/grbl/tree)
-
- It has preliminary support for Matthew Roberts advance algorithm
+ 
+ It has preliminary support for Matthew Roberts advance algorithm 
     http://reprap.org/pipermail/reprap-dev/2011-May/003323.html
 
  */
@@ -97,20 +97,20 @@ float current_temperature_bed = 0.0;
   float bedKi=(DEFAULT_bedKi*PID_dT);
   float bedKd=(DEFAULT_bedKd/PID_dT);
 #endif //PIDTEMPBED
-
+  
 #ifdef FAN_SOFT_PWM
   unsigned char fanSpeedSoftPwm;
 #endif
 
 unsigned char soft_pwm_bed;
-
+  
 #ifdef BABYSTEPPING
   volatile int babystepsTodo[3] = { 0 };
 #endif
 
 #ifdef FILAMENT_SENSOR
   int current_raw_filwidth = 0;  //Holds measured filament diameter - one extruder only
-#endif
+#endif  
 //===========================================================================
 //=============================private variables============================
 //===========================================================================
@@ -143,7 +143,7 @@ static volatile bool temp_meas_ready = false;
   static float temp_iState_min_bed;
   static float temp_iState_max_bed;
 #else //PIDTEMPBED
-    static unsigned long  previous_millis_bed_heater;
+	static unsigned long  previous_millis_bed_heater;
 #endif //PIDTEMPBED
   static unsigned char soft_pwm[EXTRUDERS];
 
@@ -152,7 +152,7 @@ static volatile bool temp_meas_ready = false;
 #endif
 #if HAS_AUTO_FAN
   static unsigned long extruder_autofan_last_check;
-#endif
+#endif  
 
 #ifdef PIDTEMP
   #ifdef PID_PARAMS_PER_EXTRUDER
@@ -335,7 +335,7 @@ void PID_autotune(float temp, int extruder, int ncycles)
           cycles++;
           min = temp;
         }
-      }
+      } 
     }
     if (input > temp + 20) {
       SERIAL_PROTOCOLLNPGM(MSG_PID_TEMP_TOO_HIGH);
@@ -382,7 +382,7 @@ void updatePID() {
     temp_iState_max_bed = PID_INTEGRAL_DRIVE_MAX / bedKi;
   #endif
 }
-
+  
 int getHeaterPower(int heater) {
   return heater < 0 ? soft_pwm_bed : soft_pwm[heater];
 }
@@ -393,10 +393,10 @@ int getHeaterPower(int heater) {
     #if EXTRUDER_0_AUTO_FAN_PIN == FAN_PIN
        #error "You cannot set EXTRUDER_0_AUTO_FAN_PIN equal to FAN_PIN"
     #endif
-    #if EXTRUDER_1_AUTO_FAN_PIN == FAN_PIN
+    #if EXTRUDER_1_AUTO_FAN_PIN == FAN_PIN 
        #error "You cannot set EXTRUDER_1_AUTO_FAN_PIN equal to FAN_PIN"
     #endif
-    #if EXTRUDER_2_AUTO_FAN_PIN == FAN_PIN
+    #if EXTRUDER_2_AUTO_FAN_PIN == FAN_PIN 
        #error "You cannot set EXTRUDER_2_AUTO_FAN_PIN equal to FAN_PIN"
     #endif
     #if EXTRUDER_3_AUTO_FAN_PIN == FAN_PIN
@@ -425,7 +425,7 @@ void checkExtruderAutoFans()
   #if HAS_AUTO_FAN_1
     if (current_temperature[1] > EXTRUDER_AUTO_FAN_TEMPERATURE) 
     {
-      if (EXTRUDER_1_AUTO_FAN_PIN == EXTRUDER_0_AUTO_FAN_PIN)
+      if (EXTRUDER_1_AUTO_FAN_PIN == EXTRUDER_0_AUTO_FAN_PIN) 
         fanState |= 1;
       else
         fanState |= 2;
@@ -434,9 +434,9 @@ void checkExtruderAutoFans()
   #if HAS_AUTO_FAN_2
     if (current_temperature[2] > EXTRUDER_AUTO_FAN_TEMPERATURE) 
     {
-      if (EXTRUDER_2_AUTO_FAN_PIN == EXTRUDER_0_AUTO_FAN_PIN)
+      if (EXTRUDER_2_AUTO_FAN_PIN == EXTRUDER_0_AUTO_FAN_PIN) 
         fanState |= 1;
-      else if (EXTRUDER_2_AUTO_FAN_PIN == EXTRUDER_1_AUTO_FAN_PIN)
+      else if (EXTRUDER_2_AUTO_FAN_PIN == EXTRUDER_1_AUTO_FAN_PIN) 
         fanState |= 2;
       else
         fanState |= 4;
@@ -445,17 +445,17 @@ void checkExtruderAutoFans()
   #if HAS_AUTO_FAN_3
     if (current_temperature[3] > EXTRUDER_AUTO_FAN_TEMPERATURE) 
     {
-      if (EXTRUDER_3_AUTO_FAN_PIN == EXTRUDER_0_AUTO_FAN_PIN)
+      if (EXTRUDER_3_AUTO_FAN_PIN == EXTRUDER_0_AUTO_FAN_PIN) 
         fanState |= 1;
-      else if (EXTRUDER_3_AUTO_FAN_PIN == EXTRUDER_1_AUTO_FAN_PIN)
+      else if (EXTRUDER_3_AUTO_FAN_PIN == EXTRUDER_1_AUTO_FAN_PIN) 
         fanState |= 2;
-      else if (EXTRUDER_3_AUTO_FAN_PIN == EXTRUDER_2_AUTO_FAN_PIN)
+      else if (EXTRUDER_3_AUTO_FAN_PIN == EXTRUDER_2_AUTO_FAN_PIN) 
         fanState |= 4;
       else
         fanState |= 8;
     }
   #endif
-
+  
   // update extruder auto fan states
   #if HAS_AUTO_FAN_0
     setExtruderAutoFanState(EXTRUDER_0_AUTO_FAN_PIN, (fanState & 1) != 0);
@@ -574,7 +574,6 @@ void manage_heater() {
             if (pid_error[e] < 0) temp_iState[e] -= pid_error[e]; // conditional un-integration
             pid_output = 0;
           }
-
         }
         temp_dState[e] = pid_input;
       #else
@@ -680,7 +679,7 @@ void manage_heater() {
           pid_output = 0;
         }
 
-    #else
+    #else 
       pid_output = constrain(target_temperature_bed, 0, MAX_BED_POWER);
     #endif //PID_OPENLOOP
         #ifdef PID_BED_DEBUG
@@ -755,7 +754,7 @@ static float analog2temp(int raw, uint8_t e) {
       SERIAL_ERRORLNPGM(MSG_INVALID_EXTRUDER_NUM);
       kill();
       return 0.0;
-  }
+  } 
   #ifdef HEATER_0_USES_MAX6675
     if (e == 0)
     {
@@ -773,8 +772,8 @@ static float analog2temp(int raw, uint8_t e) {
     {
       if (PGM_RD_W((*tt)[i][0]) > raw)
       {
-        celsius = PGM_RD_W((*tt)[i-1][1]) +
-          (raw - PGM_RD_W((*tt)[i-1][0])) *
+        celsius = PGM_RD_W((*tt)[i-1][1]) + 
+          (raw - PGM_RD_W((*tt)[i-1][0])) * 
           (float)(PGM_RD_W((*tt)[i][1]) - PGM_RD_W((*tt)[i-1][1])) /
           (float)(PGM_RD_W((*tt)[i][0]) - PGM_RD_W((*tt)[i-1][0]));
         break;
@@ -800,8 +799,8 @@ static float analog2tempBed(int raw) {
     {
       if (PGM_RD_W(BEDTEMPTABLE[i][0]) > raw)
       {
-        celsius  = PGM_RD_W(BEDTEMPTABLE[i-1][1]) +
-          (raw - PGM_RD_W(BEDTEMPTABLE[i-1][0])) *
+        celsius  = PGM_RD_W(BEDTEMPTABLE[i-1][1]) + 
+          (raw - PGM_RD_W(BEDTEMPTABLE[i-1][0])) * 
           (float)(PGM_RD_W(BEDTEMPTABLE[i][1]) - PGM_RD_W(BEDTEMPTABLE[i-1][1])) /
           (float)(PGM_RD_W(BEDTEMPTABLE[i][0]) - PGM_RD_W(BEDTEMPTABLE[i-1][0]));
         break;
@@ -911,24 +910,24 @@ void tp_init()
     #ifdef FAN_SOFT_PWM
       soft_pwm_fan = fanSpeedSoftPwm / 2;
     #endif
-  #endif
+  #endif  
 
   #ifdef HEATER_0_USES_MAX6675
 
     #ifndef SDSUPPORT
       SET_OUTPUT(SCK_PIN);
       WRITE(SCK_PIN,0);
-
+    
       SET_OUTPUT(MOSI_PIN);
       WRITE(MOSI_PIN,1);
-
+    
       SET_INPUT(MISO_PIN);
       WRITE(MISO_PIN,1);
     #else
       pinMode(SS_PIN, OUTPUT);
       digitalWrite(SS_PIN, HIGH);
     #endif
-
+    
     SET_OUTPUT(MAX6675_SS);
     WRITE(MAX6675_SS,1);
 
@@ -964,12 +963,12 @@ void tp_init()
   #if HAS_FILAMENT_SENSOR
     ANALOG_SELECT(FILWIDTH_PIN);
   #endif
-
+  
   // Use timer0 for temperature measurement
   // Interleave temperature interrupt with millies interrupt
   OCR0B = 128;
-  TIMSK0 |= (1<<OCIE0B);
-
+  TIMSK0 |= (1<<OCIE0B);  
+  
   // Wait for temperature measurement to settle
   delay(250);
 
@@ -1070,7 +1069,7 @@ void thermal_runaway_protection(int *state, unsigned long *timer, float temperat
       SERIAL_ECHO(temperature);
       SERIAL_ECHO(" ;  Target Temp:");
       SERIAL_ECHO(target_temperature);
-      SERIAL_ECHOLN("");
+      SERIAL_ECHOLN("");    
 */
   if ((target_temperature == 0) || thermal_runaway)
   {
@@ -1157,7 +1156,7 @@ void disable_heater() {
     #if HAS_HEATER_BED
       WRITE_HEATER_BED(LOW);
     #endif
-  #endif
+  #endif 
 }
 
 void max_temp_error(uint8_t e) {
