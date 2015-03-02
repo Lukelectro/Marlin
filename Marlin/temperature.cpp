@@ -382,7 +382,7 @@ void updatePID() {
     temp_iState_max_bed = PID_INTEGRAL_DRIVE_MAX / bedKi;
   #endif
 }
-  
+
 int getHeaterPower(int heater) {
   return heater < 0 ? soft_pwm_bed : soft_pwm[heater];
 }
@@ -393,10 +393,10 @@ int getHeaterPower(int heater) {
     #if EXTRUDER_0_AUTO_FAN_PIN == FAN_PIN
        #error "You cannot set EXTRUDER_0_AUTO_FAN_PIN equal to FAN_PIN"
     #endif
-    #if EXTRUDER_1_AUTO_FAN_PIN == FAN_PIN 
+    #if EXTRUDER_1_AUTO_FAN_PIN == FAN_PIN
        #error "You cannot set EXTRUDER_1_AUTO_FAN_PIN equal to FAN_PIN"
     #endif
-    #if EXTRUDER_2_AUTO_FAN_PIN == FAN_PIN 
+    #if EXTRUDER_2_AUTO_FAN_PIN == FAN_PIN
        #error "You cannot set EXTRUDER_2_AUTO_FAN_PIN equal to FAN_PIN"
     #endif
     #if EXTRUDER_3_AUTO_FAN_PIN == FAN_PIN
@@ -425,7 +425,7 @@ void checkExtruderAutoFans()
   #if HAS_AUTO_FAN_1
     if (current_temperature[1] > EXTRUDER_AUTO_FAN_TEMPERATURE) 
     {
-      if (EXTRUDER_1_AUTO_FAN_PIN == EXTRUDER_0_AUTO_FAN_PIN) 
+      if (EXTRUDER_1_AUTO_FAN_PIN == EXTRUDER_0_AUTO_FAN_PIN)
         fanState |= 1;
       else
         fanState |= 2;
@@ -910,7 +910,7 @@ void tp_init()
     #ifdef FAN_SOFT_PWM
       soft_pwm_fan = fanSpeedSoftPwm / 2;
     #endif
-  #endif  
+  #endif
 
   #ifdef HEATER_0_USES_MAX6675
 
@@ -1156,7 +1156,7 @@ void disable_heater() {
     #if HAS_HEATER_BED
       WRITE_HEATER_BED(LOW);
     #endif
-  #endif 
+  #endif
 }
 
 void max_temp_error(uint8_t e) {
