@@ -8,10 +8,12 @@
 #ifndef LANGUAGE_PT_H
 #define LANGUAGE_PT_H
 
+#define MAPPER_NON
+
 #define WELCOME_MSG                         MACHINE_NAME " pronto."
 #define MSG_SD_INSERTED                     "Cartao inserido"
 #define MSG_SD_REMOVED                      "Cartao removido"
-#define MSG_MAIN                            " Menu principal \003"
+#define MSG_MAIN                            " Menu principal"
 #define MSG_AUTOSTART                       "Autostart"
 #define MSG_DISABLE_STEPPERS                " Desactivar motores"
 #define MSG_AUTO_HOME                       "Ir para origem"
@@ -38,7 +40,7 @@
 #define MSG_SWITCH_PS_OFF                   "Desligar"
 #define MSG_EXTRUDE                         "Extrudir"
 #define MSG_RETRACT                         "Retrair"
-#define MSG_MOVE_AXIS                       "Mover eixo      \x7E"
+#define MSG_MOVE_AXIS                       "Mover eixo"
 #define MSG_MOVE_X                          "Mover X"
 #define MSG_MOVE_Y                          "Mover Y"
 #define MSG_MOVE_Z                          "Mover Z"
