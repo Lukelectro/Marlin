@@ -1438,7 +1438,7 @@ void lcd_buttons_update() {
       WRITE(SHIFT_LD, HIGH);
       for(int8_t i = 0; i < 8; i++) {
         newbutton_reprapworld_keypad >>= 1;
-        if (READ(SHIFT_OUT)) newbutton_reprapworld_keypad |= (1 << 7);
+        if (READ(SHIFT_OUT)) newbutton_reprapworld_keypad |= BIT(7);
         WRITE(SHIFT_CLK, HIGH);
         WRITE(SHIFT_CLK, LOW);
       }
@@ -1451,7 +1451,7 @@ void lcd_buttons_update() {
     unsigned char tmp_buttons = 0;
     for(int8_t i=0; i<8; i++) {
       newbutton >>= 1;
-      if (READ(SHIFT_OUT)) newbutton |= (1 << 7);
+      if (READ(SHIFT_OUT)) newbutton |= BIT(7);
       WRITE(SHIFT_CLK, HIGH);
       WRITE(SHIFT_CLK, LOW);
     }
