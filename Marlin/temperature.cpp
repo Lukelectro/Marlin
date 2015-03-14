@@ -131,8 +131,6 @@ static volatile bool temp_meas_ready = false;
   static float pid_error[EXTRUDERS];
   static float temp_iState_min[EXTRUDERS];
   static float temp_iState_max[EXTRUDERS];
-  // static float pid_input[EXTRUDERS];
-  // static float pid_output[EXTRUDERS];
   static bool pid_reset[EXTRUDERS];
 #endif //PIDTEMP
 #ifdef PIDTEMPBED
