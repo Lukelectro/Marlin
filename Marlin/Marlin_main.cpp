@@ -5468,6 +5468,10 @@ void controllerFan()
         digitalWrite(CONTROLLERFAN_PIN, CONTROLLERFAN_SPEED);
         analogWrite(CONTROLLERFAN_PIN, CONTROLLERFAN_SPEED);
     }
+    uint8_t speed = (lastMotor == 0 || ms >= lastMotor + (CONTROLLERFAN_SECS * 1000UL)) ? 0 : CONTROLLERFAN_SPEED;
+    // allows digital or PWM fan output to be used (see M42 handling)
+    digitalWrite(CONTROLLERFAN_PIN, speed);
+    analogWrite(CONTROLLERFAN_PIN, speed);
   }
 }
 #endif
