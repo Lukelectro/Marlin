@@ -100,6 +100,8 @@
   #define LCD_WIDTH_EDIT       22
 #endif
 
+#define FONT_STATUSMENU FONT_MENU
+
 #define START_ROW              0
 
 /* Custom characters defined in font font_6x10_marlin_symbols */
