@@ -11,7 +11,7 @@
 //
 //   ==> ALWAYS TRY TO COMPILE MARLIN WITH/WITHOUT "ULTIPANEL" / "ULTRALCD" / "SDSUPPORT" #define IN "Configuration.h"
 //   ==> ALSO TRY ALL AVAILABLE LANGUAGE OPTIONS
-// Se also documentation/LCDLanguageFont.md
+// See also documentation/LCDLanguageFont.md
 
 // Languages
 // en English
