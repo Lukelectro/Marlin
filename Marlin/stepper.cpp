@@ -370,7 +370,7 @@ ISR(TIMER1_COMPA_vect) {
       step_events_completed = 0;
 
       #ifdef Z_LATE_ENABLE
-        if (current_block->steps_z > 0) {
+        if (current_block->steps[Z_AXIS] > 0) {
           enable_z();
           OCR1A = 2000; //1ms wait
           return;
@@ -411,7 +411,7 @@ ISR(TIMER1_COMPA_vect) {
 
     #define UPDATE_ENDSTOP(axis,AXIS,minmax,MINMAX) \
       bool axis ##_## minmax ##_endstop = (READ(AXIS ##_## MINMAX ##_PIN) != AXIS ##_## MINMAX ##_ENDSTOP_INVERTING); \
-      if (axis ##_## minmax ##_endstop && old_## axis ##_## minmax ##_endstop && (current_block->steps_## axis > 0)) { \
+      if (axis ##_## minmax ##_endstop && old_## axis ##_## minmax ##_endstop && (current_block->steps[AXIS ##_AXIS] > 0)) { \
         endstops_trigsteps[AXIS ##_AXIS] = count_position[AXIS ##_AXIS]; \
         endstop_## axis ##_hit = true; \
         step_events_completed = current_block->step_event_count; \
@@ -420,54 +420,54 @@ ISR(TIMER1_COMPA_vect) {
 
     // Check X and Y endstops
     if (check_endstops) {
-      #ifndef COREXY
-        if (TEST(out_bits, X_AXIS))   // stepping along -X axis (regular cartesians bot)
-      #else
+      #ifdef COREXY
         // Head direction in -X axis for CoreXY bots.
         // If DeltaX == -DeltaY, the movement is only in Y axis
-        if (current_block->steps_x != current_block->steps_y || (TEST(out_bits, X_AXIS) == TEST(out_bits, Y_AXIS)))      
-            if (TEST(out_bits, X_HEAD))
-      #endif
-            { // -direction
-              #ifdef DUAL_X_CARRIAGE
-                // with 2 x-carriages, endstops are only checked in the homing direction for the active extruder
-                if ((current_block->active_extruder == 0 && X_HOME_DIR == -1) || (current_block->active_extruder != 0 && X2_HOME_DIR == -1))
-              #endif          
-                {
-                  #if defined(X_MIN_PIN) && X_MIN_PIN >= 0
-                    UPDATE_ENDSTOP(x, X, min, MIN);
-                  #endif
-                }
-            }
-            else { // +direction
-              #ifdef DUAL_X_CARRIAGE
-                // with 2 x-carriages, endstops are only checked in the homing direction for the active extruder
-                if ((current_block->active_extruder == 0 && X_HOME_DIR == 1) || (current_block->active_extruder != 0 && X2_HOME_DIR == 1))
-              #endif
-                {
-                  #if defined(X_MAX_PIN) && X_MAX_PIN >= 0
-                    UPDATE_ENDSTOP(x, X, max, MAX);
-                  #endif
-                }
-            }
-      #ifndef COREXY
-        if (TEST(out_bits, Y_AXIS))   // -direction
+        if (current_block->steps[A_AXIS] != current_block->steps[B_AXIS] || (TEST(out_bits, A_AXIS) == TEST(out_bits, B_AXIS)))
+          if (TEST(out_bits, X_HEAD))
       #else
+          if (TEST(out_bits, X_AXIS))   // stepping along -X axis (regular cartesians bot)
+      #endif
+          { // -direction
+            #ifdef DUAL_X_CARRIAGE
+              // with 2 x-carriages, endstops are only checked in the homing direction for the active extruder
+              if ((current_block->active_extruder == 0 && X_HOME_DIR == -1) || (current_block->active_extruder != 0 && X2_HOME_DIR == -1))
+            #endif          
+              {
+                #if defined(X_MIN_PIN) && X_MIN_PIN >= 0
+                  UPDATE_ENDSTOP(x, X, min, MIN);
+                #endif
+              }
+          }
+          else { // +direction
+            #ifdef DUAL_X_CARRIAGE
+              // with 2 x-carriages, endstops are only checked in the homing direction for the active extruder
+              if ((current_block->active_extruder == 0 && X_HOME_DIR == 1) || (current_block->active_extruder != 0 && X2_HOME_DIR == 1))
+            #endif
+              {
+                #if defined(X_MAX_PIN) && X_MAX_PIN >= 0
+                  UPDATE_ENDSTOP(x, X, max, MAX);
+                #endif
+              }
+          }
+      #ifdef COREXY
         // Head direction in -Y axis for CoreXY bots.
         // If DeltaX == DeltaY, the movement is only in X axis
-        if (current_block->steps_x != current_block->steps_y || (TEST(out_bits, X_AXIS) != TEST(out_bits, Y_AXIS)))
-            if (TEST(out_bits, Y_HEAD))             
+        if (current_block->steps[A_AXIS] != current_block->steps[B_AXIS] || (TEST(out_bits, A_AXIS) != TEST(out_bits, B_AXIS)))
+          if (TEST(out_bits, Y_HEAD))
+      #else
+          if (TEST(out_bits, Y_AXIS))   // -direction
       #endif
-            { // -direction
-              #if defined(Y_MIN_PIN) && Y_MIN_PIN >= 0
-                UPDATE_ENDSTOP(y, Y, min, MIN);
-              #endif
-            }
-            else { // +direction
-              #if defined(Y_MAX_PIN) && Y_MAX_PIN >= 0
-                UPDATE_ENDSTOP(y, Y, max, MAX);
-              #endif
-            }
+          { // -direction
+            #if defined(Y_MIN_PIN) && Y_MIN_PIN >= 0
+              UPDATE_ENDSTOP(y, Y, min, MIN);
+            #endif
+          }
+          else { // +direction
+            #if defined(Y_MAX_PIN) && Y_MAX_PIN >= 0
+              UPDATE_ENDSTOP(y, Y, max, MAX);
+            #endif
+          }
     }
 
     if (TEST(out_bits, Z_AXIS)) {   // -direction
