@@ -751,8 +751,6 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // JFR -was true // set to true to i
 
 
 #include "Configuration_adv.h"
-#include "Conditionals.h"
-#include "SanityCheck.h"
 #include "thermistortables.h"
 
 #endif //CONFIGURATION_H
