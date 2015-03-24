@@ -45,10 +45,21 @@
 // save 3120 bytes of PROGMEM by commenting out the next #define
 // we don't have a big font for Cyrillic, Kana
 #if defined( MAPPER_C2C3 ) || defined( MAPPER_NON )
-  #define USE_BIG_EDIT_FONT
+//  #define USE_BIG_EDIT_FONT
 #endif
-#define FONT_STATUSMENU u8g_font_6x9
-#define FONT_MENU u8g_font_6x10_marlin
+
+// If you have spare 2300Byte of progmem and want to use a 
+// smaller font on the Info-screen uncomment the next line.
+//#define USE_SMALL_INFOFONT
+#ifdef USE_SMALL_INFOFONT
+  #include "dogm_font_data_6x9_marlin.h"
+  #define FONT_STATUSMENU_NAME u8g_font_6x9
+#else
+  #define FONT_STATUSMENU_NAME FONT_MENU_NAME
+#endif
+
+#include "dogm_font_data_Marlin_symbols.h"   // The Marlin special symbols
+#define FONT_SPECIAL_NAME Marlin_symbols
 
 #ifndef SIMULATE_ROMFONT
   #if defined( DISPLAY_CHARSET_ISO10646_1 )
