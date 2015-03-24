@@ -2280,13 +2280,11 @@ inline void gcode_G28() {
           xStart = 0;
           xStop = auto_bed_leveling_grid_points;
           xInc = 1;
-          zig = false;
         }
         else {
           xStart = auto_bed_leveling_grid_points - 1;
           xStop = -1;
           xInc = -1;
-          zig = true;
         }
 
         #ifndef DELTA
@@ -2373,7 +2371,7 @@ inline void gcode_G28() {
         SERIAL_PROTOCOLPGM("+-----------+\n");
 
         for (int yy = auto_bed_leveling_grid_points - 1; yy >= 0; yy--) {
-          for (int xx = auto_bed_leveling_grid_points - 1; xx >= 0; xx--) {
+          for (int xx = 0; xx < auto_bed_leveling_grid_points; xx++) {
             int ind = yy * auto_bed_leveling_grid_points + xx;
             float diff = eqnBVector[ind] - mean;
             if (diff >= 0.0)
