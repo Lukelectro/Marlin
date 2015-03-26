@@ -257,7 +257,7 @@ float home_offset[3] = { 0, 0, 0 };
 float min_pos[3] = { X_MIN_POS, Y_MIN_POS, Z_MIN_POS };
 float max_pos[3] = { X_MAX_POS, Y_MAX_POS, Z_MAX_POS };
 bool axis_known_position[3] = { false, false, false };
-float zprobe_zoffset;
+float zprobe_zoffset = -Z_PROBE_OFFSET_FROM_EXTRUDER;
 
 // Extruder offset
 #if EXTRUDERS > 1
@@ -1103,9 +1103,6 @@ static void set_bed_level_equation_lsq(double *plane_equation_coefficients)
     current_position[Y_AXIS] = corrected_position.y;
     current_position[Z_AXIS] = corrected_position.z;
 
-    // put the bed at 0 so we don't go below it.
-    current_position[Z_AXIS] = zprobe_zoffset; // in the lsq we reach here after raising the extruder due to the loop structure
-
     plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
 }
 #endif
@@ -1131,9 +1128,6 @@ static void set_bed_level_equation_3pts(float z_at_pt_1, float z_at_pt_2, float 
     current_position[X_AXIS] = corrected_position.x;
     current_position[Y_AXIS] = corrected_position.y;
     current_position[Z_AXIS] = corrected_position.z;
-
-    // put the bed at 0 so we don't go below it.
-    current_position[Z_AXIS] = zprobe_zoffset;
 
     plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
 
@@ -2023,8 +2017,19 @@ inline void gcode_G28() {
   endstops_hit_on_purpose();
 }
 
-#if defined(MESH_BED_LEVELING)
+#ifdef MESH_BED_LEVELING
 
+  /**
+   * G29: Mesh-based Z-Probe, probes a grid and produces a
+   *      mesh to compensate for variable bed height
+   *
+   * Parameters With MESH_BED_LEVELING:
+   *
+   *  S0 Produce a mesh report
+   *  S1 Start probing mesh points
+   *  S2 Probe the next mesh point
+   *
+   */
   inline void gcode_G29() {
     static int probe_point = -1;
     int state = 0;
@@ -2066,7 +2071,7 @@ inline void gcode_G28() {
     } else if (state == 2) { // Goto next point
 
       if (probe_point < 0) {
-        SERIAL_PROTOCOLPGM("Mesh probing not started.\n");
+        SERIAL_PROTOCOLPGM("Start mesh probing with \"G29 S1\" first.\n");
         return;
       }
       int ix, iy;
@@ -2076,16 +2081,14 @@ inline void gcode_G28() {
       } else {
         ix = (probe_point-1) % MESH_NUM_X_POINTS;
         iy = (probe_point-1) / MESH_NUM_X_POINTS;
-        if (iy&1) { // Zig zag
-          ix = (MESH_NUM_X_POINTS - 1) - ix;
-        }
+        if (iy & 1) ix = (MESH_NUM_X_POINTS - 1) - ix; // zig-zag
         mbl.set_z(ix, iy, current_position[Z_AXIS]);
         current_position[Z_AXIS] = MESH_HOME_SEARCH_Z;
         plan_buffer_line(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS], homing_feedrate[X_AXIS]/60, active_extruder);
         st_synchronize();
       }
-      if (probe_point == MESH_NUM_X_POINTS*MESH_NUM_Y_POINTS) {
-        SERIAL_PROTOCOLPGM("Mesh done.\n");
+      if (probe_point == MESH_NUM_X_POINTS * MESH_NUM_Y_POINTS) {
+        SERIAL_PROTOCOLPGM("Mesh probing done.\n");
         probe_point = -1;
         mbl.active = 1;
         enquecommands_P(PSTR("G28"));
@@ -2093,9 +2096,7 @@ inline void gcode_G28() {
       }
       ix = probe_point % MESH_NUM_X_POINTS;
       iy = probe_point / MESH_NUM_X_POINTS;
-      if (iy&1) { // Zig zag
-        ix = (MESH_NUM_X_POINTS - 1) - ix;
-      }
+      if (iy & 1) ix = (MESH_NUM_X_POINTS - 1) - ix; // zig-zag
       current_position[X_AXIS] = mbl.get_x(ix);
       current_position[Y_AXIS] = mbl.get_y(iy);
       plan_buffer_line(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS], homing_feedrate[X_AXIS]/60, active_extruder);
@@ -2104,9 +2105,7 @@ inline void gcode_G28() {
     }
   }
 
-#endif
-
-#ifdef ENABLE_AUTO_BED_LEVELING
+#elif defined(ENABLE_AUTO_BED_LEVELING)
 
   /**
    * G29: Detailed Z-Probe, probes the bed at 3 or more points.
@@ -2171,9 +2170,9 @@ inline void gcode_G28() {
 
     #ifdef AUTO_BED_LEVELING_GRID
 
-    #ifndef DELTA
-      bool do_topography_map = verbose_level > 2 || code_seen('T') || code_seen('t');
-    #endif
+      #ifndef DELTA
+        bool do_topography_map = verbose_level > 2 || code_seen('T') || code_seen('t');
+      #endif
 
       if (verbose_level > 0)
       {
@@ -2230,7 +2229,7 @@ inline void gcode_G28() {
 
     #ifdef Z_PROBE_SLED
       dock_sled(false); // engage (un-dock) the probe
-    #elif defined(Z_PROBE_ALLEN_KEY)
+    #elif defined(Z_PROBE_ALLEN_KEY) //|| defined(SERVO_LEVELING)
       engage_z_probe();
     #endif
 
@@ -2267,26 +2266,24 @@ inline void gcode_G28() {
       const int xGridSpacing = (right_probe_bed_position - left_probe_bed_position) / (auto_bed_leveling_grid_points-1);
       const int yGridSpacing = (back_probe_bed_position - front_probe_bed_position) / (auto_bed_leveling_grid_points-1);
 
-    #ifndef DELTA
-      // solve the plane equation ax + by + d = z
-      // A is the matrix with rows [x y 1] for all the probed points
-      // B is the vector of the Z positions
-      // the normal vector to the plane is formed by the coefficients of the plane equation in the standard form, which is Vx*x+Vy*y+Vz*z+d = 0
-      // so Vx = -a Vy = -b Vz = 1 (we want the vector facing towards positive Z
+      #ifdef DELTA
+        delta_grid_spacing[0] = xGridSpacing;
+        delta_grid_spacing[1] = yGridSpacing;
+        float z_offset = Z_PROBE_OFFSET_FROM_EXTRUDER;
+        if (code_seen(axis_codes[Z_AXIS])) z_offset += code_value();
+      #else // !DELTA
+        // solve the plane equation ax + by + d = z
+        // A is the matrix with rows [x y 1] for all the probed points
+        // B is the vector of the Z positions
+        // the normal vector to the plane is formed by the coefficients of the plane equation in the standard form, which is Vx*x+Vy*y+Vz*z+d = 0
+        // so Vx = -a Vy = -b Vz = 1 (we want the vector facing towards positive Z
 
-      int abl2 = auto_bed_leveling_grid_points * auto_bed_leveling_grid_points;
+        int abl2 = auto_bed_leveling_grid_points * auto_bed_leveling_grid_points;
 
-      double eqnAMatrix[abl2 * 3], // "A" matrix of the linear system of equations
-             eqnBVector[abl2],     // "B" vector of Z points
-             mean = 0.0;
-
-    #else
-      delta_grid_spacing[0] = xGridSpacing;
-      delta_grid_spacing[1] = yGridSpacing;
-
-      float z_offset = Z_PROBE_OFFSET_FROM_EXTRUDER;
-      if (code_seen(axis_codes[Z_AXIS])) z_offset += code_value();
-    #endif
+        double eqnAMatrix[abl2 * 3], // "A" matrix of the linear system of equations
+               eqnBVector[abl2],     // "B" vector of Z points
+               mean = 0.0;
+      #endif // !DELTA
 
       int probePointCounter = 0;
       bool zig = true;
@@ -2319,12 +2316,12 @@ inline void gcode_G28() {
           float measured_z,
                 z_before = probePointCounter == 0 ? Z_RAISE_BEFORE_PROBING : current_position[Z_AXIS] + Z_RAISE_BETWEEN_PROBINGS;
 
-        #ifdef DELTA
-          // Avoid probing the corners (outside the round or hexagon print surface) on a delta printer.
-          float distance_from_center = sqrt(xProbe*xProbe + yProbe*yProbe);
-          if (distance_from_center > DELTA_PROBABLE_RADIUS)
-            continue;
-        #endif //DELTA
+          #ifdef DELTA
+            // Avoid probing the corners (outside the round or hexagon print surface) on a delta printer.
+            float distance_from_center = sqrt(xProbe*xProbe + yProbe*yProbe);
+            if (distance_from_center > DELTA_PROBABLE_RADIUS)
+              continue;
+          #endif //DELTA
 
           // Enhanced G29 - Do not retract servo between probes
           ProbeAction act;
@@ -2341,16 +2338,16 @@ inline void gcode_G28() {
 
           measured_z = probe_pt(xProbe, yProbe, z_before, act, verbose_level);
 
-        #ifndef DELTA
-          mean += measured_z;
+          #ifndef DELTA
+            mean += measured_z;
 
-          eqnBVector[probePointCounter] = measured_z;
-          eqnAMatrix[probePointCounter + 0 * abl2] = xProbe;
-          eqnAMatrix[probePointCounter + 1 * abl2] = yProbe;
-          eqnAMatrix[probePointCounter + 2 * abl2] = 1;
-        #else
-          bed_level[xCount][yCount] = measured_z + z_offset;
-        #endif
+            eqnBVector[probePointCounter] = measured_z;
+            eqnAMatrix[probePointCounter + 0 * abl2] = xProbe;
+            eqnAMatrix[probePointCounter + 1 * abl2] = yProbe;
+            eqnAMatrix[probePointCounter + 2 * abl2] = 1;
+          #else
+            bed_level[xCount][yCount] = measured_z + z_offset;
+          #endif
 
           probePointCounter++;
         } //xProbe
@@ -2358,52 +2355,55 @@ inline void gcode_G28() {
 
       clean_up_after_endstop_move();
 
-    #ifndef DELTA
-      // solve lsq problem
-      double *plane_equation_coefficients = qr_solve(abl2, 3, eqnAMatrix, eqnBVector);
+      #ifdef DELTA
+        extrapolate_unprobed_bed_level();
+        print_bed_level();
+      #else // !DELTA
+        // solve lsq problem
+        double *plane_equation_coefficients = qr_solve(abl2, 3, eqnAMatrix, eqnBVector);
 
-      mean /= abl2;
+        mean /= abl2;
 
-      if (verbose_level) {
-        SERIAL_PROTOCOLPGM("Eqn coefficients: a: ");
-        SERIAL_PROTOCOL_F(plane_equation_coefficients[0], 8);
-        SERIAL_PROTOCOLPGM(" b: ");
-        SERIAL_PROTOCOL_F(plane_equation_coefficients[1], 8);
-        SERIAL_PROTOCOLPGM(" d: ");
-        SERIAL_PROTOCOL_F(plane_equation_coefficients[2], 8);
-        SERIAL_EOL;
-        if (verbose_level > 2) {
-          SERIAL_PROTOCOLPGM("Mean of sampled points: ");
-          SERIAL_PROTOCOL_F(mean, 8);
+        if (verbose_level) {
+          SERIAL_PROTOCOLPGM("Eqn coefficients: a: ");
+          SERIAL_PROTOCOL_F(plane_equation_coefficients[0], 8);
+          SERIAL_PROTOCOLPGM(" b: ");
+          SERIAL_PROTOCOL_F(plane_equation_coefficients[1], 8);
+          SERIAL_PROTOCOLPGM(" d: ");
+          SERIAL_PROTOCOL_F(plane_equation_coefficients[2], 8);
           SERIAL_EOL;
+          if (verbose_level > 2) {
+            SERIAL_PROTOCOLPGM("Mean of sampled points: ");
+            SERIAL_PROTOCOL_F(mean, 8);
+            SERIAL_EOL;
+          }
         }
-      }
 
-      // Show the Topography map if enabled
-      if (do_topography_map) {
+        // Show the Topography map if enabled
+        if (do_topography_map) {
 
-        SERIAL_PROTOCOLPGM(" \nBed Height Topography: \n");
-        SERIAL_PROTOCOLPGM("+-----------+\n");
-        SERIAL_PROTOCOLPGM("|...Back....|\n");
-        SERIAL_PROTOCOLPGM("|Left..Right|\n");
-        SERIAL_PROTOCOLPGM("|...Front...|\n");
-        SERIAL_PROTOCOLPGM("+-----------+\n");
+          SERIAL_PROTOCOLPGM(" \nBed Height Topography: \n");
+          SERIAL_PROTOCOLPGM("+-----------+\n");
+          SERIAL_PROTOCOLPGM("|...Back....|\n");
+          SERIAL_PROTOCOLPGM("|Left..Right|\n");
+          SERIAL_PROTOCOLPGM("|...Front...|\n");
+          SERIAL_PROTOCOLPGM("+-----------+\n");
 
-        for (int yy = auto_bed_leveling_grid_points - 1; yy >= 0; yy--) {
-          for (int xx = 0; xx < auto_bed_leveling_grid_points; xx++) {
-            int ind = yy * auto_bed_leveling_grid_points + xx;
-            float diff = eqnBVector[ind] - mean;
-            if (diff >= 0.0)
-              SERIAL_PROTOCOLPGM(" +");   // Include + for column alignment
-            else
-              SERIAL_PROTOCOLPGM(" ");
-            SERIAL_PROTOCOL_F(diff, 5);
-          } // xx
+          for (int yy = auto_bed_leveling_grid_points - 1; yy >= 0; yy--) {
+            for (int xx = 0; xx < auto_bed_leveling_grid_points; xx++) {
+              int ind = yy * auto_bed_leveling_grid_points + xx;
+              float diff = eqnBVector[ind] - mean;
+              if (diff >= 0.0)
+                SERIAL_PROTOCOLPGM(" +");   // Include + for column alignment
+              else
+                SERIAL_PROTOCOLPGM(" ");
+              SERIAL_PROTOCOL_F(diff, 5);
+            } // xx
+            SERIAL_EOL;
+          } // yy
           SERIAL_EOL;
-        } // yy
-        SERIAL_EOL;
 
-      } //do_topography_map
+        } //do_topography_map
 
 
       if (!dryrun) set_bed_level_equation_lsq(plane_equation_coefficients);
