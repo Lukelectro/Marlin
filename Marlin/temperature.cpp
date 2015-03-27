@@ -53,7 +53,7 @@
 //============================= public variables ============================
 //===========================================================================
 
-int target_temperature[EXTRUDERS] = { 0 };
+int target_temperature[4] = { 0 };
 int target_temperature_bed = 0;
 int current_temperature_raw[4] = { 0 };
 float current_temperature[EXTRUDERS] = { 0.0 };
