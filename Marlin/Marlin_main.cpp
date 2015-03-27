@@ -390,7 +390,11 @@ const char axis_codes[NUM_AXIS] = {'X', 'Y', 'Z', 'E'};
 static float destination[NUM_AXIS] = { 0, 0, 0, 0 };
 
 static float offset[3] = { 0, 0, 0 };
-static bool home_all_axis = true;
+
+#ifndef DELTA
+  static bool home_all_axis = true;
+#endif
+
 static float feedrate = 1500.0, next_feedrate, saved_feedrate;
 static long gcode_N, gcode_LastN, Stopped_gcode_LastN = 0;
 
@@ -398,8 +402,8 @@ static bool relative_mode = false;  //Determines Absolute or Relative Coordinate
 
 static char cmdbuffer[BUFSIZE][MAX_CMD_SIZE];
 #ifdef SDSUPPORT
-static bool fromsd[BUFSIZE];
-#endif //!SDSUPPORT
+  static bool fromsd[BUFSIZE];
+#endif
 static int bufindr = 0;
 static int bufindw = 0;
 static int buflen = 0;
@@ -1232,10 +1236,6 @@ static void do_blocking_move_to(float x, float y, float z) {
 #endif
 
     feedrate = oldFeedRate;
-}
-
-static void do_blocking_move_relative(float offset_x, float offset_y, float offset_z) {
-    do_blocking_move_to(current_position[X_AXIS] + offset_x, current_position[Y_AXIS] + offset_y, current_position[Z_AXIS] + offset_z);
 }
 
 static void setup_for_endstop_move() {
@@ -2156,7 +2156,6 @@ inline void gcode_G28() {
     }
 
     int verbose_level = 1;
-    float x_tmp, y_tmp, z_tmp, real_z;
 
     if (code_seen('V') || code_seen('v')) {
       verbose_level = code_value_long();
@@ -2443,6 +2442,7 @@ inline void gcode_G28() {
     // When the bed is uneven, this height must be corrected.
     if (!dryrun)
     {
+      float x_tmp, y_tmp, z_tmp, real_z;
       real_z = float(st_get_position(Z_AXIS)) / axis_steps_per_unit[Z_AXIS];  //get the real Z (since the auto bed leveling is already correcting the plane)
       x_tmp = current_position[X_AXIS] + X_PROBE_OFFSET_FROM_EXTRUDER;
       y_tmp = current_position[Y_AXIS] + Y_PROBE_OFFSET_FROM_EXTRUDER;

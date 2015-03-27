@@ -703,26 +703,26 @@ void plan_buffer_line(float x, float y, float z, const float &e, float feed_rate
 
   int moves_queued = movesplanned();
 
-  // slow down when de buffer starts to empty, rather than wait at the corner for a buffer refill
-  bool mq = moves_queued > 1 && moves_queued < BLOCK_BUFFER_SIZE / 2;
-  #ifdef OLD_SLOWDOWN
-    if (mq) feed_rate *= 2.0 * moves_queued / BLOCK_BUFFER_SIZE;
-  #endif
-
-  #ifdef SLOWDOWN
-    //  segment time im micro seconds
-    unsigned long segment_time = lround(1000000.0/inverse_second);
-    if (mq) {
-      if (segment_time < minsegmenttime) {
-        // buffer is draining, add extra time.  The amount of time added increases if the buffer is still emptied more.
-        inverse_second = 1000000.0 / (segment_time + lround(2 * (minsegmenttime - segment_time) / moves_queued));
-        #ifdef XY_FREQUENCY_LIMIT
-          segment_time = lround(1000000.0 / inverse_second);
-        #endif
+  // Slow down when the buffer starts to empty, rather than wait at the corner for a buffer refill
+  #if defined(OLD_SLOWDOWN) || defined(SLOWDOWN)
+    bool mq = moves_queued > 1 && moves_queued < BLOCK_BUFFER_SIZE / 2;
+    #ifdef OLD_SLOWDOWN
+      if (mq) feed_rate *= 2.0 * moves_queued / BLOCK_BUFFER_SIZE;
+    #endif
+    #ifdef SLOWDOWN
+      //  segment time im micro seconds
+      unsigned long segment_time = lround(1000000.0/inverse_second);
+      if (mq) {
+        if (segment_time < minsegmenttime) {
+          // buffer is draining, add extra time.  The amount of time added increases if the buffer is still emptied more.
+          inverse_second = 1000000.0 / (segment_time + lround(2 * (minsegmenttime - segment_time) / moves_queued));
+          #ifdef XY_FREQUENCY_LIMIT
+            segment_time = lround(1000000.0 / inverse_second);
+          #endif
+        }
       }
-    }
+    #endif
   #endif
-  //  END OF SLOW DOWN SECTION    
 
   block->nominal_speed = block->millimeters * inverse_second; // (mm/sec) Always > 0
   block->nominal_rate = ceil(block->step_event_count * inverse_second); // (step/sec) Always > 0

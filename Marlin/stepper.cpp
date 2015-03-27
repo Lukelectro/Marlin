@@ -85,18 +85,24 @@ static volatile bool endstop_z_hit = false;
   int motor_current_setting[3] = DEFAULT_PWM_MOTOR_CURRENT;
 #endif
 
-static bool old_x_min_endstop = false,
-            old_x_max_endstop = false,
-            old_y_min_endstop = false,
-            old_y_max_endstop = false,
-            old_z_min_endstop = false,
-            #ifndef Z_DUAL_ENDSTOPS
-            old_z_max_endstop = false;
-            #else
-              old_z_max_endstop = false,
-              old_z2_min_endstop = false,
-              old_z2_max_endstop = false;
-            #endif
+#if defined(X_MIN_PIN) && X_MIN_PIN >= 0
+  static bool old_x_min_endstop = false;
+#endif
+#if defined(X_MAX_PIN) && X_MAX_PIN >= 0
+  static bool old_x_max_endstop = false;
+#endif
+#if defined(Y_MIN_PIN) && Y_MIN_PIN >= 0
+  static bool old_y_min_endstop = false;
+#endif
+#if defined(Y_MAX_PIN) && Y_MAX_PIN >= 0
+  static bool old_y_max_endstop = false;
+#endif
+
+static bool old_z_min_endstop = false, old_z_max_endstop = false;
+
+#ifdef Z_DUAL_ENDSTOPS
+  static bool old_z2_min_endstop = false, old_z2_max_endstop = false;
+#endif
 
 static bool check_endstops = true;
 
