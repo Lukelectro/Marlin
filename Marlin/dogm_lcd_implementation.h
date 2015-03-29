@@ -289,9 +289,6 @@ static void _draw_heater_status(int x, int heater) {
 }
 
 static void lcd_implementation_status_screen() {
-
-  static unsigned char fan_rot = 0;
- 
   u8g.setColorIndex(1); // black on white
 
   // Symbols menu graphics, animated fan
