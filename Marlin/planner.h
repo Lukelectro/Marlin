@@ -84,7 +84,12 @@ void plan_buffer_line(float x, float y, float z, const float &e, float feed_rate
   // Add a new linear movement to the buffer. x, y and z is the signed, absolute target position in 
   // millimaters. Feed rate specifies the speed of the motion.
   void plan_buffer_line(float x, float y, float z, const float &e, float feed_rate, const uint8_t &extruder);
-  // Set position. Used for G92 instructions.
+
+  /**
+   * Set the planner positions. Used for G92 instructions.
+   * Multiplies by axis_steps_per_unit[] to set stepper positions.
+   * Clears previous speed values.
+   */
   void plan_set_position(float x, float y, float z, const float &e);
   #ifndef DELTA
     // Get the position applying the bed level matrix if enabled
