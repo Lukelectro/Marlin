@@ -1410,15 +1410,15 @@ static void retract_z_probe() {
 =======
   }
 
-  static void retract_z_probe(const float z_after=Z_RAISE_AFTER_PROBING) {
+  static void retract_z_probe() {
 
     #ifdef SERVO_ENDSTOPS
 
       // Retract Z Servo endstop if enabled
       if (servo_endstops[Z_AXIS] >= 0) {
 
-        if (z_after > 0) {
-          do_blocking_move_to(current_position[X_AXIS], current_position[Y_AXIS], z_after);
+        #if Z_RAISE_AFTER_PROBING > 0
+          do_blocking_move_to(current_position[X_AXIS], current_position[Y_AXIS], Z_RAISE_AFTER_PROBING);
           st_synchronize();
 >>>>>>> MarlinFirmware/Development
         }
@@ -1503,8 +1503,13 @@ static void retract_z_probe() {
     run_z_probe();
     float measured_z = current_position[Z_AXIS];
 
+    #if Z_RAISE_AFTER_PROBING > 0
+      do_blocking_move_to(current_position[X_AXIS], current_position[Y_AXIS], Z_RAISE_AFTER_PROBING);
+      st_synchronize();
+    #endif
+
     #if !defined(Z_PROBE_SLED) && !defined(Z_PROBE_ALLEN_KEY)
-      if (retract_action & ProbeRetract) retract_z_probe(z_before);
+      if (retract_action & ProbeRetract) retract_z_probe();
     #endif
 
     if (verbose_level > 2) {
