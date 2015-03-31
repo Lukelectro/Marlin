@@ -1836,7 +1836,19 @@ inline void gcode_G28() {
     home_all_axis = !homeX && !homeY && !homeZ; // No parameters means home all axes
 
     #if Z_HOME_DIR > 0                      // If homing away from BED do Z first
+
       if (home_all_axis || homeZ) HOMEAXIS(Z);
+
+    #elif !defined(Z_SAFE_HOMING) && defined(Z_RAISE_BEFORE_HOMING) && Z_RAISE_BEFORE_HOMING > 0
+
+      // Raise Z before homing any other axes
+      if (home_all_axis || homeZ) {
+        destination[Z_AXIS] = -Z_RAISE_BEFORE_HOMING * home_dir(Z_AXIS);    // Set destination away from bed
+        feedrate = max_feedrate[Z_AXIS];
+        line_to_destination();
+        st_synchronize();
+      }
+
     #endif
 
     #ifdef QUICK_HOME
