@@ -1621,7 +1621,7 @@ static void homeaxis(int axis) {
     sync_plan_position();
 
     // Engage Servo endstop if enabled
-    #ifdef SERVO_ENDSTOPS && !defined(Z_PROBE_SLED)
+    #if defined(SERVO_ENDSTOPS) && !defined(Z_PROBE_SLED)
 
       #if SERVO_LEVELING
         if (axis == Z_AXIS) engage_z_probe(); else
@@ -3006,7 +3006,7 @@ inline void gcode_M42() {
       }
     }
 
-    #if defined(FAN_PIN) && FAN_PIN > -1
+    #if HAS_FAN
       if (pin_number == FAN_PIN) fanSpeed = pin_status;
     #endif
 
@@ -3298,17 +3298,17 @@ inline void gcode_M104() {
 inline void gcode_M105() {
   if (setTargetedHotend(105)) return;
 
-  #if defined(TEMP_0_PIN) && TEMP_0_PIN > -1
+  #if HAS_TEMP_0
     SERIAL_PROTOCOLPGM("ok T:");
     SERIAL_PROTOCOL_F(degHotend(tmp_extruder),1);
     SERIAL_PROTOCOLPGM(" /");
     SERIAL_PROTOCOL_F(degTargetHotend(tmp_extruder),1);
-    #if defined(TEMP_BED_PIN) && TEMP_BED_PIN > -1
+    #if HAS_TEMP_BED
       SERIAL_PROTOCOLPGM(" B:");
       SERIAL_PROTOCOL_F(degBed(),1);
       SERIAL_PROTOCOLPGM(" /");
       SERIAL_PROTOCOL_F(degTargetBed(),1);
-    #endif //TEMP_BED_PIN
+    #endif
     for (int8_t cur_extruder = 0; cur_extruder < EXTRUDERS; ++cur_extruder) {
       SERIAL_PROTOCOLPGM(" T");
       SERIAL_PROTOCOL(cur_extruder);
@@ -3339,7 +3339,7 @@ inline void gcode_M105() {
   #endif
 
   #ifdef SHOW_TEMP_ADC_VALUES
-    #if defined(TEMP_BED_PIN) && TEMP_BED_PIN > -1
+    #if HAS_TEMP_BED
       SERIAL_PROTOCOLPGM("    ADC B:");
       SERIAL_PROTOCOL_F(degBed(),1);
       SERIAL_PROTOCOLPGM("C->");
@@ -3355,10 +3355,10 @@ inline void gcode_M105() {
     }
   #endif
 
-  SERIAL_PROTOCOLLN("");
+  SERIAL_EOL;
 }
 
-#if defined(FAN_PIN) && FAN_PIN > -1
+#if HAS_FAN
 
   /**
    * M106: Set Fan Speed
@@ -3370,7 +3370,7 @@ inline void gcode_M105() {
    */
   inline void gcode_M107() { fanSpeed = 0; }
 
-#endif //FAN_PIN
+#endif // HAS_FAN
 
 /**
  * M109: Wait for extruder(s) to reach temperature
@@ -3428,10 +3428,10 @@ inline void gcode_M109() {
             SERIAL_PROTOCOLLN( timetemp );
           }
           else {
-            SERIAL_PROTOCOLLN( "?" );
+            SERIAL_PROTOCOLLNPGM("?");
           }
         #else
-          SERIAL_PROTOCOLLN("");
+          SERIAL_EOL;
         #endif
         timetemp = millis();
       }
@@ -3454,7 +3454,7 @@ inline void gcode_M109() {
   starttime = previous_millis_cmd = millis();
 }
 
-#if defined(TEMP_BED_PIN) && TEMP_BED_PIN > -1
+#if HAS_TEMP_BED
 
   /**
    * M190: Sxxx Wait for bed current temp to reach target temp. Waits only when heating
@@ -3482,7 +3482,7 @@ inline void gcode_M109() {
         SERIAL_PROTOCOL((int)active_extruder);
         SERIAL_PROTOCOLPGM(" B:");
         SERIAL_PROTOCOL_F(degBed(), 1);
-        SERIAL_PROTOCOLLN("");
+        SERIAL_EOL;
       }
       manage_heater();
       manage_inactivity();
@@ -3683,27 +3683,26 @@ inline void gcode_M114() {
   SERIAL_PROTOCOLPGM(" Z:");
   SERIAL_PROTOCOL(float(st_get_position(Z_AXIS))/axis_steps_per_unit[Z_AXIS]);
 
-  SERIAL_PROTOCOLLN("");
+  SERIAL_EOL;
 
   #ifdef SCARA
     SERIAL_PROTOCOLPGM("SCARA Theta:");
     SERIAL_PROTOCOL(delta[X_AXIS]);
     SERIAL_PROTOCOLPGM("   Psi+Theta:");
     SERIAL_PROTOCOL(delta[Y_AXIS]);
-    SERIAL_PROTOCOLLN("");
+    SERIAL_EOL;
     
     SERIAL_PROTOCOLPGM("SCARA Cal - Theta:");
     SERIAL_PROTOCOL(delta[X_AXIS]+home_offset[X_AXIS]);
     SERIAL_PROTOCOLPGM("   Psi+Theta (90):");
     SERIAL_PROTOCOL(delta[Y_AXIS]-delta[X_AXIS]-90+home_offset[Y_AXIS]);
-    SERIAL_PROTOCOLLN("");
+    SERIAL_EOL;
     
     SERIAL_PROTOCOLPGM("SCARA step Cal - Theta:");
     SERIAL_PROTOCOL(delta[X_AXIS]/90*axis_steps_per_unit[X_AXIS]);
     SERIAL_PROTOCOLPGM("   Psi+Theta:");
     SERIAL_PROTOCOL((delta[Y_AXIS]-delta[X_AXIS])/90*axis_steps_per_unit[Y_AXIS]);
-    SERIAL_PROTOCOLLN("");
-    SERIAL_PROTOCOLLN("");
+    SERIAL_EOL; SERIAL_EOL;
   #endif
 }
 
@@ -4149,7 +4148,7 @@ inline void gcode_M226() {
       SERIAL_PROTOCOL(servo_index);
       SERIAL_PROTOCOL(": ");
       SERIAL_PROTOCOL(servos[servo_index].read());
-      SERIAL_PROTOCOLLN("");
+      SERIAL_EOL;
     }
   }
 
@@ -4217,7 +4216,7 @@ inline void gcode_M226() {
         //Kc does not have scaling applied above, or in resetting defaults
         SERIAL_PROTOCOL(PID_PARAM(Kc, e));
       #endif
-      SERIAL_PROTOCOLLN("");    
+      SERIAL_EOL;    
     }
     else {
       SERIAL_ECHO_START;
@@ -4242,7 +4241,7 @@ inline void gcode_M226() {
     SERIAL_PROTOCOL(unscalePID_i(bedKi));
     SERIAL_PROTOCOL(" d:");
     SERIAL_PROTOCOL(unscalePID_d(bedKd));
-    SERIAL_PROTOCOLLN("");
+    SERIAL_EOL;
   }
 
 #endif // PIDTEMPBED
@@ -4292,7 +4291,7 @@ inline void gcode_M226() {
     if (code_seen('C')) lcd_setcontrast(code_value_long() & 0x3F);
     SERIAL_PROTOCOLPGM("lcd contrast value: ");
     SERIAL_PROTOCOL(lcd_contrast);
-    SERIAL_PROTOCOLLN("");
+    SERIAL_EOL;
   }
 
 #endif // DOGLCD
@@ -4565,7 +4564,7 @@ inline void gcode_M503() {
         zprobe_zoffset = -value; // compare w/ line 278 of ConfigurationStore.cpp
         SERIAL_ECHO_START;
         SERIAL_ECHOLNPGM(MSG_ZPROBE_ZOFFSET " " MSG_OK);
-        SERIAL_PROTOCOLLN("");
+        SERIAL_EOL;
       }
       else {
         SERIAL_ECHO_START;
@@ -4574,14 +4573,14 @@ inline void gcode_M503() {
         SERIAL_ECHO(Z_PROBE_OFFSET_RANGE_MIN);
         SERIAL_ECHOPGM(MSG_Z_MAX);
         SERIAL_ECHO(Z_PROBE_OFFSET_RANGE_MAX);
-        SERIAL_PROTOCOLLN("");
+        SERIAL_EOL;
       }
     }
     else {
       SERIAL_ECHO_START;
       SERIAL_ECHOLNPGM(MSG_ZPROBE_ZOFFSET " : ");
       SERIAL_ECHO(-zprobe_zoffset);
-      SERIAL_PROTOCOLLN("");
+      SERIAL_EOL;
     }
   }
 
@@ -5087,20 +5086,20 @@ void process_commands() {
         gcode_M109();
         break;
 
-      #if defined(TEMP_BED_PIN) && TEMP_BED_PIN > -1
+      #if HAS_TEMP_BED
         case 190: // M190 - Wait for bed heater to reach target.
           gcode_M190();
           break;
-      #endif //TEMP_BED_PIN
+      #endif // HAS_TEMP_BED
 
-      #if defined(FAN_PIN) && FAN_PIN > -1
+      #if HAS_FAN
         case 106: //M106 Fan On
           gcode_M106();
           break;
         case 107: //M107 Fan Off
           gcode_M107();
           break;
-      #endif //FAN_PIN
+      #endif // HAS_FAN
 
       #ifdef BARICUDA
         // PWM for HEATER_1_PIN
@@ -5956,7 +5955,7 @@ void handle_status_leds(void) {
        max_temp = max(max_temp, degHotend(cur_extruder));
        max_temp = max(max_temp, degTargetHotend(cur_extruder));
     }
-    #if defined(TEMP_BED_PIN) && TEMP_BED_PIN > -1
+    #if HAS_TEMP_BED
       max_temp = max(max_temp, degTargetBed());
       max_temp = max(max_temp, degBed());
     #endif
