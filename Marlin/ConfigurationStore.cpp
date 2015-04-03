@@ -700,14 +700,17 @@ void Config_PrintSettings(bool forReplay) {
       SERIAL_ECHOLNPGM("PID settings:");
       SERIAL_ECHO_START;
     }
+    #if defined(PIDTEMP) && defined(PIDTEMPBED)
+      SERIAL_EOL;
+    #endif
     #ifdef PIDTEMP
-      SERIAL_ECHOPAIR("   M301 P", PID_PARAM(Kp, 0)); // for compatibility with hosts, only echos values for E0
+      SERIAL_ECHOPAIR("  M301 P", PID_PARAM(Kp, 0)); // for compatibility with hosts, only echos values for E0
       SERIAL_ECHOPAIR(" I", unscalePID_i(PID_PARAM(Ki, 0)));
       SERIAL_ECHOPAIR(" D", unscalePID_d(PID_PARAM(Kd, 0)));
       SERIAL_EOL;
     #endif
     #ifdef PIDTEMPBED
-      SERIAL_ECHOPAIR("   M304 P", bedKp); // for compatibility with hosts, only echos values for E0
+      SERIAL_ECHOPAIR("  M304 P", bedKp); // for compatibility with hosts, only echos values for E0
       SERIAL_ECHOPAIR(" I", unscalePID_i(bedKi));
       SERIAL_ECHOPAIR(" D", unscalePID_d(bedKd));
       SERIAL_EOL;
@@ -721,7 +724,7 @@ void Config_PrintSettings(bool forReplay) {
       SERIAL_ECHOLNPGM("Retract: S=Length (mm) F:Speed (mm/m) Z: ZLift (mm)");
       SERIAL_ECHO_START;
     }
-    SERIAL_ECHOPAIR("   M207 S", retract_length);
+    SERIAL_ECHOPAIR("  M207 S", retract_length);
     SERIAL_ECHOPAIR(" F", retract_feedrate*60);
     SERIAL_ECHOPAIR(" Z", retract_zlift);
     SERIAL_EOL;
@@ -730,7 +733,7 @@ void Config_PrintSettings(bool forReplay) {
       SERIAL_ECHOLNPGM("Recover: S=Extra length (mm) F:Speed (mm/m)");
       SERIAL_ECHO_START;
     }
-    SERIAL_ECHOPAIR("   M208 S", retract_recover_length);
+    SERIAL_ECHOPAIR("  M208 S", retract_recover_length);
     SERIAL_ECHOPAIR(" F", retract_recover_feedrate*60);
     SERIAL_EOL;
     SERIAL_ECHO_START;
@@ -738,7 +741,7 @@ void Config_PrintSettings(bool forReplay) {
       SERIAL_ECHOLNPGM("Auto-Retract: S=0 to disable, 1 to interpret extrude-only moves as retracts or recoveries");
       SERIAL_ECHO_START;
     }
-    SERIAL_ECHOPAIR("   M209 S", (unsigned long)(autoretract_enabled ? 1 : 0));
+    SERIAL_ECHOPAIR("  M209 S", (unsigned long)(autoretract_enabled ? 1 : 0));
     SERIAL_EOL;
 
     #if EXTRUDERS > 1
@@ -762,20 +765,20 @@ void Config_PrintSettings(bool forReplay) {
       SERIAL_ECHOLNPGM("Filament settings:");
       SERIAL_ECHO_START;
     }
-    SERIAL_ECHOPAIR("   M200 D", filament_size[0]);
+    SERIAL_ECHOPAIR("  M200 D", filament_size[0]);
     SERIAL_EOL;
 
     #if EXTRUDERS > 1
       SERIAL_ECHO_START;
-      SERIAL_ECHOPAIR("   M200 T1 D", filament_size[1]);
+      SERIAL_ECHOPAIR("  M200 T1 D", filament_size[1]);
       SERIAL_EOL;
       #if EXTRUDERS > 2
         SERIAL_ECHO_START;
-        SERIAL_ECHOPAIR("   M200 T2 D", filament_size[2]);
+        SERIAL_ECHOPAIR("  M200 T2 D", filament_size[2]);
         SERIAL_EOL;
         #if EXTRUDERS > 3
           SERIAL_ECHO_START;
-          SERIAL_ECHOPAIR("   M200 T3 D", filament_size[3]);
+          SERIAL_ECHOPAIR("  M200 T3 D", filament_size[3]);
           SERIAL_EOL;
         #endif
       #endif
