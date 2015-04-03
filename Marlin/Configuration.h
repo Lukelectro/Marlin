@@ -693,7 +693,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // JFR -was true // set to true to i
 // Data from: http://www.doc-diy.net/photo/rc-1_hacked/
 // #define PHOTOGRAPH_PIN     23
 
-// SF send wrong arc g-codes when using Arc Point as fillet procedure
+// SkeinForge sends the wrong arc g-codes when using Arc Point as fillet procedure
 //#define SF_ARC_FIX
 
 // Support for the BariCUDA Paste Extruder.

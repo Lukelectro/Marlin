@@ -333,7 +333,7 @@ static void lcd_implementation_status_screen() {
   // Fan
   lcd_setFont(FONT_STATUSMENU);
   u8g.setPrintPos(104,27);
-  #if defined(FAN_PIN) && FAN_PIN > -1
+  #if HAS_FAN
     int per = ((fanSpeed + 1) * 100) / 256;
     if (per) {
       lcd_print(itostr3(per));
