@@ -1355,11 +1355,12 @@ void lcd_update() {
       (*currentMenu)();
       if (lcdDrawUpdate) {
         do {
+          if (!dotcounter) dotcounter = 63;
           lcd_setFont(FONT_MENU);
           u8g.setPrintPos(125, 0);
-          if (blink % 2) u8g.setColorIndex(1); else u8g.setColorIndex(0); // Set color for the alive dot
-          u8g.drawPixel(127, 63); // draw alive dot
-          u8g.setColorIndex(1); // black on white
+  //        if (blink % 2) u8g.setColorIndex(1); else u8g.setColorIndex(0); // Set color for the alive dot
+          u8g.drawPixel(127, dotcounter--); // draw alive dot
+  //        u8g.setColorIndex(1); // black on white
           (*currentMenu)();
         } while( u8g.nextPage() );
       }
