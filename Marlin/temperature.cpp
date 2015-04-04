@@ -1098,13 +1098,7 @@ void thermal_runaway_protection(int *state, unsigned long *timer, float temperat
           thermal_runaway = true;
           for (;;) {
             disable_heater();
-            disable_x();
-            disable_y();
-            disable_z();
-            disable_e0();
-            disable_e1();
-            disable_e2();
-            disable_e3();
+            disable_all_steppers();
             manage_heater();
             lcd_update();
           }
