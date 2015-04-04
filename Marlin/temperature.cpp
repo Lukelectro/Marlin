@@ -1091,18 +1091,18 @@ void thermal_runaway_protection(int *state, unsigned long *timer, float temperat
         }
 
         // If the temperature is over the target (-hysteresis) restart the timer
-        if (temperature >= tr_target_temperature[heater_index] - hysteresis_degc) *timer = millis();
-
-        // If the timer goes too long without a reset, trigger shutdown
+        if (temperature >= tr_target_temperature[heater_index] - hysteresis_degc) {
+          *timer = millis();
+        } // If the timer goes too long without a reset, trigger shutdown
         else if (millis() > *timer + period_seconds * 1000UL) {
           SERIAL_ERROR_START;
           SERIAL_ERRORLNPGM(MSG_THERMAL_RUNAWAY_STOP);
           if (heater_id < 0) SERIAL_ERRORLNPGM("bed"); else SERIAL_ERRORLN(heater_id);
           LCD_ALERTMESSAGEPGM(MSG_THERMAL_RUNAWAY);
           thermal_runaway = true;
+          disable_heater();
+          disable_all_steppers();
           for (;;) {
-            disable_heater();
-            disable_all_steppers();
             manage_heater();
             lcd_update();
           }
