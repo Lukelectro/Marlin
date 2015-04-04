@@ -76,15 +76,14 @@ unsigned char soft_pwm_bed;
 #define HAS_HEATER_THERMAL_PROTECTION (defined(THERMAL_RUNAWAY_PROTECTION_PERIOD) && THERMAL_RUNAWAY_PROTECTION_PERIOD > 0)
 #define HAS_BED_THERMAL_PROTECTION (defined(THERMAL_RUNAWAY_PROTECTION_BED_PERIOD) && THERMAL_RUNAWAY_PROTECTION_BED_PERIOD > 0 && TEMP_SENSOR_BED != 0)
 #if HAS_HEATER_THERMAL_PROTECTION || HAS_BED_THERMAL_PROTECTION
-  enum TRState { TRInactive, TRFirstHeating, TRStable };
-  static bool thermal_runaway = false;
+  enum TRState { TRReset, TRInactive, TRFirstHeating, TRStable, TRRunaway };
   void thermal_runaway_protection(TRState *state, unsigned long *timer, float temperature, float target_temperature, int heater_id, int period_seconds, int hysteresis_degc);
   #if HAS_HEATER_THERMAL_PROTECTION
-    static TRState thermal_runaway_state_machine[4] = { TRInactive, TRInactive, TRInactive, TRInactive };
+    static TRState thermal_runaway_state_machine[4] = { TRReset, TRReset, TRReset, TRReset };
     static unsigned long thermal_runaway_timer[4]; // = {0,0,0,0};
   #endif
   #if HAS_BED_THERMAL_PROTECTION
-    static TRState thermal_runaway_bed_state_machine = TRInactive;
+    static TRState thermal_runaway_bed_state_machine = TRReset;
     static unsigned long thermal_runaway_bed_timer;
   #endif
 #endif
@@ -1091,23 +1090,23 @@ void thermal_runaway_protection(int *state, unsigned long *timer, float temperat
         }
 
         // If the temperature is over the target (-hysteresis) restart the timer
-        if (temperature >= tr_target_temperature[heater_index] - hysteresis_degc) {
+        if (temperature >= tr_target_temperature[heater_index] - hysteresis_degc)
           *timer = millis();
-        } // If the timer goes too long without a reset, trigger shutdown
-        else if (millis() > *timer + period_seconds * 1000UL) {
-          SERIAL_ERROR_START;
-          SERIAL_ERRORLNPGM(MSG_THERMAL_RUNAWAY_STOP);
-          if (heater_id < 0) SERIAL_ERRORLNPGM("bed"); else SERIAL_ERRORLN(heater_id);
-          LCD_ALERTMESSAGEPGM(MSG_THERMAL_RUNAWAY);
-          thermal_runaway = true;
-          disable_heater();
-          disable_all_steppers();
-          for (;;) {
-            manage_heater();
-            lcd_update();
-          }
+          // If the timer goes too long without a reset, trigger shutdown
+        else if (millis() > *timer + period_seconds * 1000UL)
+          *state = TRRunaway;
+        break;
+      case TRRunaway:
+        SERIAL_ERROR_START;
+        SERIAL_ERRORLNPGM(MSG_THERMAL_RUNAWAY_STOP);
+        if (heater_id < 0) SERIAL_ERRORLNPGM("bed"); else SERIAL_ERRORLN(heater_id);
+        LCD_ALERTMESSAGEPGM(MSG_THERMAL_RUNAWAY);
+        disable_heater();
+        disable_all_steppers();
+        for (;;) {
+          manage_heater();
+          lcd_update();
         }
-      } break;
     }
   }
 
