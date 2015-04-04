@@ -974,8 +974,6 @@ static void axis_is_at_home(int axis) {
   #endif
 }
 
-inline void refresh_cmd_timeout() { previous_millis_cmd = millis(); }
-
 /**
  * Some planner shorthand inline functions
  */
@@ -1453,20 +1451,20 @@ static void retract_z_probe() {
   }
 
   enum ProbeAction {
-    ProbeStay             = 0,
-    ProbeEngage           = BIT(0),
-    ProbeRetract          = BIT(1),
-    ProbeEngageAndRetract = (ProbeEngage | ProbeRetract)
+    ProbeStay          = 0,
+    ProbeDeploy        = BIT(0),
+    ProbeStow          = BIT(1),
+    ProbeDeployAndStow = (ProbeDeploy | ProbeStow)
   };
 
   // Probe bed height at position (x,y), returns the measured z value
-  static float probe_pt(float x, float y, float z_before, ProbeAction retract_action=ProbeEngageAndRetract, int verbose_level=1) {
+  static float probe_pt(float x, float y, float z_before, ProbeAction retract_action=ProbeDeployAndStow, int verbose_level=1) {
     // move to right place
     do_blocking_move_to(current_position[X_AXIS], current_position[Y_AXIS], z_before);
     do_blocking_move_to(x - X_PROBE_OFFSET_FROM_EXTRUDER, y - Y_PROBE_OFFSET_FROM_EXTRUDER, current_position[Z_AXIS]);
 
     #if !defined(Z_PROBE_SLED) && !defined(Z_PROBE_ALLEN_KEY)
-      if (retract_action & ProbeEngage) deploy_z_probe();
+      if (retract_action & ProbeDeploy) deploy_z_probe();
     #endif
 
     run_z_probe();
@@ -1480,7 +1478,7 @@ static void retract_z_probe() {
     #endif
 
     #if !defined(Z_PROBE_SLED) && !defined(Z_PROBE_ALLEN_KEY)
-      if (retract_action & ProbeRetract) stow_z_probe();
+      if (retract_action & ProbeStow) stow_z_probe();
     #endif
 
     if (verbose_level > 2) {
@@ -2353,7 +2351,7 @@ inline void gcode_G28() {
     }
 
     bool dryrun = code_seen('D') || code_seen('d'),
-         engage_probe_for_each_reading = code_seen('E') || code_seen('e');
+         deploy_probe_for_each_reading = code_seen('E') || code_seen('e');
 
     #ifdef AUTO_BED_LEVELING_GRID
 
@@ -2510,14 +2508,13 @@ inline void gcode_G28() {
             if (distance_from_center > DELTA_PROBABLE_RADIUS) continue;
           #endif //DELTA
 
-          // Enhanced G29 - Do not retract servo between probes
           ProbeAction act;
-          if (engage_probe_for_each_reading)
-            act = ProbeEngageAndRetract;
-          else if (yProbe == front_probe_bed_position && xCount == 0)
-            act = ProbeEngage;
-          else if (yProbe == front_probe_bed_position + (yGridSpacing * (auto_bed_leveling_grid_points - 1)) && xCount == auto_bed_leveling_grid_points - 1)
-            act = ProbeRetract;
+          if (deploy_probe_for_each_reading) // G29 E - Stow between probes
+            act = ProbeDeployAndStow;
+          else if (yCount == 0 && xCount == 0)
+            act = ProbeDeploy;
+          else if (yCount == auto_bed_leveling_grid_points - 1 && xCount == auto_bed_leveling_grid_points - 1)
+            act = ProbeStow;
           else
             act = ProbeStay;
 
@@ -2607,10 +2604,10 @@ inline void gcode_G28() {
 
       // Actions for each probe
       ProbeAction p1, p2, p3;
-      if (engage_probe_for_each_reading)
-        p1 = p2 = p3 = ProbeEngageAndRetract;
+      if (deploy_probe_for_each_reading)
+        p1 = p2 = p3 = ProbeDeployAndStow;
       else
-        p1 = ProbeEngage, p2 = ProbeStay, p3 = ProbeRetract;
+        p1 = ProbeDeploy, p2 = ProbeStay, p3 = ProbeStow;
 
       // Probe at 3 arbitrary points
       float z_at_pt_1 = probe_pt(ABL_PROBE_PT_1_X, ABL_PROBE_PT_1_Y, Z_RAISE_BEFORE_PROBING, p1, verbose_level),
@@ -3025,7 +3022,7 @@ inline void gcode_M42() {
            Z_start_location = Z_current + Z_RAISE_BEFORE_PROBING,
            ext_position = st_get_position_mm(E_AXIS);
 
-    bool engage_probe_for_each_reading = code_seen('E') || code_seen('e');
+    bool deploy_probe_for_each_reading = code_seen('E') || code_seen('e');
 
     if (code_seen('X') || code_seen('x')) {
       X_probe_location = code_value() - X_PROBE_OFFSET_FROM_EXTRUDER;
@@ -3103,7 +3100,7 @@ inline void gcode_M42() {
     st_synchronize();
     current_position[Z_AXIS] = Z_current = st_get_position_mm(Z_AXIS);
 
-    if (engage_probe_for_each_reading) stow_z_probe();
+    if (deploy_probe_for_each_reading) stow_z_probe();
 
     for (uint16_t n=0; n < n_samples; n++) {
 
@@ -3145,7 +3142,7 @@ inline void gcode_M42() {
 
       } // n_legs
 
-      if (engage_probe_for_each_reading)  {
+      if (deploy_probe_for_each_reading)  {
         deploy_z_probe(); 
         delay(1000);
       }
@@ -3192,13 +3189,13 @@ inline void gcode_M42() {
       plan_buffer_line(X_probe_location, Y_probe_location, Z_start_location, current_position[E_AXIS], homing_feedrate[Z_AXIS]/60, active_extruder);
       st_synchronize();
 
-      if (engage_probe_for_each_reading) {
+      if (deploy_probe_for_each_reading) {
         stow_z_probe();
         delay(1000);
       }
     }
 
-    if (!engage_probe_for_each_reading) {
+    if (!deploy_probe_for_each_reading) {
       stow_z_probe();
       delay(1000);
     }
