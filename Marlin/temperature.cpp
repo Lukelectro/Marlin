@@ -1089,6 +1089,10 @@ void thermal_runaway_protection(int *state, unsigned long *timer, float temperat
           manage_heater();
           lcd_update();
         }
+
+        // If the temperature is over the target (-hysteresis) restart the timer
+        if (temperature >= tr_target_temperature - hysteresis_degc) *timer = millis();
+
         // If the timer goes too long without a reset, trigger shutdown
         else if (millis() > *timer + period_seconds * 1000UL) {
           SERIAL_ERROR_START;
@@ -1107,7 +1111,7 @@ void thermal_runaway_protection(int *state, unsigned long *timer, float temperat
     }
   }
 
-#endif // HAS_HEATER_THERMAL_PROTECTION
+#endif // HAS_HEATER_THERMAL_PROTECTION || HAS_BED_THERMAL_PROTECTION
 
 void disable_heater() {
   for (int i=0; i<EXTRUDERS; i++) setTargetHotend(0, i);
