@@ -2966,14 +2966,12 @@ inline void gcode_M42() {
 #if defined(ENABLE_AUTO_BED_LEVELING) && defined(Z_PROBE_REPEATABILITY_TEST)
 
   // This is redudant since the SanityCheck.h already checks for a valid Z_PROBE_PIN, but here for clarity.
-  #if defined (Z_PROBE_ENDSTOP)
-    #if (! defined (Z_PROBE_PIN) || Z_PROBE_PIN == -1)
+  #ifdef Z_PROBE_ENDSTOP
+    #if !HAS_Z_PROBE
       #error "You must have a Z_PROBE_PIN defined in order to enable calculation of Z-Probe repeatability."
     #endif
-  #else
-    #if (Z_MIN_PIN == -1)
-      #error "You must have a Z_MIN_PIN defined in order to enable calculation of Z-Probe repeatability."
-    #endif
+  #elif !HAS_Z_MIN
+    #error "You must have a Z_MIN_PIN defined in order to enable calculation of Z-Probe repeatability."
   #endif
 
   /**
@@ -3702,7 +3700,7 @@ inline void gcode_M119() {
     SERIAL_PROTOCOLPGM(MSG_Z2_MAX);
     SERIAL_PROTOCOLLN(((READ(Z2_MAX_PIN)^Z2_MAX_ENDSTOP_INVERTING)?MSG_ENDSTOP_HIT:MSG_ENDSTOP_OPEN));
   #endif
-  #if defined(Z_PROBE_PIN) && Z_PROBE_PIN > -1
+  #if HAS_Z_PROBE
     SERIAL_PROTOCOLPGM(MSG_Z_PROBE);
     SERIAL_PROTOCOLLN(((READ(Z_PROBE_PIN)^Z_PROBE_ENDSTOP_INVERTING)?MSG_ENDSTOP_HIT:MSG_ENDSTOP_OPEN));
   #endif
