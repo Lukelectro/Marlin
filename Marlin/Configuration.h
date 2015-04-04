@@ -37,6 +37,8 @@ Here are some standard links for getting your machine calibrated:
   #include "Default_Version.h"
 #endif
 
+// @section info
+
 // User-specified version info of this build to display in [Pronterface, etc] terminal window during
 // startup. Implementation of an idea by Prof Braino to inform user that any changes made to this
 // build by the user have been successfully uploaded into firmware.
@@ -48,9 +50,12 @@ Here are some standard links for getting your machine calibrated:
 #define STRING_SPLASH_LINE1 "v" STRING_VERSION // will be shown during bootup in line 1
 //#define STRING_SPLASH_LINE2 STRING_VERSION_CONFIG_H // will be shown during bootup in line2
 
+// @section machine
+
 // SERIAL_PORT selects which serial port should be used for communication with the host.
 // This allows the connection of wireless adapters (for instance) to non-default port pins.
 // Serial port 0 is still used by the Arduino bootloader regardless of this setting.
+// :[0,1,2,3,4,5,6,7]
 #define SERIAL_PORT 0
 
 // This determines the communication speed of the printer
@@ -74,6 +79,7 @@ Here are some standard links for getting your machine calibrated:
 // #define MACHINE_UUID "00000000-0000-0000-0000-000000000000"
 
 // This defines the number of extruders
+// :[1,2,3,4]
 #define EXTRUDERS 1
 
 // Offset of the extruders (uncomment if using more than one and relying on firmware to position when changing).
@@ -85,11 +91,14 @@ Here are some standard links for getting your machine calibrated:
 //// The following define selects which power supply you have. Please choose the one that matches your setup
 // 1 = ATX
 // 2 = X-Box 360 203Watts (the blue wire connected to PS_ON and the red wire to VCC)
+// :{1:'ATX',2:'X-Box 360'}
 
 #define POWER_SUPPLY 1
 
 // Define this to have the electronics keep the power supply off on startup. If you don't know what this is leave it.
 // #define PS_DEFAULT_OFF
+
+// @section temperature
 
 //===========================================================================
 //============================= Thermal Settings ============================
@@ -257,6 +266,7 @@ Here are some standard links for getting your machine calibrated:
 // FIND YOUR OWN: "M303 E-1 C8 S90" to run autotune on the bed at 90 degreesC for 8 cycles.
 #endif // PIDTEMPBED
 
+// @section extruder
 
 //this prevents dangerous Extruder moves, i.e. if the temperature is under the limit
 //can be software-disabled for whatever purposes by
@@ -350,6 +360,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // JFR -was true // set to true to i
 #endif
 
 // For Inverting Stepper Enable Pins (Active Low) use 0, Non Inverting (Active High) use 1
+// :{0:'Low',1:'High'}
 #define X_ENABLE_ON 0
 #define Y_ENABLE_ON 0
 #define Z_ENABLE_ON 0
@@ -359,6 +370,9 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // JFR -was true // set to true to i
 #define DISABLE_X false
 #define DISABLE_Y false
 #define DISABLE_Z false
+
+// @section extruder
+
 #define DISABLE_E false // For all extruders
 #define DISABLE_INACTIVE_EXTRUDER true //disable only inactive extruders and keep active extruder enabled
 
@@ -371,6 +385,8 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // JFR -was true // set to true to i
 #define INVERT_E2_DIR false   // for direct drive extruder v9 set to true, for geared extruder set to false
 #define INVERT_E3_DIR false   // for direct drive extruder v9 set to true, for geared extruder set to false
 
+// @section homing
+
 // ENDSTOP SETTINGS:
 // Sets direction of endstops when homing; 1=MAX, -1=MIN
 // deltas always home to max
@@ -380,6 +396,8 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // JFR -was true // set to true to i
 
 #define min_software_endstops true // If true, axis won't move to coordinates less than HOME_POS.
 #define max_software_endstops true  // If true, axis won't move to coordinates greater than the defined lengths below.
+
+// @section machine
 
 // Travel limits after homing (units are in mm)
 #define X_MIN_POS 0
@@ -499,6 +517,8 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // JFR -was true // set to true to i
 //============================= Additional Features ===========================
 //=============================================================================
 
+// @section more
+
 // Custom M code points
 #define CUSTOM_M_CODES
 #ifdef CUSTOM_M_CODES
@@ -509,6 +529,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // JFR -was true // set to true to i
   #endif
 #endif
 
+// @section extras
 
 // EEPROM
 // The microcontroller can store settings in the EEPROM, e.g. max velocity...
@@ -521,6 +542,8 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // JFR -was true // set to true to i
 // please keep turned on if you can.
 #define EEPROM_CHITCHAT
 
+// @section temperature
+
 // Preheat Constants
 #define PLA_PREHEAT_HOTEND_TEMP 180
 #define PLA_PREHEAT_HPB_TEMP 70
@@ -531,6 +554,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // JFR -was true // set to true to i
 #define ABS_PREHEAT_FAN_SPEED 0   // Insert Value between 0 and 255
 
 //==============================LCD and SD support=============================
+// @section lcd
 
 // Define your display language below. Replace (en) with your language code and uncomment.
 // en, pl, fr, de, es, ru, it, pt, pt-br, fi, an, nl, ca, eu, kana, kana_utf8, test
@@ -669,6 +693,8 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // JFR -was true // set to true to i
 // https://bitbucket.org/fmalpartida/new-liquidcrystal/wiki/schematics#!shiftregister-connection
 
 //#define SAV_3DLCD
+
+// @section extras
 
 // Increase the FAN pwm frequency. Removes the PWM noise but increases heating in the FET/Arduino
 //#define FAST_PWM_FAN
