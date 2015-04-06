@@ -193,7 +193,7 @@ char lcd_printPGM(const char* str) {
   return n;
 }
 
-static int8_t show_splashscreed = 2;
+static bool show_splashscreen = true;
 
 static void lcd_implementation_init()
 {
