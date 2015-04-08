@@ -44,8 +44,8 @@
 
 // save 3120 bytes of PROGMEM by commenting out the next #define
 // we don't have a big font for Cyrillic, Kana
-#if defined( MAPPER_C2C3 ) || defined( MAPPER_NON )
-//  #define USE_BIG_EDIT_FONT
+#if defined(MAPPER_C2C3) || defined(MAPPER_NON)
+  //#define USE_BIG_EDIT_FONT
 #endif
 
 // If you have spare 2300Byte of progmem and want to use a 
@@ -133,17 +133,17 @@
 
 // LCD selection
 #ifdef U8GLIB_ST7920
-//U8GLIB_ST7920_128X64_RRD u8g(0,0,0);
-U8GLIB_ST7920_128X64_RRD u8g(0);
+  //U8GLIB_ST7920_128X64_RRD u8g(0,0,0);
+  U8GLIB_ST7920_128X64_RRD u8g(0);
 #elif defined(MAKRPANEL)
-// The MaKrPanel display, ST7565 controller as well
-U8GLIB_NHD_C12864 u8g(DOGLCD_CS, DOGLCD_A0);
+  // The MaKrPanel display, ST7565 controller as well
+  U8GLIB_NHD_C12864 u8g(DOGLCD_CS, DOGLCD_A0);
 #elif defined(VIKI2) || defined(miniVIKI)
-// Mini Viki and Viki 2.0 LCD, ST7565 controller as well
-U8GLIB_NHD_C12864 u8g(DOGLCD_CS, DOGLCD_A0);
+  // Mini Viki and Viki 2.0 LCD, ST7565 controller as well
+  U8GLIB_NHD_C12864 u8g(DOGLCD_CS, DOGLCD_A0);
 #else
-// for regular DOGM128 display with HW-SPI
-U8GLIB_DOGM128 u8g(DOGLCD_CS, DOGLCD_A0);  // HW-SPI Com: CS, A0
+  // for regular DOGM128 display with HW-SPI
+  U8GLIB_DOGM128 u8g(DOGLCD_CS, DOGLCD_A0);  // HW-SPI Com: CS, A0
 #endif
 
 #include "utf_mapper.h"
@@ -195,8 +195,8 @@ char lcd_printPGM(const char* str) {
 
 static bool show_splashscreen = true;
 
-static void lcd_implementation_init()
-{
+static void lcd_implementation_init() {
+
   #ifdef LCD_PIN_BL // Enable LCD backlight
     pinMode(LCD_PIN_BL, OUTPUT);
 	  digitalWrite(LCD_PIN_BL, HIGH);
