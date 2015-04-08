@@ -87,7 +87,7 @@ unsigned long axis_steps_per_sqr_second[NUM_AXIS];
     0.0, 1.0, 0.0,
     0.0, 0.0, 1.0
   };
-#endif // #ifdef ENABLE_AUTO_BED_LEVELING
+#endif // ENABLE_AUTO_BED_LEVELING
 
 // The current position of the tool in absolute steps
 long position[NUM_AXIS];   //rescaled from extern when axis_steps_per_unit are changed by gcode
@@ -472,7 +472,7 @@ float junction_deviation = 0.1;
 void plan_buffer_line(float x, float y, float z, const float &e, float feed_rate, const uint8_t &extruder)
 #else
   void plan_buffer_line(const float &x, const float &y, const float &z, const float &e, float feed_rate, const uint8_t &extruder)
-#endif  //ENABLE_AUTO_BED_LEVELING
+#endif  // ENABLE_AUTO_BED_LEVELING
 {
   // Calculate the buffer head after we push this byte
   int next_buffer_head = next_block_index(block_buffer_head);
