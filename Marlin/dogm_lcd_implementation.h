@@ -205,16 +205,16 @@ static void lcd_implementation_init()
   u8g.setContrast(lcd_contrast);	
 	// FIXME: remove this workaround
   // Uncomment this if you have the first generation (V1.10) of STBs board
-	// pinMode(17, OUTPUT);	// Enable LCD backlight
-	// digitalWrite(17, HIGH);
-  
-#ifdef LCD_SCREEN_ROT_90
-	u8g.setRot90();   // Rotate screen by 90°
-#elif defined(LCD_SCREEN_ROT_180)
-	u8g.setRot180();	// Rotate screen by 180°
-#elif defined(LCD_SCREEN_ROT_270)
-	u8g.setRot270();	// Rotate screen by 270°
-#endif
+  // pinMode(17, OUTPUT);	// Enable LCD backlight
+  // digitalWrite(17, HIGH);
+
+  #ifdef LCD_SCREEN_ROT_90
+    u8g.setRot90();   // Rotate screen by 90°
+  #elif defined(LCD_SCREEN_ROT_180)
+    u8g.setRot180();	// Rotate screen by 180°
+  #elif defined(LCD_SCREEN_ROT_270)
+    u8g.setRot270();	// Rotate screen by 270°
+  #endif
 	
   // Show splashscreen
   int offx = (u8g.getWidth() - START_BMPWIDTH) / 2;
@@ -325,13 +325,13 @@ static void lcd_implementation_status_screen() {
       lcd_printPGM(PSTR("--:--"));
     }
   #endif
- 
+
   // Extruders
   for (int i=0; i<EXTRUDERS; i++) _draw_heater_status(6 + i * 25, i);
 
   // Heatbed
   if (EXTRUDERS < 4) _draw_heater_status(81, -1);
- 
+
   // Fan
   lcd_setFont(FONT_STATUSMENU);
   u8g.setPrintPos(104,27);
