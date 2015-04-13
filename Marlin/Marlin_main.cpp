@@ -6079,7 +6079,7 @@ void kill()
 #ifdef FILAMENT_RUNOUT_SENSOR
    void filrunout()
    {
-      if filrunoutEnqued == false {
+      if (filrunoutEnqued == false) {
          filrunoutEnqued = true;
          enqueuecommand("M600");
       }
