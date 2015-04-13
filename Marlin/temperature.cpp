@@ -623,7 +623,7 @@ void manage_heater() {
   #endif       
   
   #ifndef PIDTEMPBED
-    if (ms < previous_bed_check_ms) return;
+    if (ms < next_bed_check_ms) return;
     next_bed_check_ms = ms + BED_CHECK_INTERVAL;
   #endif
 
