@@ -362,7 +362,7 @@ static uint8_t tmp_extruder;
 bool Stopped = false;
 
 #if NUM_SERVOS > 0
-  Servo servos[NUM_SERVOS];
+  Servo servo[NUM_SERVOS];
 #endif
 
 #ifdef CHDK
@@ -517,28 +517,28 @@ void suicide() {
 
 void servo_init() {
   #if NUM_SERVOS >= 1 && HAS_SERVO_0
-    servos[0].attach(SERVO0_PIN);
+    servo[0].attach(SERVO0_PIN);
   #endif
   #if NUM_SERVOS >= 2 && HAS_SERVO_1
-    servos[1].attach(SERVO1_PIN);
+    servo[1].attach(SERVO1_PIN);
   #endif
   #if NUM_SERVOS >= 3 && HAS_SERVO_2
-    servos[2].attach(SERVO2_PIN);
+    servo[2].attach(SERVO2_PIN);
   #endif
   #if NUM_SERVOS >= 4 && HAS_SERVO_3
-    servos[3].attach(SERVO3_PIN);
+    servo[3].attach(SERVO3_PIN);
   #endif
 
   // Set position of Servo Endstops that are defined
   #ifdef SERVO_ENDSTOPS
   for (int i = 0; i < 3; i++)
     if (servo_endstops[i] >= 0)
-      servos[servo_endstops[i]].write(servo_endstop_angles[i * 2 + 1]);
+      servo[servo_endstops[i]].write(servo_endstop_angles[i * 2 + 1]);
   #endif
 
   #if SERVO_LEVELING
     delay(PROBE_SERVO_DEACTIVATION_DELAY);
-    servos[servo_endstops[Z_AXIS]].detach();
+    servo[servo_endstops[Z_AXIS]].detach();
   #endif
 }
 
@@ -1309,12 +1309,12 @@ static void engage_z_probe() {
       // Engage Z Servo endstop if enabled
       if (servo_endstops[Z_AXIS] >= 0) {
         #if SERVO_LEVELING
-          servos[servo_endstops[Z_AXIS]].attach(0);
+          servo[servo_endstops[Z_AXIS]].attach(0);
         #endif
-        servos[servo_endstops[Z_AXIS]].write(servo_endstop_angles[Z_AXIS * 2]);
+        servo[servo_endstops[Z_AXIS]].write(servo_endstop_angles[Z_AXIS * 2]);
         #if SERVO_LEVELING
           delay(PROBE_SERVO_DEACTIVATION_DELAY);
-          servos[servo_endstops[Z_AXIS]].detach();
+          servo[servo_endstops[Z_AXIS]].detach();
         #endif
       }
 
@@ -1436,14 +1436,14 @@ static void retract_z_probe() {
         }
 
         #if SERVO_LEVELING
-          servos[servo_endstops[Z_AXIS]].attach(0);
+          servo[servo_endstops[Z_AXIS]].attach(0);
         #endif
 
-        servos[servo_endstops[Z_AXIS]].write(servo_endstop_angles[Z_AXIS * 2 + 1]);
+        servo[servo_endstops[Z_AXIS]].write(servo_endstop_angles[Z_AXIS * 2 + 1]);
 
         #if SERVO_LEVELING
           delay(PROBE_SERVO_DEACTIVATION_DELAY);
-          servos[servo_endstops[Z_AXIS]].detach();
+          servo[servo_endstops[Z_AXIS]].detach();
         #endif
       }
 
@@ -1634,7 +1634,7 @@ static void homeaxis(AxisEnum axis) {
       #endif
         {
           if (servo_endstops[axis] > -1)
-            servos[servo_endstops[axis]].write(servo_endstop_angles[axis * 2]);
+            servo[servo_endstops[axis]].write(servo_endstop_angles[axis * 2]);
         }
 
       #endif // SERVO_ENDSTOPS
@@ -1730,7 +1730,7 @@ static void homeaxis(AxisEnum axis) {
     // Retract Servo endstop if enabled
     #ifdef SERVO_ENDSTOPS
       if (servo_endstops[axis] > -1)
-        servos[servo_endstops[axis]].write(servo_endstop_angles[axis * 2 + 1]);
+        servo[servo_endstops[axis]].write(servo_endstop_angles[axis * 2 + 1]);
     #endif
 
     #if SERVO_LEVELING && !defined(Z_PROBE_SLED)
@@ -4121,12 +4121,12 @@ inline void gcode_M226() {
       servo_position = code_value();
       if ((servo_index >= 0) && (servo_index < NUM_SERVOS)) {
         #if SERVO_LEVELING
-          servos[servo_index].attach(0);
+          servo[servo_index].attach(0);
         #endif
-        servos[servo_index].write(servo_position);
+        servo[servo_index].write(servo_position);
         #if SERVO_LEVELING
           delay(PROBE_SERVO_DEACTIVATION_DELAY);
-          servos[servo_index].detach();
+          servo[servo_index].detach();
         #endif
       }
       else {
@@ -4141,7 +4141,7 @@ inline void gcode_M226() {
       SERIAL_PROTOCOL(" Servo ");
       SERIAL_PROTOCOL(servo_index);
       SERIAL_PROTOCOL(": ");
-      SERIAL_PROTOCOL(servos[servo_index].read());
+      SERIAL_PROTOCOL(servo[servo_index].read());
       SERIAL_EOL;
     }
   }
