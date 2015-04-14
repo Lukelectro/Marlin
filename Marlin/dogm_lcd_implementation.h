@@ -315,8 +315,8 @@ static void lcd_implementation_status_screen() {
     }
 
     u8g.setPrintPos(80,48);
-    if (starttime != 0) {
-      uint16_t time = (millis() - starttime) / 60000;
+    if (print_job_start_ms != 0) {
+      uint16_t time = (millis() - print_job_start_ms) / 60000;
       lcd_print(itostr2(time/60));
       lcd_print(':');
       lcd_print(itostr2(time%60));
