@@ -707,8 +707,15 @@ void get_command() {
 
   if (drain_queued_commands_P()) return; // priority is given to non-serial commands
   
+  millis_t ms = millis();
+  
+  if (!MYSERIAL.available() && commands_in_queue == 0 && ms - last_command_time > 1000) {
+    SERIAL_ECHOLNPGM(MSG_WAIT);
+    last_command_time = ms;
+  }
+  
   while (MYSERIAL.available() > 0 && commands_in_queue < BUFSIZE) {
-
+    last_command_time = ms;
     serial_char = MYSERIAL.read();
 
     if (serial_char == '\n' || serial_char == '\r' ||
