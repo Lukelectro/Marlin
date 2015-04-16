@@ -707,6 +707,7 @@ void get_command() {
 
   if (drain_queued_commands_P()) return; // priority is given to non-serial commands
   
+  static millis_t last_command_time = 0;
   millis_t ms = millis();
   
   if (!MYSERIAL.available() && commands_in_queue == 0 && ms - last_command_time > 1000) {
