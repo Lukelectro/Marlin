@@ -4540,6 +4540,14 @@ inline void gcode_M400() { st_synchronize(); }
 #endif // FILAMENT_SENSOR
 
 /**
+ * M410: quickstop - Abort all planned moves
+ *
+ * This will stop the carriages mid-move, so most likely they
+ * will be out of sync with the stepper position after this.
+ */
+inline void gcode_M410() { quickStop(); }
+
+/**
  * M500: Store settings in EEPROM
  */
 inline void gcode_M500() {
@@ -5357,6 +5365,10 @@ void process_commands() {
           gcode_M407();
           break;
       #endif // FILAMENT_SENSOR
+
+      case 410: // M410 quickstop - Abort all the planned moves.
+        gcode_M410();
+        break;
 
       case 500: // M500 Store settings in EEPROM
         gcode_M500();
