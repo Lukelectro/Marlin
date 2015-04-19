@@ -4540,7 +4540,7 @@ inline void gcode_M400() { st_synchronize(); }
 #endif // FILAMENT_SENSOR
 
 /**
- * M410: quickstop - Abort all planned moves
+ * M410: Quickstop - Abort all planned moves
  *
  * This will stop the carriages mid-move, so most likely they
  * will be out of sync with the stepper position after this.
