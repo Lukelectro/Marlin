@@ -2095,12 +2095,18 @@ inline void gcode_G28() {
     if (home_all_axis || homeY) HOMEAXIS(Y);
 
     // Set the X position, if included
-    if (code_seen(axis_codes[X_AXIS]) && code_has_value())
-      current_position[X_AXIS] = code_value();
+    if (code_seen(axis_codes[X_AXIS]) && code_has_value()) {
+      float v = code_value();
+      if (X_HOME_DIR == -1 || v != 0) // filter 0 with max-endstopps
+        current_position[X_AXIS] = v;
+    }
 
     // Set the Y position, if included
-    if (code_seen(axis_codes[Y_AXIS]) && code_has_value())
-      current_position[Y_AXIS] = code_value();
+    if (code_seen(axis_codes[Y_AXIS]) && code_has_value()) {
+      float v = code_value();
+      if (Y_HOME_DIR == -1 || v != 0) // filter 0 with max-endstopps
+        current_position[Y_AXIS] = code_value();
+    }
 
     // Home Z last if homing towards the bed
     #if Z_HOME_DIR < 0
@@ -2195,8 +2201,11 @@ inline void gcode_G28() {
     #endif // Z_HOME_DIR < 0
 
     // Set the Z position, if included
-    if (code_seen(axis_codes[Z_AXIS]) && code_has_value())
+    if (code_seen(axis_codes[Z_AXIS]) && code_has_value()) {
+      float v = code_value();
+      if (Z_HOME_DIR == -1 || v != 0) // filter 0 with max-endstopps
       current_position[Z_AXIS] = code_value();
+    }
 
     sync_plan_position();
 
