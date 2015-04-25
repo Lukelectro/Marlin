@@ -1937,12 +1937,6 @@ inline void gcode_G4() {
  *  Y   Home to the Y endstop
  *  Z   Home to the Z endstop
  *
- * If numbers are included with XYZ set the position as with G92
- * Currently adds the home_offset, which may be wrong and removed soon.
- *
- *  Xn  Home X, setting X to n + home_offset[X_AXIS]
- *  Yn  Home Y, setting Y to n + home_offset[Y_AXIS]
- *  Zn  Home Z, setting Z to n + home_offset[Z_AXIS]
  */
 inline void gcode_G28() {
 
@@ -2002,7 +1996,7 @@ inline void gcode_G28() {
           homeY = code_seen(axis_codes[Y_AXIS]),
           homeZ = code_seen(axis_codes[Z_AXIS]);
 
-    home_all_axis = !(homeX || homeY || homeZ) || (homeX && homeY && homeZ);
+    home_all_axis = (!homeX && !homeY && !homeZ) || (homeX && homeY && homeZ);
 
     if (home_all_axis || homeZ) {
 
@@ -2088,18 +2082,6 @@ inline void gcode_G28() {
 
     // Home Y
     if (home_all_axis || homeY) HOMEAXIS(Y);
-
-    // Set the X position, if included
-    if (code_seen(axis_codes[X_AXIS]) && code_has_value()) {
-      if (code_value_long() != 0) // filter 0
-        current_position[X_AXIS] = code_value();
-    }
-
-    // Set the Y position, if included
-    if (code_seen(axis_codes[Y_AXIS]) && code_has_value()) {
-      if (code_value_long() != 0) // filter 0
-        current_position[Y_AXIS] = code_value();
-    }
 
     // Home Z last if homing towards the bed
     #if Z_HOME_DIR < 0
