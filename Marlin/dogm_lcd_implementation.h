@@ -71,6 +71,10 @@
   #elif defined( DISPLAY_CHARSET_ISO10646_KANA )
     #include "dogm_font_data_ISO10646_Kana.h"
     #define FONT_MENU_NAME ISO10646_Kana_5x7
+  #elif defined( DISPLAY_CHARSET_ISO10646_CN )
+    #include "dogm_font_data_ISO10646_CN.h"
+    #define FONT_MENU_NAME ISO10646_CN
+    #define TALL_FONT_CORRECTION 1
   #else // fall-back
     #include <utility/u8g.h> // system font
     #define FONT_MENU_NAME u8g_font_6x10
@@ -144,6 +148,13 @@
 #else
   // for regular DOGM128 display with HW-SPI
   U8GLIB_DOGM128 u8g(DOGLCD_CS, DOGLCD_A0);  // HW-SPI Com: CS, A0
+#endif
+
+#ifndef LCD_PIXEL_WIDTH
+  #define LCD_PIXEL_WIDTH 128
+#endif
+#ifndef LCD_PIXEL_HEIGHT
+  #define LCD_PIXEL_HEIGHT 64
 #endif
 
 #include "utf_mapper.h"
@@ -298,20 +309,21 @@ static void lcd_implementation_status_screen() {
  
   #ifdef SDSUPPORT
     // SD Card Symbol
-    u8g.drawBox(42,42,8,7);
-    u8g.drawBox(50,44,2,5);
-    u8g.drawFrame(42,49,10,4);
-    u8g.drawPixel(50,43);
+    u8g.drawBox(42, 42 - TALL_FONT_CORRECTION, 8, 7);
+    u8g.drawBox(50, 44 - TALL_FONT_CORRECTION, 2, 5);
+    u8g.drawFrame(42, 49 - TALL_FONT_CORRECTION, 10, 4);
+    u8g.drawPixel(50, 43 - TALL_FONT_CORRECTION);
+
 
     // Progress bar frame
-    u8g.drawFrame(54,49,73,4);
+    u8g.drawFrame(54, 49, 73, 4 - TALL_FONT_CORRECTION);
 
     // SD Card Progress bar and clock
     lcd_setFont(FONT_STATUSMENU);
  
     if (IS_SD_PRINTING) {
       // Progress bar solid part
-      u8g.drawBox(55, 50, (unsigned int)(71.f * card.percentDone() / 100.f), 2);
+      u8g.drawBox(55, 50, (unsigned int)(71.f * card.percentDone() / 100.f), 2 - TALL_FONT_CORRECTION);
     }
 
     u8g.setPrintPos(80,48);
@@ -411,7 +423,7 @@ static void lcd_implementation_status_screen() {
 static void lcd_implementation_mark_as_selected(uint8_t row, bool isSelected) {
   if (isSelected) {
     u8g.setColorIndex(1);  // black on white
-    u8g.drawBox(0, row * DOG_CHAR_HEIGHT + 3, 128, DOG_CHAR_HEIGHT);
+    u8g.drawBox(0, row * DOG_CHAR_HEIGHT + 3 - TALL_FONT_CORRECTION, LCD_PIXEL_WIDTH, DOG_CHAR_HEIGHT);
     u8g.setColorIndex(0);  // following text must be white on black
   }
   else {
@@ -437,7 +449,8 @@ static void lcd_implementation_drawmenu_generic(bool isSelected, uint8_t row, co
 
 static void _drawmenu_setting_edit_generic(bool isSelected, uint8_t row, const char* pstr, const char* data, bool pgm) {
   char c;
-  uint8_t n = LCD_WIDTH - 2 - (pgm ? lcd_strlen_P(data) : (lcd_strlen((char*)data)));
+  uint8_t vallen = (pgm ? lcd_strlen_P(data) : (lcd_strlen((char*)data)));
+  uint8_t n = LCD_WIDTH - 2 - vallen;
 
   lcd_implementation_mark_as_selected(row, isSelected);
 
