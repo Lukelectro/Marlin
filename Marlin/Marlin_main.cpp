@@ -3529,6 +3529,62 @@ inline void gcode_M140() {
   if (code_seen('S')) setTargetBed(code_value());
 }
 
+#ifdef ULTIPANEL
+
+  /**
+   * M145: Set the heatup state for a material in the LCD menu
+   *   S<material> (0=PLA, 1=ABS)
+   *   H<hotend temp>
+   *   B<bed temp>
+   *   F<fan speed>
+   */
+  inline void gcode_M145() {
+    uint8_t material = code_seen('S') ? code_value_short() : 0;
+    if (material < 0 || material > 1) {
+      SERIAL_ERROR_START;
+      SERIAL_ERRORLNPGM(MSG_ERR_MATERIAL_INDEX);
+    }
+    else {
+      int v;
+      switch (material) {
+        case 0:
+          if (code_seen('H')) {
+            v = code_value_short();
+            plaPreheatHotendTemp = constrain(v, EXTRUDE_MINTEMP, HEATER_0_MAXTEMP - 15);
+          }
+          if (code_seen('F')) {
+            v = code_value_short();
+            plaPreheatFanSpeed = constrain(v, 0, 255);
+          }
+          #if TEMP_SENSOR_BED != 0
+            if (code_seen('B')) {
+              v = code_value_short();
+              plaPreheatHPBTemp = constrain(v, BED_MINTEMP, BED_MAXTEMP - 15);
+            }
+          #endif
+          break;
+        case 1:
+          if (code_seen('H')) {
+            v = code_value_short();
+            absPreheatHotendTemp = constrain(v, EXTRUDE_MINTEMP, HEATER_0_MAXTEMP - 15);
+          }
+          if (code_seen('F')) {
+            v = code_value_short();
+            absPreheatFanSpeed = constrain(v, 0, 255);
+          }
+          #if TEMP_SENSOR_BED != 0
+            if (code_seen('B')) {
+              v = code_value_short();
+              absPreheatHPBTemp = constrain(v, BED_MINTEMP, BED_MAXTEMP - 15);
+            }
+          #endif
+          break;
+      }
+    }
+  }
+
+#endif
+
 #if HAS_POWER_SWITCH
 
   /**
@@ -3636,7 +3692,8 @@ inline void gcode_M85() {
 }
 
 /**
- * M92: Set inactivity shutdown timer with parameter S<seconds>. To disable set zero (default)
+ * M92: Set axis steps-per-unit for one or more axes, X, Y, Z, and E.
+ *      (Follows the same syntax as G92)
  */
 inline void gcode_M92() {
   for(int8_t i=0; i < NUM_AXIS; i++) {
@@ -3958,20 +4015,35 @@ inline void gcode_M206() {
 #ifdef FWRETRACT
 
   /**
-   * M207: Set retract length S[positive mm] F[feedrate mm/min] Z[additional zlift/hop]
+   * M207: Set firmware retraction values
+   *
+   *   S[+mm]    retract_length
+   *   W[+mm]    retract_length_swap (multi-extruder)
+   *   F[mm/min] retract_feedrate
+   *   Z[mm]     retract_zlift
    */
   inline void gcode_M207() {
     if (code_seen('S')) retract_length = code_value();
     if (code_seen('F')) retract_feedrate = code_value() / 60;
     if (code_seen('Z')) retract_zlift = code_value();
+    #if EXTRUDERS > 1
+      if (code_seen('W')) retract_length_swap = code_value();
+    #endif
   }
 
   /**
-   * M208: Set retract recover length S[positive mm surplus to the M207 S*] F[feedrate mm/min]
+   * M208: Set firmware un-retraction values
+   *
+   *   S[+mm]    retract_recover_length (in addition to M207 S*)
+   *   W[+mm]    retract_recover_length_swap (multi-extruder)
+   *   F[mm/min] retract_recover_feedrate
    */
   inline void gcode_M208() {
     if (code_seen('S')) retract_recover_length = code_value();
     if (code_seen('F')) retract_recover_feedrate = code_value() / 60;
+    #if EXTRUDERS > 1
+      if (code_seen('W')) retract_recover_length_swap = code_value();
+    #endif
   }
 
   /**
@@ -4523,6 +4595,42 @@ inline void gcode_M400() { st_synchronize(); }
  * will be out of sync with the stepper position after this.
  */
 inline void gcode_M410() { quickStop(); }
+
+
+#ifdef MESH_BED_LEVELING
+
+  /**
+   * M420: Enable/Disable Mesh Bed Leveling
+   */
+  inline void gcode_M420() { if (code_seen('S') && code_has_value()) mbl.active = !!code_value_short(); }
+
+  /**
+   * M421: Set a single Mesh Bed Leveling Z coordinate
+   */
+  inline void gcode_M421() {
+    int x, y;
+    float z;
+    bool err = false, hasX, hasY, hasZ;
+    if ((hasX = code_seen('X'))) x = code_value_short();
+    if ((hasY = code_seen('Y'))) y = code_value_short();
+    if ((hasZ = code_seen('Z'))) z = code_value();
+
+    if (!hasX || !hasY || !hasZ) {
+      SERIAL_ERROR_START;
+      SERIAL_ERRORLNPGM(MSG_ERR_XYZ_REQUIRED_FOR_M421);
+      err = true;
+    }
+
+    if (x >= MESH_NUM_X_POINTS || y >= MESH_NUM_Y_POINTS) {
+      SERIAL_ERROR_START;
+      SERIAL_ERRORLNPGM(MSG_ERR_MESH_INDEX_OOB);
+      err = true;
+    }
+
+    if (!err) mbl.z_values[y][x] = z;
+  }
+
+#endif
 
 /**
  * M500: Store settings in EEPROM
@@ -5078,11 +5186,11 @@ void process_commands() {
         gcode_M104();
         break;
 
-      case 111: //  M111: Set debug level
+      case 111: // M111: Set debug level
         gcode_M111();
         break;
 
-      case 112: //  M112: Emergency Stop
+      case 112: // M112: Emergency Stop
         gcode_M112();
         break;
 
@@ -5161,28 +5269,35 @@ void process_commands() {
       case 85: // M85
         gcode_M85();
         break;
-      case 92: // M92
+      case 92: // M92: Set the steps-per-unit for one or more axes
         gcode_M92();
         break;
-      case 115: // M115
+      case 115: // M115: Report capabilities
         gcode_M115();
         break;
-      case 117: // M117 display message
+      case 117: // M117: Set LCD message text
         gcode_M117();
         break;
-      case 114: // M114
+      case 114: // M114: Report current position
         gcode_M114();
         break;
-      case 120: // M120
+      case 120: // M120: Enable endstops
         gcode_M120();
         break;
-      case 121: // M121
+      case 121: // M121: Disable endstops
         gcode_M121();
         break;
-      case 119: // M119
+      case 119: // M119: Report endstop states
         gcode_M119();
         break;
-        //TODO: update for all axis, use for loop
+
+      #ifdef ULTIPANEL
+
+        case 145: // M145: Set material heatup parameters
+          gcode_M145();
+          break;
+
+      #endif
 
       #ifdef BLINKM
 
@@ -5356,6 +5471,15 @@ void process_commands() {
       case 410: // M410 quickstop - Abort all the planned moves.
         gcode_M410();
         break;
+
+      #ifdef MESH_BED_LEVELING
+        case 420: // M420 Enable/Disable Mesh Bed Leveling
+          gcode_M420();
+          break;
+        case 421: // M421 Set a Mesh Bed Leveling Z coordinate
+          gcode_M421();
+          break;
+      #endif
 
       case 500: // M500 Store settings in EEPROM
         gcode_M500();
