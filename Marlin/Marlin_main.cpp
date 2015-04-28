@@ -1735,6 +1735,7 @@ static void homeaxis(AxisEnum axis) {
 
     // Set the axis position to its home position (plus home offsets)
     axis_is_at_home(axis);
+    sync_plan_position();
 
     destination[axis] = current_position[axis];
     feedrate = 0.0;
