@@ -1644,9 +1644,10 @@ static void homeaxis(AxisEnum axis) {
     #if SERVO_LEVELING && !defined(Z_PROBE_SLED)
 
       // Deploy a probe if there is one, and homing towards the bed
-      if (axis == Z_AXIS && axis_home_dir < 0) deploy_z_probe();
-
-    #elif defined(SERVO_ENDSTOPS)
+      if (axis == Z_AXIS) {
+        if (axis_home_dir < 0) deploy_z_probe();
+      }
+      else
 
       #endif // SERVO_ENDSTOPS
 
@@ -1747,15 +1748,20 @@ static void homeaxis(AxisEnum axis) {
 
     #if SERVO_LEVELING && !defined(Z_PROBE_SLED)
 
-      // Stow the Z probe if it had been deployed
-      if (axis == Z_AXIS && axis_home_dir < 0) stow_z_probe();
+      // Deploy a probe if there is one, and homing towards the bed
+      if (axis == Z_AXIS) {
+        if (axis_home_dir < 0) stow_z_probe();
+      }
+      else
 
-    #elif defined(SERVO_ENDSTOPS)
+    #endif
 
-      // Retract Servo endstop if enabled
-      if (servo_endstops[axis] > -1)
-        servo[servo_endstops[axis]].write(servo_endstop_angles[axis * 2 + 1]);
-
+    #ifdef SERVO_ENDSTOPS
+      {
+        // Retract Servo endstop if enabled
+        if (servo_endstops[axis] > -1)
+          servo[servo_endstops[axis]].write(servo_endstop_angles[axis * 2 + 1]);
+      }
     #endif
 
   }
