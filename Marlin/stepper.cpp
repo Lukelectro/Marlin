@@ -728,7 +728,6 @@ ISR(TIMER1_COMPA_vect) {
       #endif //ADVANCE
 
       #define _COUNTER(axis) counter_## axis
-      #define _WRITE_STEP(AXIS, HIGHLOW) AXIS ##_STEP_WRITE(HIGHLOW)
       #define _APPLY_STEP(AXIS) AXIS ##_APPLY_STEP
       #define _INVERT_STEP_PIN(AXIS) INVERT_## AXIS ##_STEP_PIN
 
@@ -774,7 +773,6 @@ ISR(TIMER1_COMPA_vect) {
           Z2_STEP_WRITE(INVERT_Z_STEP_PIN);
         #endif
 
-      #endif // CONFIG_STEPPERS_TOSHIBA
       step_events_completed++;
       if (step_events_completed >= current_block->step_event_count) break;
     }
@@ -1069,6 +1067,7 @@ void st_init() {
 #endif
 
   #define _STEP_INIT(AXIS) AXIS ##_STEP_INIT
+  #define _WRITE_STEP(AXIS, HIGHLOW) AXIS ##_STEP_WRITE(HIGHLOW)
   #define _DISABLE(axis) disable_## axis()
 
   #define AXIS_INIT(axis, AXIS, PIN) \
