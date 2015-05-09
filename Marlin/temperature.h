@@ -130,7 +130,6 @@ HOTEND_ROUTINES(0);
 
 int getHeaterPower(int heater);
 void disable_all_heaters();
-void setWatch();
 void updatePID();
 
 #if (defined (THERMAL_RUNAWAY_PROTECTION_PERIOD) && THERMAL_RUNAWAY_PROTECTION_PERIOD > 0) || (defined (THERMAL_RUNAWAY_PROTECTION_BED_PERIOD) && THERMAL_RUNAWAY_PROTECTION_BED_PERIOD > 0)
@@ -142,6 +141,10 @@ static bool thermal_runaway = false;
   static int thermal_runaway_bed_state_machine;
   static unsigned long thermal_runaway_bed_timer;
 #endif
+#endif
+
+#ifdef WATCH_TEMP_PERIOD
+  void start_watching_heaters();
 #endif
 
 FORCE_INLINE void autotempShutdown() {
