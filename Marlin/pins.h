@@ -2340,6 +2340,7 @@ Fan_2 2
 #endif
 
 #if defined(DISABLE_Z_PROBE_ENDSTOP) || !defined(Z_PROBE_ENDSTOP) // Allow code to compile regardless of Z_PROBE_ENDSTOP setting.
+  #undef Z_PROBE_PIN
   #define Z_PROBE_PIN        -1
 #endif
 
