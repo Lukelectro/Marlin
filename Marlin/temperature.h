@@ -144,7 +144,7 @@ static bool thermal_runaway = false;
 #endif
 
 #ifdef WATCH_TEMP_PERIOD
-  void start_watching_heaters();
+  void start_watching_heater(int e=0);
 #endif
 
 FORCE_INLINE void autotempShutdown() {
