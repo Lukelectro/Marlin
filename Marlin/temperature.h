@@ -143,7 +143,7 @@ static bool thermal_runaway = false;
 #endif
 #endif
 
-#ifdef WATCH_TEMP_PERIOD
+#ifdef THERMAL_PROTECTION_HOTENDS
   void start_watching_heater(int e=0);
 #endif
 
