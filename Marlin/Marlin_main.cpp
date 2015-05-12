@@ -2149,7 +2149,7 @@ inline void gcode_G28() {
           if (home_all_axis) {
 
             current_position[Z_AXIS] = 0;
-            sync_plan_position();         
+            sync_plan_position();
 
             //
             // Set the probe (or just the nozzle) destination to the safe homing point
