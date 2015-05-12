@@ -192,7 +192,7 @@ void disable_all_steppers();
 enum AxisEnum {X_AXIS=0, Y_AXIS=1, A_AXIS=0, B_AXIS=1, Z_AXIS=2, E_AXIS=3, X_HEAD=4, Y_HEAD=5};
 
 void FlushSerialRequestResend();
-void ClearToSend();
+void ok_to_send();
 
 void get_coordinates();
 #ifdef DELTA
