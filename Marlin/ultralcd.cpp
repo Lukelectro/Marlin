@@ -7,12 +7,11 @@
 #include "stepper.h"
 #include "configuration_store.h"
 
-int8_t encoderDiff; /* encoderDiff is updated from interrupt context and added to encoderPosition every LCD update */
+int8_t encoderDiff; // updated from interrupt context and added to encoderPosition every LCD update
 
 bool encoderRateMultiplierEnabled;
 int32_t lastEncoderMovementMillis;
 
-/* Configuration settings */
 int plaPreheatHotendTemp;
 int plaPreheatHPBTemp;
 int plaPreheatFanSpeed;
@@ -25,9 +24,7 @@ int absPreheatFanSpeed;
   millis_t previous_lcd_status_ms = 0;
 #endif
 
-/* !Configuration settings */
-
-//Function pointer to menu functions.
+// Function pointer to menu functions.
 typedef void (*menuFunc_t)();
 
 uint8_t lcd_status_message_level;
@@ -852,9 +849,12 @@ static void lcd_control_menu() {
  * "Control" > "Temperature" submenu
  *
  */
-
 static void lcd_control_temperature_menu() {
   START_MENU();
+
+  //
+  // ^ Control
+  //
   MENU_ITEM(back, MSG_CONTROL, lcd_control_menu);
 #if TEMP_SENSOR_0 != 0
   MENU_MULTIPLIER_ITEM_EDIT(int3, MSG_NOZZLE, &target_temperature[0], 0, HEATER_0_MAXTEMP - 15);
@@ -931,7 +931,15 @@ static void lcd_control_temperature_menu() {
       #endif//EXTRUDERS > 1
     #endif //PID_PARAMS_PER_EXTRUDER
   #endif//PIDTEMP
+
+  //
+  // Preheat PLA conf
+  //
   MENU_ITEM(submenu, MSG_PREHEAT_PLA_SETTINGS, lcd_control_temperature_preheat_pla_settings_menu);
+
+  //
+  // Preheat ABS conf
+  //
   MENU_ITEM(submenu, MSG_PREHEAT_ABS_SETTINGS, lcd_control_temperature_preheat_abs_settings_menu);
   END_MENU();
 }
@@ -941,7 +949,6 @@ static void lcd_control_temperature_menu() {
  * "Temperature" > "Preheat PLA conf" submenu
  *
  */
-
 static void lcd_control_temperature_preheat_pla_settings_menu() {
   START_MENU();
   MENU_ITEM(back, MSG_TEMPERATURE, lcd_control_temperature_menu);
@@ -963,7 +970,6 @@ static void lcd_control_temperature_preheat_pla_settings_menu() {
  * "Temperature" > "Preheat ABS conf" submenu
  *
  */
-
 static void lcd_control_temperature_preheat_abs_settings_menu() {
   START_MENU();
   MENU_ITEM(back, MSG_TEMPERATURE, lcd_control_temperature_menu);
@@ -985,7 +991,6 @@ static void lcd_control_temperature_preheat_abs_settings_menu() {
  * "Control" > "Motion" submenu
  *
  */
-
 static void lcd_control_motion_menu() {
   START_MENU();
   MENU_ITEM(back, MSG_CONTROL, lcd_control_menu);
@@ -1050,7 +1055,6 @@ static void lcd_control_volumetric_menu()
  * "Control" > "Contrast" submenu
  *
  */
-
 #ifdef HAS_LCD_CONTRAST
   static void lcd_set_contrast() {
     if (encoderPosition != 0) {
@@ -1070,7 +1074,6 @@ static void lcd_control_volumetric_menu()
  * "Control" > "Retract" submenu
  *
  */
-
 #ifdef FWRETRACT
   static void lcd_control_retract_menu() {
     START_MENU();
@@ -1108,7 +1111,6 @@ static void lcd_sd_updir() {
  * "Print from SD" submenu
  *
  */
-
 void lcd_sdcard_menu() {
   if (lcdDrawUpdate == 0 && LCD_CLICKED == 0) return;	// nothing to do (so don't thrash the SD card)
   uint16_t fileCnt = card.getnrfilenames();
