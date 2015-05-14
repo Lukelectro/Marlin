@@ -194,7 +194,6 @@ enum AxisEnum {X_AXIS=0, Y_AXIS=1, A_AXIS=0, B_AXIS=1, Z_AXIS=2, E_AXIS=3, X_HEA
 void FlushSerialRequestResend();
 void ok_to_send();
 
-void get_coordinates();
 #ifdef DELTA
   void calculate_delta(float cartesian[3]);
   #ifdef ENABLE_AUTO_BED_LEVELING
