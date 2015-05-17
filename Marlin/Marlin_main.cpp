@@ -1692,7 +1692,6 @@ static void homeaxis(AxisEnum axis) {
       if (axis == Z_AXIS) {
         if (axis_home_dir < 0) deploy_z_probe();
       }
-      else
 
       #endif // SERVO_ENDSTOPS
 
