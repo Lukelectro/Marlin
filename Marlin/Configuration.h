@@ -578,8 +578,9 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // JFR -was true // set to true to i
 //#define VIKI2
 //#define miniVIKI
 
-// The Adafruit ST7565 is a custom display.  More info will be posted as the project files are finialized.
-//#define ADAFRUIT_ST7565
+// This is a new controller currently under development.  A link to more information will be provided as it
+// becomes available.
+//#define ELB_FULL_GRAPHIC_CONTROLLER
 
 // The RepRapDiscount Smart Controller (white PCB)
 // http://reprap.org/wiki/RepRapDiscount_Smart_Controller
