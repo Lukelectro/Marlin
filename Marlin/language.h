@@ -29,8 +29,8 @@
 // eu Basque-Euskera
 // cz Czech
 
+// fallback if no language is set, don't change
 #ifndef LANGUAGE_INCLUDE
-  // pick your default from the list above, individual language ist set in LCD section of Configuration.h
   #define LANGUAGE_INCLUDE GENERATE_LANGUAGE_INCLUDE(en)
 #endif
 
