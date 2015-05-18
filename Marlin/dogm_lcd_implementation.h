@@ -48,9 +48,7 @@
   //#define USE_BIG_EDIT_FONT
 #endif
 
-// If you have spare 2300Byte of progmem and want to use a 
-// smaller font on the Info-screen uncomment the next line.
-//#define USE_SMALL_INFOFONT
+
 #ifdef USE_SMALL_INFOFONT
   #include "dogm_font_data_6x9_marlin.h"
   #define FONT_STATUSMENU_NAME u8g_font_6x9
