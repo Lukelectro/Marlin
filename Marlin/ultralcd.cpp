@@ -1058,7 +1058,7 @@ static void lcd_control_volumetric_menu()
 #ifdef HAS_LCD_CONTRAST
   static void lcd_set_contrast() {
     if (encoderPosition != 0) {
-      #ifdef U8GLIB_ST7920
+      #ifdef U8GLIB_LM6059_AF
         lcd_contrast += encoderPosition;
         lcd_contrast &= 0xFF;
       #else
@@ -1070,7 +1070,7 @@ static void lcd_control_volumetric_menu()
       u8g.setContrast(lcd_contrast);
     }
     if (lcdDrawUpdate) {
-      #ifdef U8GLIB_ST7920
+      #ifdef U8GLIB_LM6059_AF
         lcd_implementation_drawedit(PSTR(MSG_CONTRAST), itostr3(lcd_contrast));
       #else
         lcd_implementation_drawedit(PSTR(MSG_CONTRAST), itostr2(lcd_contrast));
