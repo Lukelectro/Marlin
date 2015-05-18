@@ -2940,7 +2940,13 @@ inline void gcode_G92() {
         didXYZ = true;
     }
   }
-  if (didXYZ) sync_plan_position();
+  if (didXYZ) {
+    #if defined(DELTA) || defined(SCARA)
+      sync_plan_position_delta();
+    #else
+      sync_plan_position();
+    #endif
+  }
 }
 
 #ifdef ULTIPANEL
