@@ -49,15 +49,15 @@
   #define MACHINE_NAME "Rumba"
 #elif MB(3DRAG)
   #define MACHINE_NAME "3Drag"
-  #define FIRMWARE_URL "http://3dprint.elettronicain.it/"
+  #define SOURCE_CODE_URL "http://3dprint.elettronicain.it/"
 #elif MB(K8200)
   #define MACHINE_NAME "K8200"
-  #define FIRMWARE_URL "https://github.com/CONSULitAS/Marlin-K8200"
+  #define SOURCE_CODE_URL "https://github.com/CONSULitAS/Marlin-K8200"
 #elif MB(5DPRINT)
   #define MACHINE_NAME "Makibox"
 #elif MB(SAV_MKI)
   #define MACHINE_NAME "SAV MkI"
-  #define FIRMWARE_URL "https://github.com/fmalpartida/Marlin/tree/SAV-MkI-config"
+  #define SOURCE_CODE_URL "https://github.com/fmalpartida/Marlin/tree/SAV-MkI-config"
 #elif !defined(MACHINE_NAME)
   #define MACHINE_NAME "3D Printer"
 #endif
