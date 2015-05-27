@@ -695,11 +695,8 @@ void loop() {
     commands_in_queue--;
     cmd_queue_index_r = (cmd_queue_index_r + 1) % BUFSIZE;
   }
-  // Check heater every n milliseconds
-  manage_heater();
-  manage_inactivity();
   checkHitEndstops();
-  lcd_update();
+  idle();
 }
 
 void gcode_line_error(const char *err, bool doFlush=true) {
@@ -2098,11 +2095,7 @@ inline void gcode_G4() {
 
   if (!lcd_hasstatus()) LCD_MESSAGEPGM(MSG_DWELL);
 
-  while (millis() < codenum) {
-    manage_heater();
-    manage_inactivity();
-    lcd_update();
-  }
+  while (millis() < codenum) idle();
 }
 
 #ifdef FWRETRACT
@@ -2795,9 +2788,7 @@ inline void gcode_G28() {
 
           probePointCounter++;
 
-          manage_heater();
-          manage_inactivity();
-          lcd_update();
+          idle();
 
         } //xProbe
       } //yProbe
@@ -2993,21 +2984,13 @@ inline void gcode_G92() {
     st_synchronize();
     refresh_cmd_timeout();
     if (codenum > 0) {
-      codenum += previous_cmd_ms;  // keep track of when we started waiting
-      while(millis() < codenum && !lcd_clicked()) {
-        manage_heater();
-        manage_inactivity();
-        lcd_update();
-      }
+      codenum += previous_cmd_ms;  // wait until this time for a click
+      while (millis() < codenum && !lcd_clicked()) idle();
       lcd_ignore_click(false);
     }
     else {
       if (!lcd_detected()) return;
-      while (!lcd_clicked()) {
-        manage_heater();
-        manage_inactivity();
-        lcd_update();
-      }
+      while (!lcd_clicked()) idle();
     }
     if (IS_SD_PRINTING)
       LCD_MESSAGEPGM(MSG_RESUMING);
@@ -3630,9 +3613,9 @@ inline void gcode_M109() {
         #endif
         temp_ms = millis();
       }
-      manage_heater();
-      manage_inactivity();
-      lcd_update();
+
+      idle();
+
       #ifdef TEMP_RESIDENCY_TIME
         // start/restart the TEMP_RESIDENCY_TIME timer whenever we reach target temp for the first time
         // or when current temp falls outside the hysteresis after target temp was reached
@@ -3680,9 +3663,7 @@ inline void gcode_M109() {
         SERIAL_PROTOCOL_F(degBed(), 1);
         SERIAL_EOL;
       }
-      manage_heater();
-      manage_inactivity();
-      lcd_update();
+      idle();
     }
     LCD_MESSAGEPGM(MSG_BED_DONE);
     refresh_cmd_timeout();
@@ -4367,11 +4348,7 @@ inline void gcode_M226() {
             break;
         }
 
-        while(digitalRead(pin_number) != target) {
-          manage_heater();
-          manage_inactivity();
-          lcd_update();
-        }
+        while (digitalRead(pin_number) != target) idle();
 
       } // pin_number > -1
     } // pin_state -1 0 1
@@ -6396,6 +6373,15 @@ void disable_all_steppers() {
   disable_e1();
   disable_e2();
   disable_e3();
+}
+
+/**
+ * Standard idle routine keeps the machine alive
+ */
+void idle() {
+  manage_heater();
+  manage_inactivity();
+  lcd_update();
 }
 
 /**
