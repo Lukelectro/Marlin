@@ -4753,7 +4753,7 @@ inline void gcode_M400() { st_synchronize(); }
   #ifdef SERVO_ENDSTOPS
     void raise_z_for_servo() {
       float zpos = current_position[Z_AXIS], z_dest = Z_RAISE_BEFORE_HOMING;
-      z_dest += axis_known_position[Z_AXIS] ? -zprobe_zoffset : zpos;
+      z_dest += axis_known_position[Z_AXIS] ? zprobe_zoffset : zpos;
       if (zpos < z_dest)
         do_blocking_move_to(current_position[X_AXIS], current_position[Y_AXIS], z_dest); // also updates current_position
     }
@@ -4974,7 +4974,7 @@ inline void gcode_M503() {
     if (code_seen('Z')) {
       value = code_value();
       if (Z_PROBE_OFFSET_RANGE_MIN <= value && value <= Z_PROBE_OFFSET_RANGE_MAX) {
-        zprobe_zoffset = -value;
+        zprobe_zoffset = value;
         SERIAL_ECHO_START;
         SERIAL_ECHOLNPGM(MSG_ZPROBE_ZOFFSET " " MSG_OK);
         SERIAL_EOL;
@@ -4991,8 +4991,8 @@ inline void gcode_M503() {
     }
     else {
       SERIAL_ECHO_START;
-      SERIAL_ECHOLNPGM(MSG_ZPROBE_ZOFFSET " : ");
-      SERIAL_ECHO(-zprobe_zoffset);
+      SERIAL_ECHOPGM(MSG_ZPROBE_ZOFFSET " : ");
+      SERIAL_ECHO(zprobe_zoffset);
       SERIAL_EOL;
     }
   }

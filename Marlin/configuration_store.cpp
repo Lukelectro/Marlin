@@ -14,7 +14,7 @@
  *
  */
 
-#define EEPROM_VERSION "V19"
+#define EEPROM_VERSION "V20"
 
 /**
  * V19 EEPROM Layout:
@@ -502,7 +502,7 @@ void Config_ResetDefault() {
   #endif
 
   #ifdef ENABLE_AUTO_BED_LEVELING
-    zprobe_zoffset = -Z_PROBE_OFFSET_FROM_EXTRUDER;
+    zprobe_zoffset = Z_PROBE_OFFSET_FROM_EXTRUDER;
   #endif
 
   #ifdef DELTA
