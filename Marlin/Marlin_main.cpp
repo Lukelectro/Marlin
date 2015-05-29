@@ -5379,8 +5379,6 @@ void process_next_command() {
       case 92: // G92
         gcode_G92();
         break;
-
-      // default: code_is_good = false;
     }
     break;
 
@@ -5811,8 +5809,6 @@ void process_next_command() {
       case 999: // M999: Restart after being Stopped
         gcode_M999();
         break;
-
-      // default: code_is_good = false;
     }
     break;
 
