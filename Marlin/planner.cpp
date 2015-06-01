@@ -506,7 +506,7 @@ void plan_buffer_line(float x, float y, float z, const float &e, float feed_rate
 
   #ifdef PREVENT_DANGEROUS_EXTRUDE
     if (de) {
-      if (degHotend(extruder) < extrude_min_temp) {
+      if (degHotend(extruder) < extrude_min_temp && !(marlin_debug_flags & DEBUG_DRYRUN)) {
         position[E_AXIS] = target[E_AXIS]; // Behave as if the move really took place, but ignore E part
         de = 0; // no difference
         SERIAL_ECHO_START;
