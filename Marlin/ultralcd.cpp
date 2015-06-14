@@ -1261,7 +1261,7 @@ void lcd_quick_feedback() {
     #ifndef LCD_FEEDBACK_FREQUENCY_DURATION_MS
       #define LCD_FEEDBACK_FREQUENCY_DURATION_MS (1000/6)
     #endif    
-    lcd_buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
+    buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
   #elif defined(BEEPER) && BEEPER >= 0
     #ifndef LCD_FEEDBACK_FREQUENCY_HZ
       #define LCD_FEEDBACK_FREQUENCY_HZ 5000
@@ -1269,7 +1269,7 @@ void lcd_quick_feedback() {
     #ifndef LCD_FEEDBACK_FREQUENCY_DURATION_MS
       #define LCD_FEEDBACK_FREQUENCY_DURATION_MS 2
     #endif
-    lcd_buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
+    buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
   #else
     #ifndef LCD_FEEDBACK_FREQUENCY_DURATION_MS
       #define LCD_FEEDBACK_FREQUENCY_DURATION_MS 2
@@ -1705,7 +1705,12 @@ void lcd_reset_alert_level() { lcd_status_message_level = 0; }
     #endif
   }
 
-  void lcd_buzz(long duration, uint16_t freq) {
+  bool lcd_clicked() { return LCD_CLICKED; }
+
+#endif // ULTIPANEL
+
+#if HAS_BUZZER
+  void buzz(long duration, uint16_t freq) {
     if (freq > 0) {
       #ifdef LCD_USE_I2C_BUZZER
         lcd.buzz(duration, freq);
@@ -1721,10 +1726,7 @@ void lcd_reset_alert_level() { lcd_status_message_level = 0; }
       delay(duration);
     }
   }
-
-  bool lcd_clicked() { return LCD_CLICKED; }
-
-#endif // ULTIPANEL
+#endif
 
 /*********************************/
 /** Number to string conversion **/
