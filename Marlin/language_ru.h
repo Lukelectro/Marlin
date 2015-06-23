@@ -20,7 +20,7 @@
 #define MSG_AUTOSTART                       "Автостарт"
 #define MSG_DISABLE_STEPPERS                "Выкл. двигатели"
 #define MSG_AUTO_HOME                       "Парковка"
-#define MSG_SET_HOME_OFFSETS                "Set home offsets"
+#define MSG_SET_HOME_OFFSETS                "Запомнить парковку"
 #define MSG_SET_ORIGIN                      "Запомнить ноль"
 #define MSG_PREHEAT_PLA                     "Преднагрев PLA"
 #define MSG_PREHEAT_PLA0                    "Преднагрев PLA0"
@@ -107,8 +107,8 @@
 #define MSG_PAUSE_PRINT                     "Продолжить печать"
 #define MSG_RESUME_PRINT                    "Возобн. печать"
 #define MSG_STOP_PRINT                      "Остановить печать"
-#define MSG_CARD_MENU                       "Меню карты"
-#define MSG_NO_CARD                         "Нет карты"
+#define MSG_CARD_MENU                       "Обзор SD карты"
+#define MSG_NO_CARD                         "Нет SD карты"
 #define MSG_DWELL                           "Сон..."
 #define MSG_USERWAIT                        "Ожиданиие"
 #define MSG_RESUMING                        "Продолжение печати"
@@ -133,16 +133,16 @@
 #define MSG_BABYSTEP_X                      "Babystep X"
 #define MSG_BABYSTEP_Y                      "Babystep Y"
 #define MSG_BABYSTEP_Z                      "Babystep Z"
-#define MSG_ENDSTOP_ABORT                   "Endstop abort"
+#define MSG_ENDSTOP_ABORT                   "Сработал концевик"
 #define MSG_END_HOUR                        "часов"
 #define MSG_END_MINUTE                      "минут"
 
 #ifdef DELTA_CALIBRATION_MENU
-    #define MSG_DELTA_CALIBRATE             "Delta Calibration"
-    #define MSG_DELTA_CALIBRATE_X           "Calibrate X"
-    #define MSG_DELTA_CALIBRATE_Y           "Calibrate Y"
-    #define MSG_DELTA_CALIBRATE_Z           "Calibrate Z"
-    #define MSG_DELTA_CALIBRATE_CENTER      "Calibrate Center"
+    #define MSG_DELTA_CALIBRATE             "Калибровка Delta"
+    #define MSG_DELTA_CALIBRATE_X           "Калибровать X"
+    #define MSG_DELTA_CALIBRATE_Y           "Калибровать Y"
+    #define MSG_DELTA_CALIBRATE_Z           "Калибровать Z"
+    #define MSG_DELTA_CALIBRATE_CENTER      "Калибровать Center"
 #endif // DELTA_CALIBRATION_MENU
 
 #endif // LANGUAGE_RU_H
