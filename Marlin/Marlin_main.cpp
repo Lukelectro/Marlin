@@ -3751,6 +3751,7 @@ inline void gcode_M111() {
       setTargetHotend(0, cur_hotend);
     }
   }
+  SERIAL_EOL;
 }
 
 /**
