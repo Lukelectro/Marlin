@@ -4012,11 +4012,11 @@ inline void gcode_M114() {
   SERIAL_PROTOCOL(current_position[E_AXIS]);
 
   SERIAL_PROTOCOLPGM(MSG_COUNT_X);
-  SERIAL_PROTOCOL(float(st_get_position(X_AXIS))/axis_steps_per_unit[X_AXIS]);
+  SERIAL_PROTOCOL(st_get_position_mm(X_AXIS));
   SERIAL_PROTOCOLPGM(" Y:");
-  SERIAL_PROTOCOL(float(st_get_position(Y_AXIS))/axis_steps_per_unit[Y_AXIS]);
+  SERIAL_PROTOCOL(st_get_position_mm(Y_AXIS));
   SERIAL_PROTOCOLPGM(" Z:");
-  SERIAL_PROTOCOL(float(st_get_position(Z_AXIS))/axis_steps_per_unit[Z_AXIS]);
+  SERIAL_PROTOCOL(st_get_position_mm(Z_AXIS));
 
   SERIAL_EOL;
 
