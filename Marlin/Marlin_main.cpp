@@ -36,7 +36,7 @@
   #endif
 #endif // ENABLE_AUTO_BED_LEVELING
 
-#define SERVO_LEVELING (defined(ENABLE_AUTO_BED_LEVELING) && PROBE_SERVO_DEACTIVATION_DELAY > 0)
+#define SERVO_LEVELING (defined(ENABLE_AUTO_BED_LEVELING) && defined(DEACTIVATE_SERVOS_AFTER_MOVE))
 
 #ifdef MESH_BED_LEVELING
   #include "mesh_bed_leveling.h"
@@ -538,13 +538,9 @@ void servo_init() {
   #ifdef SERVO_ENDSTOPS
     for (int i = 0; i < 3; i++)
       if (servo_endstops[i] >= 0)
-        servo[servo_endstops[i]].write(servo_endstop_angles[i * 2 + 1]);
+        servo[servo_endstops[i]].move(0, servo_endstop_angles[i * 2 + 1]);
   #endif
 
-  #if SERVO_LEVELING
-    delay(PROBE_SERVO_DEACTIVATION_DELAY);
-    servo[servo_endstops[Z_AXIS]].detach();
-  #endif
 }
 
 /**
@@ -1351,14 +1347,7 @@ static void engage_z_probe() {
       // Engage Z Servo endstop if enabled
       if (servo_endstops[Z_AXIS] >= 0) {
         Servo *srv = &servo[servo_endstops[Z_AXIS]];
-        #if SERVO_LEVELING
-          srv->attach(0);
-        #endif
-        srv->write(servo_endstop_angles[Z_AXIS * 2]);
-        #if SERVO_LEVELING
-          delay(PROBE_SERVO_DEACTIVATION_DELAY);
-          srv->detach();
-        #endif
+        srv->move(0, servo_endstop_angles[Z_AXIS * 2]);
       }
 
     #elif defined(Z_PROBE_ALLEN_KEY)
@@ -1519,14 +1508,7 @@ static void retract_z_probe() {
 
         // Change the Z servo angle
         Servo *srv = &servo[servo_endstops[Z_AXIS]];
-        #if SERVO_LEVELING
-          srv->attach(0);
-        #endif
-        srv->write(servo_endstop_angles[Z_AXIS * 2 + 1]);
-        #if SERVO_LEVELING
-          delay(PROBE_SERVO_DEACTIVATION_DELAY);
-          srv->detach();
-        #endif
+        srv->move(0, servo_endstop_angles[Z_AXIS * 2 + 1]);
       }
 
     #elif defined(Z_PROBE_ALLEN_KEY)
@@ -1885,7 +1867,7 @@ static void homeaxis(AxisEnum axis) {
       {
         // Retract Servo endstop if enabled
         if (servo_endstops[axis] > -1)
-          servo[servo_endstops[axis]].write(servo_endstop_angles[axis * 2 + 1]);
+          servo[servo_endstops[axis]].move(0, servo_endstop_angles[axis * 2 + 1]);
       }
     #endif
 
@@ -4457,14 +4439,7 @@ inline void gcode_M226() {
       servo_position = code_value_short();
       if (servo_index >= 0 && servo_index < NUM_SERVOS) {
         Servo *srv = &servo[servo_index];
-        #if SERVO_LEVELING
-          srv->attach(0);
-        #endif
-        srv->write(servo_position);
-        #if SERVO_LEVELING
-          delay(PROBE_SERVO_DEACTIVATION_DELAY);
-          srv->detach();
-        #endif
+        srv->move(0, servo_position);
       }
       else {
         SERIAL_ECHO_START;
