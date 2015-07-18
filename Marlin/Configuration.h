@@ -537,9 +537,9 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // JFR -was true // set to true to i
 #define EEPROM_CHITCHAT
 
 //
-// M99 Free Memory Watcher
+// M100 Free Memory Watcher
 //
-#define M99_FREE_MEMORY_WATCHER // uncomment to add the M99 Free Memory Watcher for debug purpose
+//#define M100_FREE_MEMORY_WATCHER // uncomment to add the M100 Free Memory Watcher for debug purpose
 
 // @section temperature
 

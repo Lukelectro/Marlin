@@ -198,8 +198,8 @@
 // M928 - Start SD logging (M928 filename.g) - ended by M29
 // M999 - Restart after being stopped by error
 
-#ifdef M99_FREE_MEMORY_WATCHER
-  void m99_code();
+#ifdef M100_FREE_MEMORY_WATCHER
+  void gcode_M100();
 #endif
 
 #ifdef SDSUPPORT
@@ -5448,9 +5448,9 @@ void process_next_command() {
           break;
       #endif // ENABLE_AUTO_BED_LEVELING && Z_PROBE_REPEATABILITY_TEST
 
-      #ifdef M99_FREE_MEMORY_WATCHER
-        case 99:
-          m99_code();
+      #ifdef M100_FREE_MEMORY_WATCHER
+        case 100:
+          gcode_M100();
           break;
       #endif
 
