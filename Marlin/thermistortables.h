@@ -2,6 +2,7 @@
 #define THERMISTORTABLES_H_
 
 #include "Marlin.h"
+#include "macros.h"
 
 #define OVERSAMPLENR 16
 
@@ -1085,7 +1086,7 @@ const short temptable_1047[][2] PROGMEM = {
 
 #ifdef THERMISTORHEATER_0
 # define HEATER_0_TEMPTABLE TT_NAME(THERMISTORHEATER_0)
-# define HEATER_0_TEMPTABLE_LEN (sizeof(HEATER_0_TEMPTABLE)/sizeof(*HEATER_0_TEMPTABLE))
+# define HEATER_0_TEMPTABLE_LEN COUNT(HEATER_0_TEMPTABLE)
 #else
 # ifdef HEATER_0_USES_THERMISTOR
 #  error No heater 0 thermistor table specified
@@ -1108,7 +1109,7 @@ const short temptable_1047[][2] PROGMEM = {
 
 #ifdef THERMISTORHEATER_1
 # define HEATER_1_TEMPTABLE TT_NAME(THERMISTORHEATER_1)
-# define HEATER_1_TEMPTABLE_LEN (sizeof(HEATER_1_TEMPTABLE)/sizeof(*HEATER_1_TEMPTABLE))
+# define HEATER_1_TEMPTABLE_LEN COUNT(HEATER_1_TEMPTABLE)
 #else
 # ifdef HEATER_1_USES_THERMISTOR
 #  error No heater 1 thermistor table specified
@@ -1131,7 +1132,7 @@ const short temptable_1047[][2] PROGMEM = {
 
 #ifdef THERMISTORHEATER_2
 # define HEATER_2_TEMPTABLE TT_NAME(THERMISTORHEATER_2)
-# define HEATER_2_TEMPTABLE_LEN (sizeof(HEATER_2_TEMPTABLE)/sizeof(*HEATER_2_TEMPTABLE))
+# define HEATER_2_TEMPTABLE_LEN COUNT(HEATER_2_TEMPTABLE)
 #else
 # ifdef HEATER_2_USES_THERMISTOR
 #  error No heater 2 thermistor table specified
@@ -1154,7 +1155,7 @@ const short temptable_1047[][2] PROGMEM = {
 
 #ifdef THERMISTORHEATER_3
 # define HEATER_3_TEMPTABLE TT_NAME(THERMISTORHEATER_3)
-# define HEATER_3_TEMPTABLE_LEN (sizeof(HEATER_3_TEMPTABLE)/sizeof(*HEATER_3_TEMPTABLE))
+# define HEATER_3_TEMPTABLE_LEN COUNT(HEATER_3_TEMPTABLE)
 #else
 # ifdef HEATER_3_USES_THERMISTOR
 #  error No heater 3 thermistor table specified
@@ -1177,7 +1178,7 @@ const short temptable_1047[][2] PROGMEM = {
 
 #ifdef THERMISTORBED
 # define BEDTEMPTABLE TT_NAME(THERMISTORBED)
-# define BEDTEMPTABLE_LEN (sizeof(BEDTEMPTABLE)/sizeof(*BEDTEMPTABLE))
+# define BEDTEMPTABLE_LEN COUNT(BEDTEMPTABLE)
 #else
 # ifdef BED_USES_THERMISTOR
 #  error No bed thermistor table specified
