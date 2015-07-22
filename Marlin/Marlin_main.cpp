@@ -255,8 +255,8 @@ float zprobe_zoffset = -Z_PROBE_OFFSET_FROM_EXTRUDER;
 #endif
 
 #ifdef SERVO_ENDSTOPS
-  int servo_endstops[] = SERVO_ENDSTOPS;
-  int servo_endstop_angles[] = SERVO_ENDSTOP_ANGLES;
+  const int servo_endstops[] = SERVO_ENDSTOPS;
+  const int servo_endstop_angles[] = SERVO_ENDSTOP_ANGLES;
 #endif
 
 #ifdef BARICUDA
