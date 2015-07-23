@@ -40,7 +40,7 @@ Here are some standard links for getting your machine calibrated:
 
 // @section info
 
-#ifdef HAS_AUTOMATIC_VERSIONING
+#if ENABLED(HAS_AUTOMATIC_VERSIONING)
   #include "_Version.h"
 #else
   #include "Default_Version.h"
@@ -257,7 +257,7 @@ Here are some standard links for getting your machine calibrated:
 
 //#define PID_BED_DEBUG // Sends debug data to the serial port.
 
-#ifdef PIDTEMPBED
+#if ENABLED(PIDTEMPBED)
 
   #define PID_BED_INTEGRAL_DRIVE_MAX MAX_BED_POWER //limit for the integral term
 
@@ -314,7 +314,7 @@ Here are some standard links for getting your machine calibrated:
 // coarse Endstop Settings
 #define ENDSTOPPULLUPS // Comment this out (using // at the start of the line) to disable the endstop pullup resistors
 
-#ifndef ENDSTOPPULLUPS
+#if DISABLED(ENDSTOPPULLUPS)
   // fine endstop settings: Individual pullups. will be ignored if ENDSTOPPULLUPS is defined
   // #define ENDSTOPPULLUP_XMAX
   // #define ENDSTOPPULLUP_YMAX
@@ -405,7 +405,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // JFR -was true // set to true to i
                                  // In RAMPS uses servo pin 2. Can be changed in pins file. For other boards pin definition should be made.
                                  // It is assumed that when logic high = filament available
                                  //                    when logic  low = filament ran out
-#ifdef FILAMENT_RUNOUT_SENSOR
+#if ENABLED(FILAMENT_RUNOUT_SENSOR)
   const bool FIL_RUNOUT_INVERTING = true;  // Should be uncommented and true or false should assigned
   #define ENDSTOPPULLUP_FIL_RUNOUT // Uncomment to use internal pullup for filament runout pins if the sensor is defined.
   #define FILAMENT_RUNOUT_SCRIPT "M600"
@@ -515,8 +515,8 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // JFR -was true // set to true to i
 
 // Custom M code points
 #define CUSTOM_M_CODES
-#ifdef CUSTOM_M_CODES
-  #ifdef ENABLE_AUTO_BED_LEVELING
+#if ENABLED(CUSTOM_M_CODES)
+  #if ENABLED(ENABLE_AUTO_BED_LEVELING)
     #define CUSTOM_M_CODE_SET_Z_PROBE_OFFSET 851
     #define Z_PROBE_OFFSET_RANGE_MIN -20
     #define Z_PROBE_OFFSET_RANGE_MAX 20
@@ -772,7 +772,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // JFR -was true // set to true to i
 // With this option servos are powered only during movement, then turned off to prevent jitter.
 //#define DEACTIVATE_SERVOS_AFTER_MOVE
 
-#ifdef DEACTIVATE_SERVOS_AFTER_MOVE
+#if ENABLED(DEACTIVATE_SERVOS_AFTER_MOVE)
   // Delay (in microseconds) before turning the servo off. This depends on the servo speed.
   // 300ms is a good value but you can try less delay.
   // If the servo can't reach the requested position, increase it.
