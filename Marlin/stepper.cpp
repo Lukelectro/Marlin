@@ -395,7 +395,7 @@ inline void update_endstops() {
           UPDATE_ENDSTOP(Y, MAX);
         #endif
       }
-  #if defined(COREXY) || defined(COREXZ)
+  #if defined(COREXY)
     }
   #endif
 
@@ -480,6 +480,9 @@ inline void update_endstops() {
           }
         #endif
       }
+  #if defined(COREXZ)
+    }
+  #endif  
   old_endstop_bits = current_endstop_bits;
 }
 
