@@ -611,6 +611,7 @@ void plan_buffer_line(float x, float y, float z, const float &e, float feed_rate
       enable_x();
       enable_z();
     }
+    if (block->steps[Y_AXIS]) enable_y();
   #else
     if (block->steps[X_AXIS]) enable_x();
     if (block->steps[Y_AXIS]) enable_y();
