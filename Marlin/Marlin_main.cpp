@@ -1520,8 +1520,11 @@ static void retract_z_probe() {
 
       // Move up for safety
       feedrate = Z_PROBE_ALLEN_KEY_STOW_1_FEEDRATE;
-      destination[Z_AXIS] = current_position[Z_AXIS] + Z_RAISE_AFTER_PROBING;
-      prepare_move_raw(); // this will also set_current_to_destination
+
+      #if Z_RAISE_AFTER_PROBING > 0
+        destination[Z_AXIS] = current_position[Z_AXIS] + Z_RAISE_AFTER_PROBING;
+        prepare_move_raw(); // this will also set_current_to_destination
+      #endif
 
       // Move to the start position to initiate retraction
       destination[X_AXIS] = Z_PROBE_ALLEN_KEY_STOW_1_X;
@@ -1700,7 +1703,9 @@ static void retract_z_probe() {
 
     float oldXpos = current_position[X_AXIS]; // save x position
     if (dock) {
-      do_blocking_move_to_z(current_position[Z_AXIS] + Z_RAISE_AFTER_PROBING); // raise Z   
+      #if Z_RAISE_AFTER_PROBING > 0
+        do_blocking_move_to_z(current_position[Z_AXIS] + Z_RAISE_AFTER_PROBING); // raise Z
+      #endif
       do_blocking_move_to_x(X_MAX_POS + SLED_DOCKING_OFFSET + offset - 1);  // Dock sled a bit closer to ensure proper capturing
       digitalWrite(SLED_PIN, LOW); // turn off magnet
     } else {
