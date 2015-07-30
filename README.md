@@ -39,6 +39,7 @@ The current Marlin dev team consists of:
  - Erik van der Zalm [@ErikZalm]
  - David Braam [@daid]
  - Bernhard Kubicek [@bkubicek]
+ - Richard Wackerbarth [@Wackerbarth] - English
 
 More features have been added by:
   - Alberto Cotronei [@MagoKimbra]
