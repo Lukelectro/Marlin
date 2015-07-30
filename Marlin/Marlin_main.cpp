@@ -2753,7 +2753,8 @@ inline void gcode_G28() {
         print_bed_level();
       #else // !DELTA
         // solve lsq problem
-        double *plane_equation_coefficients = qr_solve(abl2, 3, eqnAMatrix, eqnBVector);
+        double plane_equation_coefficients[3];
+        qr_solve(plane_equation_coefficients, abl2, 3, eqnAMatrix, eqnBVector);
 
         mean /= abl2;
 
