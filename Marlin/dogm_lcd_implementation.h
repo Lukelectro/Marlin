@@ -211,14 +211,16 @@ char lcd_printPGM(const char* str) {
   return n;
 }
 
-static bool show_splashscreen = true;
+#if ENABLED(SHOW_BOOTSCREEN)
+  static bool show_bootscreen = true;
+#endif
 
 /* Warning: This function is called from interrupt context */
 static void lcd_implementation_init() {
 
   #if ENABLED(LCD_PIN_BL) // Enable LCD backlight
     pinMode(LCD_PIN_BL, OUTPUT);
-	  digitalWrite(LCD_PIN_BL, HIGH);
+    digitalWrite(LCD_PIN_BL, HIGH);
   #endif
 
   #if ENABLED(LCD_PIN_RESET)
@@ -228,25 +230,17 @@ static void lcd_implementation_init() {
   #ifndef MINIPANEL//setContrast not working for Mini Panel
     u8g.setContrast(lcd_contrast);	
   #endif
-	// FIXME: remove this workaround
+  // FIXME: remove this workaround
   // Uncomment this if you have the first generation (V1.10) of STBs board
-  // pinMode(17, OUTPUT);	// Enable LCD backlight
+  // pinMode(17, OUTPUT); // Enable LCD backlight
   // digitalWrite(17, HIGH);
 
   #if ENABLED(LCD_SCREEN_ROT_90)
     u8g.setRot90();   // Rotate screen by 90°
   #elif ENABLED(LCD_SCREEN_ROT_180)
-    u8g.setRot180();	// Rotate screen by 180°
+    u8g.setRot180();  // Rotate screen by 180°
   #elif ENABLED(LCD_SCREEN_ROT_270)
-    u8g.setRot270();	// Rotate screen by 270°
-  #endif
-	
-  // Show splashscreen
-  int offx = (u8g.getWidth() - START_BMPWIDTH) / 2;
-  #if ENABLED(START_BMPHIGH)
-    int offy = 0;
-  #else
-    int offy = DOG_CHAR_HEIGHT;
+    u8g.setRot270();  // Rotate screen by 270°
   #endif
 
   int txt1X = (u8g.getWidth() - (sizeof(STRING_SPLASH_LINE1) - 1)*DOG_CHAR_WIDTH) / 2;
