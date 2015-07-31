@@ -260,7 +260,7 @@ float zprobe_zoffset = -Z_PROBE_OFFSET_FROM_EXTRUDER;
 
 #if HAS_SERVO_ENDSTOPS
   const int servo_endstop_id[] = SERVO_ENDSTOP_IDS;
-  const int servo_endstop_angles[][2] = SERVO_ENDSTOP_ANGLES;
+  const int servo_endstop_angle[][2] = SERVO_ENDSTOP_ANGLES;
 #endif
 
 #ifdef BARICUDA
@@ -548,7 +548,7 @@ void servo_init() {
   #if HAS_SERVO_ENDSTOPS
     for (int i = 0; i < 3; i++)
       if (servo_endstop_id[i] >= 0)
-        servo[servo_endstop_id[i]].move(servo_endstop_angles[i][1]);
+        servo[servo_endstop_id[i]].move(servo_endstop_angle[i][1]);
   #endif
 
 }
@@ -1360,7 +1360,7 @@ static void engage_z_probe() {
     #if HAS_SERVO_ENDSTOPS
 
       // Engage Z Servo endstop if enabled
-      if (servo_endstop_id[Z_AXIS] >= 0) servo[servo_endstop_id[Z_AXIS]].move(servo_endstop_angles[Z_AXIS][0]);
+      if (servo_endstop_id[Z_AXIS] >= 0) servo[servo_endstop_id[Z_AXIS]].move(servo_endstop_angle[Z_AXIS][0]);
 
     #elif defined(Z_PROBE_ALLEN_KEY)
       feedrate = Z_PROBE_ALLEN_KEY_DEPLOY_1_FEEDRATE;
@@ -1519,7 +1519,7 @@ static void retract_z_probe() {
         }
 
         // Change the Z servo angle
-        servo[servo_endstop_id[Z_AXIS]].move(servo_endstop_angles[Z_AXIS][1]);
+        servo[servo_endstop_id[Z_AXIS]].move(servo_endstop_angle[Z_AXIS][1]);
       }
 
     #elif defined(Z_PROBE_ALLEN_KEY)
@@ -1881,7 +1881,7 @@ static void homeaxis(AxisEnum axis) {
       #if HAS_SERVO_ENDSTOPS
         // Retract Servo endstop if enabled
         if (servo_endstop_id[axis] >= 0)
-          servo[servo_endstop_id[axis]].move(servo_endstop_angles[axis][1]);
+          servo[servo_endstop_id[axis]].move(servo_endstop_angle[axis][1]);
       #endif
     }
 
