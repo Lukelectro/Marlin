@@ -77,14 +77,14 @@ float max_e_jerk;
 float mintravelfeedrate;
 unsigned long axis_steps_per_sqr_second[NUM_AXIS];
 
-#if ENABLED(ENABLE_AUTO_BED_LEVELING)
+#if ENABLED(AUTO_BED_LEVELING_FEATURE)
   // Transform required to compensate for bed level
   matrix_3x3 plan_bed_level_matrix = {
     1.0, 0.0, 0.0,
     0.0, 1.0, 0.0,
     0.0, 0.0, 1.0
   };
-#endif // ENABLE_AUTO_BED_LEVELING
+#endif // AUTO_BED_LEVELING_FEATURE
 
 #if ENABLED(AUTOTEMP)
   float autotemp_max = 250;
@@ -478,7 +478,7 @@ float junction_deviation = 0.1;
 void plan_buffer_line(float x, float y, float z, const float &e, float feed_rate, const uint8_t &extruder)
 #else
   void plan_buffer_line(const float &x, const float &y, const float &z, const float &e, float feed_rate, const uint8_t extruder)
-#endif  // ENABLE_AUTO_BED_LEVELING
+#endif  // AUTO_BED_LEVELING_FEATURE
 {
   // Calculate the buffer head after we push this byte
   int next_buffer_head = next_block_index(block_buffer_head);
