@@ -2674,6 +2674,7 @@ inline void gcode_G28() {
         double eqnAMatrix[abl2 * 3], // "A" matrix of the linear system of equations
                eqnBVector[abl2],     // "B" vector of Z points
                mean = 0.0;
+        int8_t indexIntoAB[auto_bed_leveling_grid_points][auto_bed_leveling_grid_points];
       #endif // !DELTA
 
       int probePointCounter = 0;
@@ -2738,7 +2739,7 @@ inline void gcode_G28() {
             bed_level[xCount][yCount] = measured_z + z_offset;
           #endif
 
-          probePointCounter++;
+          indexIntoAB[xCount][yCount] = probePointCounter++;
 
           idle();
 
@@ -2789,7 +2790,7 @@ inline void gcode_G28() {
 
           for (int yy = auto_bed_leveling_grid_points - 1; yy >= 0; yy--) {
             for (int xx = 0; xx < auto_bed_leveling_grid_points; xx++) {
-              int ind = yy * auto_bed_leveling_grid_points + xx;
+              int ind = indexIntoAB[xx][yy];
               float diff = eqnBVector[ind] - mean;
 
               float x_tmp = eqnAMatrix[ind + 0 * abl2],
