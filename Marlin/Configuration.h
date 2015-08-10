@@ -323,7 +323,7 @@ Here are some standard links for getting your machine calibrated:
   // #define ENDSTOPPULLUP_XMIN
   // #define ENDSTOPPULLUP_YMIN
   // #define ENDSTOPPULLUP_ZMIN
-  // #define ENDSTOPPULLUP_ZPROBE
+  // #define ENDSTOPPULLUP_ZMIN_PROBE
 #endif
 
 #ifdef ENDSTOPPULLUPS
