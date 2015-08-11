@@ -1351,6 +1351,7 @@ static void setup_for_endstop_move() {
   inline void do_blocking_move_to_xy(float x, float y) { do_blocking_move_to(x, y, current_position[Z_AXIS]); }
   inline void do_blocking_move_to_x(float x) { do_blocking_move_to(x, current_position[Y_AXIS], current_position[Z_AXIS]); }
   inline void do_blocking_move_to_z(float z) { do_blocking_move_to(current_position[X_AXIS], current_position[Y_AXIS], z); }
+  inline void raise_z_after_probing() { do_blocking_move_to_z(current_position[Z_AXIS] + Z_RAISE_AFTER_PROBING); }
 
   static void clean_up_after_endstop_move() {
     #if ENABLED(ENDSTOPS_ONLY_FOR_HOMING)
@@ -1855,7 +1856,7 @@ static void retract_z_probe() {
     float oldXpos = current_position[X_AXIS]; // save x position
     if (dock) {
       #if Z_RAISE_AFTER_PROBING > 0
-        do_blocking_move_to_z(current_position[Z_AXIS] + Z_RAISE_AFTER_PROBING); // raise Z
+        raise_z_after_probing(); // raise Z
       #endif
       do_blocking_move_to_x(X_MAX_POS + SLED_DOCKING_OFFSET + offset - 1);  // Dock sled a bit closer to ensure proper capturing
       digitalWrite(SLED_PIN, LOW); // turn off magnet
