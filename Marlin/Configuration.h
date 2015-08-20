@@ -416,8 +416,8 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // JFR -was true // set to true to i
 //=========================== Manual Bed Leveling ===========================
 //===========================================================================
 
-// #define MANUAL_BED_LEVELING  // Add display menu option for bed leveling
-// #define MESH_BED_LEVELING    // Enable mesh bed leveling
+// #define MANUAL_BED_LEVELING  // Add display menu option for bed leveling.
+// #define MESH_BED_LEVELING    // Enable mesh bed leveling.
 
 #if defined(MANUAL_BED_LEVELING)
   #define MBL_Z_STEP 0.025
@@ -428,9 +428,9 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // JFR -was true // set to true to i
   #define MESH_MAX_X (X_MAX_POS - MESH_MIN_X)
   #define MESH_MIN_Y 10
   #define MESH_MAX_Y (Y_MAX_POS - MESH_MIN_Y)
-  #define MESH_NUM_X_POINTS 3  // Don't use more than 7 points per axis, implementation limited
+  #define MESH_NUM_X_POINTS 3  // Don't use more than 7 points per axis, implementation limited.
   #define MESH_NUM_Y_POINTS 3
-  #define MESH_HOME_SEARCH_Z 4  // Z after Home, bed somewhere below but above 0.0
+  #define MESH_HOME_SEARCH_Z 4  // Z after Home, bed somewhere below but above 0.0.
 #endif  // MESH_BED_LEVELING
 
 //===========================================================================
@@ -761,7 +761,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // JFR -was true // set to true to i
 // Servo Endstops
 //
 // This allows for servo actuated endstops, primary usage is for the Z Axis to eliminate calibration or bed height changes.
-// Use M851 to set the z-probe vertical offset from the nozzle. Store that setting with M500.
+// Use M851 to set the Z probe vertical offset from the nozzle. Store that setting with M500.
 //
 //#define X_ENDSTOP_SERVO_NR 1
 //#define Y_ENDSTOP_SERVO_NR 2
