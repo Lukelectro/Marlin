@@ -30,7 +30,7 @@ The current Marlin dev team consists of:
  - Roxanne Neufeld [@Roxy-3DPrintBoard] - English
  - Andreas Hardtung [@AnHardt] - Deutsch, English
  - [@Wurstnase] - Deutsch, English
- - [@fmalpartida] - English, Spanish
+ - F. Malpartida [@fmalpartida] - English, Spanish
  - [@CONSULitAS] - Deutsch, English
  - [@maverikou]
  - Chris Palmer [@nophead]
