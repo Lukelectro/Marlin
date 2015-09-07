@@ -496,14 +496,19 @@ static void lcd_tune_menu()
     MENU_ITEM_EDIT(int3, MSG_FLOW MSG_F0, &extruder_multiply[0], 10, 999);
   #if TEMP_SENSOR_1 != 0
     MENU_ITEM_EDIT(int3, MSG_FLOW MSG_N1, &extruder_multiplier[1], 10, 999);
-  #endif
-  #if TEMP_SENSOR_2 != 0
-    MENU_ITEM_EDIT(int3, MSG_FLOW MSG_N2, &extruder_multiplier[2], 10, 999);
-  #endif
-  #if TEMP_SENSOR_3 != 0
-    MENU_ITEM_EDIT(int3, MSG_FLOW MSG_N3, &extruder_multiplier[3], 10, 999);
-  #endif
+    #if EXTRUDERS > 2
+      MENU_ITEM_EDIT(int3, MSG_FLOW MSG_N2, &extruder_multiplier[2], 10, 999);
+      #if EXTRUDERS > 3
+        MENU_ITEM_EDIT(int3, MSG_FLOW MSG_N3, &extruder_multiplier[3], 10, 999);
+      #endif //EXTRUDERS > 3
+    #endif //EXTRUDERS > 2
+  #endif //EXTRUDERS > 1
 
+  //
+  // Babystep X:
+  // Babystep Y:
+  // Babystep Z:
+  //
   #if ENABLED(BABYSTEPPING)
     #if ENABLED(BABYSTEP_XY)
       MENU_ITEM(submenu, MSG_BABYSTEP_X, lcd_babystep_x);
@@ -511,9 +516,14 @@ static void lcd_tune_menu()
     #endif //BABYSTEP_XY
     MENU_ITEM(submenu, MSG_BABYSTEP_Z, lcd_babystep_z);
   #endif
+
+  //
+  // Change filament
+  //
   #if ENABLED(FILAMENTCHANGEENABLE)
      MENU_ITEM(gcode, MSG_FILAMENTCHANGE, PSTR("M600"));
   #endif
+
   END_MENU();
 }
 
