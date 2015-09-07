@@ -803,7 +803,6 @@ void plan_buffer_line(float x, float y, float z, const float &e, float feed_rate
 
   // Max segement time in us.
   #ifdef XY_FREQUENCY_LIMIT
-    #define MAX_FREQ_TIME (1000000.0 / XY_FREQUENCY_LIMIT)
 
     // Check and limit the xy direction change frequency
     unsigned char direction_change = block->direction_bits ^ old_direction_bits;
