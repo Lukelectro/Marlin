@@ -502,9 +502,9 @@ static void lcd_tune_menu()
   #if TEMP_SENSOR_1 != 0
     MENU_ITEM_EDIT(int3, MSG_FLOW MSG_N1, &extruder_multiplier[1], 10, 999);
     #if EXTRUDERS > 2
-      MENU_ITEM_EDIT(int3, MSG_FLOW MSG_N2, &extruder_multiplier[2], 10, 999);
+      MENU_ITEM_EDIT(int3, MSG_FLOW MSG_N3, &extruder_multiplier[2], 10, 999);
       #if EXTRUDERS > 3
-        MENU_ITEM_EDIT(int3, MSG_FLOW MSG_N3, &extruder_multiplier[3], 10, 999);
+        MENU_ITEM_EDIT(int3, MSG_FLOW MSG_N4, &extruder_multiplier[3], 10, 999);
       #endif //EXTRUDERS > 3
     #endif //EXTRUDERS > 2
   #endif //EXTRUDERS > 1
@@ -761,12 +761,12 @@ static void lcd_move_e(
       pos_label = PSTR(MSG_MOVE_E);
     #else
       switch (e) {
-        case 0: pos_label = PSTR(MSG_MOVE_E0); break;
-        case 1: pos_label = PSTR(MSG_MOVE_E1); break;
+        case 0: pos_label = PSTR(MSG_MOVE_E MSG_MOVE_E1); break;
+        case 1: pos_label = PSTR(MSG_MOVE_E MSG_MOVE_E2); break;
         #if EXTRUDERS > 2
-          case 2: pos_label = PSTR(MSG_MOVE_E2); break;
+          case 2: pos_label = PSTR(MSG_MOVE_E MSG_MOVE_E3); break;
           #if EXTRUDERS > 3
-            case 3: pos_label = PSTR(MSG_MOVE_E3); break;
+            case 3: pos_label = PSTR(MSG_MOVE_E MSG_MOVE_E4); break;
           #endif //EXTRUDERS > 3
         #endif //EXTRUDERS > 2
       }
@@ -806,12 +806,12 @@ static void lcd_move_menu_axis() {
     #if EXTRUDERS == 1
       MENU_ITEM(submenu, MSG_MOVE_E, lcd_move_e);
     #else
-      MENU_ITEM(submenu, MSG_MOVE_E0, lcd_move_e0);
-      MENU_ITEM(submenu, MSG_MOVE_E1, lcd_move_e1);
+      MENU_ITEM(submenu, MSG_MOVE_E MSG_MOVE_E1, lcd_move_e0);
+      MENU_ITEM(submenu, MSG_MOVE_E MSG_MOVE_E2, lcd_move_e1);
       #if EXTRUDERS > 2
-        MENU_ITEM(submenu, MSG_MOVE_E2, lcd_move_e2);
+        MENU_ITEM(submenu, MSG_MOVE_E MSG_MOVE_E3, lcd_move_e2);
         #if EXTRUDERS > 3
-          MENU_ITEM(submenu, MSG_MOVE_E3, lcd_move_e3);
+          MENU_ITEM(submenu, MSG_MOVE_E MSG_MOVE_E4, lcd_move_e3);
         #endif
       #endif
     #endif // EXTRUDERS > 1
@@ -894,18 +894,18 @@ static void lcd_control_menu() {
     PID_PARAM(Kd, e) = scalePID_d(raw_Kd);
     updatePID();
   }
-  void copy_and_scalePID_i_E1() { copy_and_scalePID_i(0); }
-  void copy_and_scalePID_d_E1() { copy_and_scalePID_d(0); }
+  #define COPY_AND_SCALE(eindex) \
+    void copy_and_scalePID_i_E ## eindex() { copy_and_scalePID_i(eindex); } \
+    void copy_and_scalePID_d_E ## eindex() { copy_and_scalePID_d(eindex); }
+
+  COPY_AND_SCALE(0);
   #if ENABLED(PID_PARAMS_PER_EXTRUDER)
     #if EXTRUDERS > 1
-      void copy_and_scalePID_i_E2() { copy_and_scalePID_i(1); }
-      void copy_and_scalePID_d_E2() { copy_and_scalePID_d(1); }
+      COPY_AND_SCALE(1);
       #if EXTRUDERS > 2
-        void copy_and_scalePID_i_E3() { copy_and_scalePID_i(2); }
-        void copy_and_scalePID_d_E3() { copy_and_scalePID_d(2); }
+        COPY_AND_SCALE(2);
         #if EXTRUDERS > 3
-          void copy_and_scalePID_i_E4() { copy_and_scalePID_i(3); }
-          void copy_and_scalePID_d_E4() { copy_and_scalePID_d(3); }
+          COPY_AND_SCALE(3);
         #endif //EXTRUDERS > 3
       #endif //EXTRUDERS > 2
     #endif //EXTRUDERS > 1
@@ -972,34 +972,20 @@ static void lcd_control_temperature_menu() {
           MENU_ITEM_EDIT(float3, MSG_PID_C MSG_E2, &PID_PARAM(Kc,1), 1, 9990);
         #endif//PID_ADD_EXTRUSION_RATE
 
-        #if EXTRUDERS > 2
-          // set up temp variables - undo the default scaling
-          raw_Ki = unscalePID_i(PID_PARAM(Ki,2));
-          raw_Kd = unscalePID_d(PID_PARAM(Kd,2));
-          MENU_ITEM_EDIT(float52, MSG_PID_P MSG_E3, &PID_PARAM(Kp,2), 1, 9990);
-          // i is typically a small value so allows values below 1
-          MENU_ITEM_EDIT_CALLBACK(float52, MSG_PID_I MSG_E3, &raw_Ki, 0.01, 9990, copy_and_scalePID_i_E3);
-          MENU_ITEM_EDIT_CALLBACK(float52, MSG_PID_D MSG_E3, &raw_Kd, 1, 9990, copy_and_scalePID_d_E3);
-          #if ENABLED(PID_ADD_EXTRUSION_RATE)
-            MENU_ITEM_EDIT(float3, MSG_PID_C MSG_E3, &PID_PARAM(Kc,2), 1, 9990);
-          #endif//PID_ADD_EXTRUSION_RATE
+    #if ENABLED(PID_PARAMS_PER_EXTRUDER) && EXTRUDERS > 1
+      PID_MENU_ITEMS(MSG_E1, 0);
+      PID_MENU_ITEMS(MSG_E2, 1);
+      #if EXTRUDERS > 2
+        PID_MENU_ITEMS(MSG_E3, 2);
+        #if EXTRUDERS > 3
+          PID_MENU_ITEMS(MSG_E4, 3);
+        #endif //EXTRUDERS > 3
+      #endif //EXTRUDERS > 2
+    #else //!PID_PARAMS_PER_EXTRUDER || EXTRUDERS == 1
+      PID_MENU_ITEMS("", 0);
+    #endif //!PID_PARAMS_PER_EXTRUDER || EXTRUDERS == 1
 
-          #if EXTRUDERS > 3
-            // set up temp variables - undo the default scaling
-            raw_Ki = unscalePID_i(PID_PARAM(Ki,3));
-            raw_Kd = unscalePID_d(PID_PARAM(Kd,3));
-            MENU_ITEM_EDIT(float52, MSG_PID_P MSG_E4, &PID_PARAM(Kp,3), 1, 9990);
-            // i is typically a small value so allows values below 1
-            MENU_ITEM_EDIT_CALLBACK(float52, MSG_PID_I MSG_E4, &raw_Ki, 0.01, 9990, copy_and_scalePID_i_E4);
-            MENU_ITEM_EDIT_CALLBACK(float52, MSG_PID_D MSG_E4, &raw_Kd, 1, 9990, copy_and_scalePID_d_E4);
-            #if ENABLED(PID_ADD_EXTRUSION_RATE)
-              MENU_ITEM_EDIT(float3, MSG_PID_C MSG_E4, &PID_PARAM(Kc,3), 1, 9990);
-            #endif//PID_ADD_EXTRUSION_RATE
-          #endif//EXTRUDERS > 3
-        #endif//EXTRUDERS > 2
-      #endif//EXTRUDERS > 1
-    #endif //PID_PARAMS_PER_EXTRUDER
-  #endif//PIDTEMP
+  #endif //PIDTEMP
 
   //
   // Preheat PLA conf
@@ -1108,9 +1094,9 @@ static void lcd_control_volumetric_menu()
     #if EXTRUDERS > 1
       MENU_MULTIPLIER_ITEM_EDIT_CALLBACK(float43, MSG_FILAMENT_SIZE_EXTRUDER_1, &filament_size[1], 1.5, 3.25, calculate_volumetric_multipliers);
       #if EXTRUDERS > 2
-        MENU_MULTIPLIER_ITEM_EDIT_CALLBACK(float43, MSG_FILAMENT_SIZE_EXTRUDER_2, &filament_size[2], 1.5, 3.25, calculate_volumetric_multipliers);
+        MENU_MULTIPLIER_ITEM_EDIT_CALLBACK(float43, MSG_FILAMENT_DIAM MSG_DIAM_E3, &filament_size[2], 1.5, 3.25, calculate_volumetric_multipliers);
         #if EXTRUDERS > 3
-          MENU_MULTIPLIER_ITEM_EDIT_CALLBACK(float43, MSG_FILAMENT_SIZE_EXTRUDER_3, &filament_size[3], 1.5, 3.25, calculate_volumetric_multipliers);
+          MENU_MULTIPLIER_ITEM_EDIT_CALLBACK(float43, MSG_FILAMENT_DIAM MSG_DIAM_E4, &filament_size[3], 1.5, 3.25, calculate_volumetric_multipliers);
         #endif //EXTRUDERS > 3
       #endif //EXTRUDERS > 2
     #endif //EXTRUDERS > 1
