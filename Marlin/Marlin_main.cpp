@@ -3914,6 +3914,7 @@ inline void gcode_M109() {
     }
 
     idle();
+    refresh_cmd_timeout(); // to prevent stepper_inactive_time from running out
 
     #ifdef TEMP_RESIDENCY_TIME
       // start/restart the TEMP_RESIDENCY_TIME timer whenever we reach target temp for the first time
@@ -3928,7 +3929,6 @@ inline void gcode_M109() {
   }
 
   LCD_MESSAGEPGM(MSG_HEATING_COMPLETE);
-  refresh_cmd_timeout();
   print_job_start_ms = previous_cmd_ms;
 }
 
@@ -3963,9 +3963,9 @@ inline void gcode_M109() {
         #endif
       }
       idle();
+      refresh_cmd_timeout(); // to prevent stepper_inactive_time from running out
     }
     LCD_MESSAGEPGM(MSG_BED_DONE);
-    refresh_cmd_timeout();
   }
 
 #endif // HAS_TEMP_BED
