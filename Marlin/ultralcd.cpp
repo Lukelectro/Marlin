@@ -1481,10 +1481,6 @@ void lcd_update() {
     static millis_t return_to_status_ms = 0;
   #endif
 
-  #if ENABLED(LCD_HAS_SLOW_BUTTONS)
-    slow_buttons = lcd_implementation_read_slow_buttons(); // buttons which take too long to read in interrupt context
-  #endif
-
   lcd_buttons_update();
 
   #if ENABLED(SDSUPPORT) && PIN_EXISTS(SD_DETECT)
