@@ -1749,7 +1749,8 @@ static void retract_z_probe() {
       if (a < b) {
         if (b < c) median = b;
         if (c < a) median = a;
-      } else {  // b <= a
+      }
+      else {  // b <= a
         if (c < b) median = b;
         if (a < c) median = a;
       }
@@ -1844,7 +1845,8 @@ static void retract_z_probe() {
       #endif
       do_blocking_move_to_x(X_MAX_POS + SLED_DOCKING_OFFSET + offset - 1);  // Dock sled a bit closer to ensure proper capturing
       digitalWrite(SLED_PIN, LOW); // turn off magnet
-    } else {
+    }
+    else {
       float z_loc = current_position[Z_AXIS];
       if (z_loc < Z_RAISE_BEFORE_PROBING + 5) z_loc = Z_RAISE_BEFORE_PROBING;
       do_blocking_move_to(X_MAX_POS + SLED_DOCKING_OFFSET + offset, current_position[Y_AXIS], z_loc); // this also updates current_position
@@ -6413,25 +6415,29 @@ void mesh_plan_buffer_line(float x, float y, float z, const float e, float feed_
     ny = current_position[Y_AXIS] + (y - current_position[Y_AXIS]) * normalized_dist;
     ne = current_position[E_AXIS] + (e - current_position[E_AXIS]) * normalized_dist;
     x_splits ^= BIT(ix);
-  } else if (ix < pix && (x_splits) & BIT(pix)) {
+  }
+  else if (ix < pix && (x_splits) & BIT(pix)) {
     nx = mbl.get_x(pix);
     normalized_dist = (nx - current_position[X_AXIS]) / (x - current_position[X_AXIS]);
     ny = current_position[Y_AXIS] + (y - current_position[Y_AXIS]) * normalized_dist;
     ne = current_position[E_AXIS] + (e - current_position[E_AXIS]) * normalized_dist;
     x_splits ^= BIT(pix);
-  } else if (iy > piy && (y_splits) & BIT(iy)) {
+  }
+  else if (iy > piy && (y_splits) & BIT(iy)) {
     ny = mbl.get_y(iy);
     normalized_dist = (ny - current_position[Y_AXIS]) / (y - current_position[Y_AXIS]);
     nx = current_position[X_AXIS] + (x - current_position[X_AXIS]) * normalized_dist;
     ne = current_position[E_AXIS] + (e - current_position[E_AXIS]) * normalized_dist;
     y_splits ^= BIT(iy);
-  } else if (iy < piy && (y_splits) & BIT(piy)) {
+  }
+  else if (iy < piy && (y_splits) & BIT(piy)) {
     ny = mbl.get_y(piy);
     normalized_dist = (ny - current_position[Y_AXIS]) / (y - current_position[Y_AXIS]);
     nx = current_position[X_AXIS] + (x - current_position[X_AXIS]) * normalized_dist;
     ne = current_position[E_AXIS] + (e - current_position[E_AXIS]) * normalized_dist;
     y_splits ^= BIT(piy);
-  } else {
+  }
+  else {
     // Already split on a border
     plan_buffer_line(x, y, z, e, feed_rate, extruder);
     set_current_to_destination();
