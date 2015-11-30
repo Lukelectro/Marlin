@@ -29,6 +29,7 @@ The current Marlin dev team consists of:
  - Scott Lahteine [@thinkyhead] - English
  - Roxanne Neufeld [@Roxy-3DPrintBoard] - English
  - Andreas Hardtung [@AnHardt] - Deutsch, English
+ - Scott Lahteine [@thinkyhead] - English
  - [@Wurstnase] - Deutsch, English
  - F. Malpartida [@fmalpartida] - English, Spanish
  - [@CONSULitAS] - Deutsch, English
