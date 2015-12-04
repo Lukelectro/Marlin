@@ -511,15 +511,15 @@ void plan_buffer_line(float x, float y, float z, const float &e, float feed_rate
   target[Z_AXIS] = lround(z * axis_steps_per_unit[Z_AXIS]);
   target[E_AXIS] = lround(e * axis_steps_per_unit[E_AXIS]);
 
-  float dx = target[X_AXIS] - position[X_AXIS],
-        dy = target[Y_AXIS] - position[Y_AXIS],
-        dz = target[Z_AXIS] - position[Z_AXIS];
+  long dx = target[X_AXIS] - position[X_AXIS],
+       dy = target[Y_AXIS] - position[Y_AXIS],
+       dz = target[Z_AXIS] - position[Z_AXIS];
 
   // DRYRUN ignores all temperature constraints and assures that the extruder is instantly satisfied
   if (marlin_debug_flags & DEBUG_DRYRUN)
     position[E_AXIS] = target[E_AXIS];
 
-  float de = target[E_AXIS] - position[E_AXIS];
+  long de = target[E_AXIS] - position[E_AXIS];
 
   #if ENABLED(PREVENT_DANGEROUS_EXTRUDE)
     if (de) {
