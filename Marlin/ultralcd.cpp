@@ -218,9 +218,6 @@ static void lcd_status_screen();
   #if ENABLED(REPRAPWORLD_KEYPAD)
     volatile uint8_t buttons_reprapworld_keypad; // to store the keypad shift register values
   #endif
-  #if ENABLED(RIGIDBOT_PANEL)
-    volatile millis_t next_fake_encoder_update_ms;
-  #endif
 
   #if ENABLED(LCD_HAS_SLOW_BUTTONS)
     volatile uint8_t slow_buttons; // Bits of the pressed buttons.
