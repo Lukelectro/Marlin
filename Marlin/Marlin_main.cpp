@@ -1285,7 +1285,7 @@ static void setup_for_endstop_move() {
       st_synchronize();
 
       // Tell the planner where we ended up - Get this from the stepper handler
-      zPosition = st_get_position_mm(Z_AXIS);
+      zPosition = st_get_axis_position_mm(Z_AXIS);
       plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], zPosition, current_position[E_AXIS]);
 
       // move up the retract distance
@@ -1303,7 +1303,7 @@ static void setup_for_endstop_move() {
       endstops_hit_on_purpose(); // clear endstop hit flags
 
       // Get the current stepper position after bumping an endstop
-      current_position[Z_AXIS] = st_get_position_mm(Z_AXIS);
+      current_position[Z_AXIS] = st_get_axis_position_mm(Z_AXIS);
       sync_plan_position();
 
       #if ENABLED(DEBUG_LEVELING_FEATURE)
@@ -3586,10 +3586,10 @@ inline void gcode_M42() {
       }
     }
 
-    double X_current = st_get_position_mm(X_AXIS),
-           Y_current = st_get_position_mm(Y_AXIS),
-           Z_current = st_get_position_mm(Z_AXIS),
-           E_current = st_get_position_mm(E_AXIS),
+    double X_current = st_get_axis_position_mm(X_AXIS),
+           Y_current = st_get_axis_position_mm(Y_AXIS),
+           Z_current = st_get_axis_position_mm(Z_AXIS),
+           E_current = st_get_axis_position_mm(E_AXIS),
            X_probe_location = X_current, Y_probe_location = Y_current,
            Z_start_location = Z_current + Z_RAISE_BEFORE_PROBING;
 
@@ -3643,10 +3643,10 @@ inline void gcode_M42() {
                      active_extruder);
     st_synchronize();
 
-    current_position[X_AXIS] = X_current = st_get_position_mm(X_AXIS);
-    current_position[Y_AXIS] = Y_current = st_get_position_mm(Y_AXIS);
-    current_position[Z_AXIS] = Z_current = st_get_position_mm(Z_AXIS);
-    current_position[E_AXIS] = E_current = st_get_position_mm(E_AXIS);
+    current_position[X_AXIS] = X_current = st_get_axis_position_mm(X_AXIS);
+    current_position[Y_AXIS] = Y_current = st_get_axis_position_mm(Y_AXIS);
+    current_position[Z_AXIS] = Z_current = st_get_axis_position_mm(Z_AXIS);
+    current_position[E_AXIS] = E_current = st_get_axis_position_mm(E_AXIS);
 
     //
     // OK, do the initial probe to get us close to the bed.
@@ -3658,15 +3658,15 @@ inline void gcode_M42() {
     setup_for_endstop_move();
     run_z_probe();
 
-    current_position[Z_AXIS] = Z_current = st_get_position_mm(Z_AXIS);
-    Z_start_location = st_get_position_mm(Z_AXIS) + Z_RAISE_BEFORE_PROBING;
+    Z_current = current_position[Z_AXIS] = st_get_axis_position_mm(Z_AXIS);
+    Z_start_location = Z_current + Z_RAISE_BEFORE_PROBING;
 
     plan_buffer_line(X_probe_location, Y_probe_location, Z_start_location,
                      E_current,
                      homing_feedrate[X_AXIS] / 60,
                      active_extruder);
     st_synchronize();
-    current_position[Z_AXIS] = Z_current = st_get_position_mm(Z_AXIS);
+    Z_current = current_position[Z_AXIS] = st_get_axis_position_mm(Z_AXIS);
 
     if (deploy_probe_for_each_reading) stow_z_probe();
 
