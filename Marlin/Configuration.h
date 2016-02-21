@@ -413,10 +413,9 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // JFR -was true // set to true to i
 #endif
 
 //===========================================================================
-//=========================== Manual Bed Leveling ===========================
+//============================ Mesh Bed Leveling ============================
 //===========================================================================
 
-//#define MANUAL_BED_LEVELING  // Add display menu option for bed leveling.
 //#define MESH_BED_LEVELING    // Enable mesh bed leveling.
 
 #if defined(MANUAL_BED_LEVELING)
@@ -431,6 +430,13 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // JFR -was true // set to true to i
   #define MESH_NUM_X_POINTS 3  // Don't use more than 7 points per axis, implementation limited.
   #define MESH_NUM_Y_POINTS 3
   #define MESH_HOME_SEARCH_Z 4  // Z after Home, bed somewhere below but above 0.0.
+
+  //#define MANUAL_BED_LEVELING  // Add display menu option for bed leveling.
+
+  #if ENABLED(MANUAL_BED_LEVELING)
+    #define MBL_Z_STEP 0.025  // Step size while manually probing Z axis.
+  #endif  // MANUAL_BED_LEVELING
+
 #endif  // MESH_BED_LEVELING
 
 //===========================================================================
