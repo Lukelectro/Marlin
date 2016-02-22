@@ -4021,7 +4021,7 @@ inline void gcode_M109() {
         }
       #else
         SERIAL_EOL;
-      #endif //TEMP_RESIDENCY_TIME
+      #endif
     }
 
     idle();
