@@ -2190,11 +2190,9 @@ Fan_2 2
 #elif MB(RAMPS_13_EEB) || MB(RAMPS_13_EFF) || MB(RAMPS_13_EEF) || MB(RAMPS_13_SF)
   #include "pins_RAMPS_13.h"
 #elif MB(RAMPS_14_EFB)
-  #define IS_RAMPS_14
-  #include "pins_RAMPS_13_EFB.h"
+  #include "pins_RAMPS_14_EFB.h"
 #elif MB(RAMPS_14_EEB) || MB(RAMPS_14_EFF) || MB(RAMPS_14_EEF) || MB(RAMPS_14_SF)
-  #define IS_RAMPS_14
-  #include "pins_RAMPS_13.h"
+  #include "pins_RAMPS_14.h"
 #elif MB(GEN6)
   #include "pins_GEN6.h"
 #elif MB(GEN6_DELUXE)
