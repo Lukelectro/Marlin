@@ -1928,9 +1928,7 @@ static void unknown_position_error() {
     if (z_probe_is_active == dock) return;
 
     if (!axis_known_position[X_AXIS] || !axis_known_position[Y_AXIS]) {
-      LCD_MESSAGEPGM(MSG_POSITION_UNKNOWN);
-      SERIAL_ECHO_START;
-      SERIAL_ECHOLNPGM(MSG_POSITION_UNKNOWN);
+      unknown_position_error();
       return;
     }
 
@@ -2699,9 +2697,7 @@ inline void gcode_G28() {
               }
             }
             else {
-              LCD_MESSAGEPGM(MSG_POSITION_UNKNOWN);
-              SERIAL_ECHO_START;
-              SERIAL_ECHOLNPGM(MSG_POSITION_UNKNOWN);
+              unknown_position_error();
             }
 
           } // !home_all_axes && homeZ
@@ -2968,9 +2964,7 @@ inline void gcode_G28() {
 
     // Don't allow auto-leveling without homing first
     if (!axis_known_position[X_AXIS] || !axis_known_position[Y_AXIS]) {
-      LCD_MESSAGEPGM(MSG_POSITION_UNKNOWN);
-      SERIAL_ECHO_START;
-      SERIAL_ECHOLNPGM(MSG_POSITION_UNKNOWN);
+      unknown_position_error();
       return;
     }
 
