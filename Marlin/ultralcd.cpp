@@ -591,7 +591,13 @@ void _lcd_preheat(int endnum, const float temph, const float tempb, const int fa
   #if TEMP_SENSOR_BED != 0
     setTargetBed(tempb);
   #endif
-  fanSpeed = fan;
+  #if FAN_COUNT > 0
+    #if FAN_COUNT > 1
+      fanSpeeds[active_extruder < FAN_COUNT ? active_extruder : 0] = fan;
+    #else
+      fanSpeeds[0] = fan;
+    #endif
+  #endif
   lcd_return_to_status();
 }
 
@@ -656,8 +662,10 @@ static void lcd_preheat_abs_menu() {
 }
 
 void lcd_cooldown() {
+  #if FAN_COUNT > 0
+    for (uint8_t i = 0; i < FAN_COUNT; i++) fanSpeeds[i] = 0;
+  #endif
   disable_all_heaters();
-  fanSpeed = 0;
   lcd_return_to_status();
 }
 
