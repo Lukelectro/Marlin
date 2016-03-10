@@ -3802,7 +3802,7 @@ inline void gcode_M104() {
   // Detect if a print job has finished.
   // When the target temperature for all extruders is zero then we must have
   // finished printing.
-  if( print_job_start_ms != 0 ) {
+  if (print_job_start_ms) {
     bool all_extruders_cooling = true;
     for (int i = 0; i < EXTRUDERS; i++) if( degTargetHotend(i) > 0 ) {
       all_extruders_cooling = false;
@@ -3861,7 +3861,6 @@ inline void gcode_M104() {
  *       Rxxx Wait for extruder(s) to reach temperature. Waits when heating and cooling.
  */
 inline void gcode_M109() {
-  float temp;
   bool no_wait_for_cooling = true;
 
   if (setTargetedHotend(109)) return;
@@ -3869,16 +3868,16 @@ inline void gcode_M109() {
 
   no_wait_for_cooling = code_seen('S');
   if (no_wait_for_cooling || code_seen('R')) {
-    temp = code_value();
+    float temp = code_value();
     setTargetHotend(temp, target_extruder);
     #if ENABLED(DUAL_X_CARRIAGE)
       if (dual_x_carriage_mode == DXC_DUPLICATION_MODE && target_extruder == 0)
         setTargetHotend1(temp == 0.0 ? 0.0 : temp + duplicate_extruder_temp_offset);
     #endif
-  }
 
-  // Only makes sense to show the heating message if we're in fact heating.
-  if( temp > 0 ) LCD_MESSAGEPGM(MSG_HEATING);
+    // Only makes sense to show the heating message if we're in fact heating.
+    if (temp > 0) LCD_MESSAGEPGM(MSG_HEATING);
+  }
 
   #if ENABLED(AUTOTEMP)
     autotemp_enabled = code_seen('F');
