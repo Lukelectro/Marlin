@@ -77,8 +77,8 @@
   #error BUILD_VERSION Information must be specified
 #endif
 
-#ifndef UUID
-  #define UUID "00000000-0000-0000-0000-000000000000"
+#ifndef MACHINE_UUID
+  #define MACHINE_UUID "00000000-0000-0000-0000-000000000000"
 #endif
 
 
