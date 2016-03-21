@@ -1044,16 +1044,16 @@ static void lcd_control_temperature_menu() {
         #endif//PID_ADD_EXTRUSION_RATE
 
     #if ENABLED(PID_PARAMS_PER_EXTRUDER) && EXTRUDERS > 1
-      PID_MENU_ITEMS(MSG_E1, 0);
-      PID_MENU_ITEMS(MSG_E2, 1);
+      PID_MENU_ITEMS(MSG_E1, 0, "M303 U1");
+      PID_MENU_ITEMS(MSG_E2, 1, "M303 U1 E1");
       #if EXTRUDERS > 2
-        PID_MENU_ITEMS(MSG_E3, 2);
+        PID_MENU_ITEMS(MSG_E3, 2, "M303 U1 E2");
         #if EXTRUDERS > 3
-          PID_MENU_ITEMS(MSG_E4, 3);
+          PID_MENU_ITEMS(MSG_E4, 3, "M303 U1 E3");
         #endif //EXTRUDERS > 3
       #endif //EXTRUDERS > 2
     #else //!PID_PARAMS_PER_EXTRUDER || EXTRUDERS == 1
-      PID_MENU_ITEMS("", 0);
+      PID_MENU_ITEMS("", 0, "M303 U1");
     #endif //!PID_PARAMS_PER_EXTRUDER || EXTRUDERS == 1
 
   #endif //PIDTEMP
