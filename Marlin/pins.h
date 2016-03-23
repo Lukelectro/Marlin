@@ -2375,6 +2375,7 @@ Fan_2 2
 #endif
 
 #if ENABLED(DISABLE_YMAX_ENDSTOP)
+  #undef Y_MAX_PIN
   #define Y_MAX_PIN          -1
 #endif
 
