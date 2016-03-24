@@ -2802,13 +2802,14 @@ inline void gcode_G28() {
    *  S1              Start probing mesh points
    *  S2              Probe the next mesh point
    *  S3 Xn Yn Zn.nn  Manually modify a single point
+   *  S4 Zn.nn        Set z offset. Positive away from bed, negative closer to bed.
    *
    * The S0 report the points as below
    *
-   *  +----> X-axis
+   *  +----> X-axis  1-n
    *  |
    *  |
-   *  v Y-axis
+   *  v Y-axis  1-n
    *
    */
   inline void gcode_G29() {
