@@ -1000,7 +1000,7 @@ static void lcd_control_menu() {
     enqueue_and_echo_command_now(cmd);
   }
 
-#endif PIDTEMP || PIDTEMPBED
+#endif //PIDTEMP || PIDTEMPBED
 
 #if ENABLED(PIDTEMP)
 
