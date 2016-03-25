@@ -1,4 +1,4 @@
-/*
+/**
  * Marlin 3D Printer Firmware
  * Copyright (C) 2016 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
@@ -20,7 +20,7 @@
  *
  */
 
-/*
+/**
   temperature.cpp - temperature control
   Part of Marlin
 
@@ -316,7 +316,7 @@ void PID_autotune(float temp, int extruder, int ncycles, bool set_result/*=false
               SERIAL_PROTOCOLPGM(MSG_KP); SERIAL_PROTOCOLLN(Kp);
               SERIAL_PROTOCOLPGM(MSG_KI); SERIAL_PROTOCOLLN(Ki);
               SERIAL_PROTOCOLPGM(MSG_KD); SERIAL_PROTOCOLLN(Kd);
-              /*
+              /**
               Kp = 0.33*Ku;
               Ki = Kp/Tu;
               Kd = Kp*Tu/3;
@@ -1478,7 +1478,7 @@ ISR(TIMER0_COMPB_vect) {
 
   #else // SLOW_PWM_HEATERS
 
-    /*
+    /**
      * SLOW PWM HEATERS
      *
      * for heaters drived by relay
