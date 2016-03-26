@@ -975,7 +975,7 @@ static void lcd_control_menu() {
  *
  */
 
-#if ENABLED(PIDTEMP) || ENABLED(PIDTEMPBED)
+#if ENABLED(PID_AUTOTUNE_MENU)
 
   #if ENABLED(PIDTEMP)
     int autotune_temp[EXTRUDERS] = { 150 };
@@ -1000,7 +1000,7 @@ static void lcd_control_menu() {
     enqueue_and_echo_command_now(cmd);
   }
 
-#endif //PIDTEMP || PIDTEMPBED
+#endif //PID_AUTOTUNE_MENU
 
 #if ENABLED(PIDTEMP)
 
@@ -1014,10 +1014,17 @@ static void lcd_control_menu() {
     PID_PARAM(Kd, e) = scalePID_d(raw_Kd);
     updatePID();
   }
-  #define _PIDTEMP_FUNCTIONS(eindex) \
+  #define _PIDTEMP_BASE_FUNCTIONS(eindex) \
     void copy_and_scalePID_i_E ## eindex() { copy_and_scalePID_i(eindex); } \
-    void copy_and_scalePID_d_E ## eindex() { copy_and_scalePID_d(eindex); } \
-    void lcd_autotune_callback_E ## eindex() { _lcd_autotune(eindex); }
+    void copy_and_scalePID_d_E ## eindex() { copy_and_scalePID_d(eindex); }
+
+  #if ENABLED(PID_AUTOTUNE_MENU)
+    #define _PIDTEMP_FUNCTIONS(eindex) \
+      _PIDTEMP_BASE_FUNCTIONS(eindex); \
+      void lcd_autotune_callback_E ## eindex() { _lcd_autotune(eindex); }
+  #else
+    #define _PIDTEMP_FUNCTIONS(eindex) _PIDTEMP_BASE_FUNCTIONS(eindex);
+  #endif
 
   _PIDTEMP_FUNCTIONS(0);
   #if ENABLED(PID_PARAMS_PER_EXTRUDER)
@@ -1093,9 +1100,13 @@ static void lcd_control_temperature_menu() {
           MENU_ITEM_EDIT(float3, MSG_PID_C MSG_E2, &PID_PARAM(Kc,1), 1, 9990);
         #endif//PID_ADD_EXTRUSION_RATE
 
-    #define PID_MENU_ITEMS(ELABEL, eindex) \
-      _PID_MENU_ITEMS(ELABEL, eindex); \
-      MENU_MULTIPLIER_ITEM_EDIT_CALLBACK(int3, MSG_PID_AUTOTUNE ELABEL, &autotune_temp[eindex], 150, heater_maxtemp[eindex] - 15, lcd_autotune_callback_E ## eindex)
+    #if ENABLED(PID_AUTOTUNE_MENU)
+      #define PID_MENU_ITEMS(ELABEL, eindex) \
+        _PID_MENU_ITEMS(ELABEL, eindex); \
+        MENU_MULTIPLIER_ITEM_EDIT_CALLBACK(int3, MSG_PID_AUTOTUNE ELABEL, &autotune_temp[eindex], 150, heater_maxtemp[eindex] - 15, lcd_autotune_callback_E ## eindex)
+    #else
+      #define PID_MENU_ITEMS(ELABEL, eindex) _PID_MENU_ITEMS(ELABEL, eindex)
+    #endif
 
     #if ENABLED(PID_PARAMS_PER_EXTRUDER) && EXTRUDERS > 1
       PID_MENU_ITEMS(MSG_E1, 0);
