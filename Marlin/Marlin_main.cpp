@@ -1814,7 +1814,7 @@ static void retract_z_probe() {
     #endif // Z_PROBE_ALLEN_KEY
 
     #if ENABLED(FIX_MOUNTED_PROBE)
-      // Noting to be done. Just set z_probe_is_active
+      // Nothing to do here. Just clear z_probe_is_active
     #endif
 
     z_probe_is_active = false;
@@ -3131,7 +3131,7 @@ inline void gcode_G28() {
 
     #if ENABLED(Z_PROBE_SLED)
       dock_sled(false); // engage (un-dock) the Z probe
-    #elif ENABLED(Z_PROBE_ALLEN_KEY) || (ENABLED(DELTA) && SERVO_LEVELING)
+    #elif ENABLED(MECHANICAL_PROBE) || (ENABLED(DELTA) && SERVO_LEVELING)
       deploy_z_probe();
     #endif
 
