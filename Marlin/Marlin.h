@@ -109,7 +109,6 @@ void serial_echopair_P(const char* s_P, float v);
 void serial_echopair_P(const char* s_P, double v);
 void serial_echopair_P(const char* s_P, unsigned long v);
 
-
 // Things to write to serial from Program memory. Saves 400 to 2k of RAM.
 FORCE_INLINE void serialprintPGM(const char *str) {
   char ch = pgm_read_byte(str);
@@ -118,8 +117,6 @@ FORCE_INLINE void serialprintPGM(const char *str) {
     ch = pgm_read_byte(++str);
   }
 }
-
-void get_command();
 
 void idle(
   #if ENABLED(FILAMENTCHANGEENABLE)
