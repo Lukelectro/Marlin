@@ -5957,9 +5957,9 @@ void process_next_command() {
   //  - Bypass N[-0-9][0-9]*[ ]*
   //  - Overwrite * with nul to mark the end
   while (*current_command == ' ') ++current_command;
-  if (*current_command == 'N' && ((current_command[1] >= '0' && current_command[1] <= '9') || current_command[1] == '-')) {
+  if (*current_command == 'N' && NUMERIC_SIGNED(current_command[1])) {
     current_command += 2; // skip N[-0-9]
-    while (*current_command >= '0' && *current_command <= '9') ++current_command; // skip [0-9]*
+    while (NUMERIC(*current_command)) ++current_command; // skip [0-9]*
     while (*current_command == ' ') ++current_command; // skip [ ]*
   }
   char* starpos = strchr(current_command, '*');  // * should always be the last parameter
@@ -6559,7 +6559,7 @@ void ok_to_send() {
     if (*p == 'N') {
       SERIAL_PROTOCOL(' ');
       SERIAL_ECHO(*p++);
-      while ((*p >= '0' && *p <= '9') || *p == '-')
+      while (NUMERIC_SIGNED(*p))
         SERIAL_ECHO(*p++);
     }
     SERIAL_PROTOCOLPGM(" P"); SERIAL_PROTOCOL(int(BLOCK_BUFFER_SIZE - movesplanned() - 1));
