@@ -315,7 +315,7 @@ extern int fanSpeed;
   extern float filament_width_nominal;  //holds the theoretical filament diameter i.e., 3.00 or 1.75
   extern bool filament_sensor;  //indicates that filament sensor readings should control extrusion
   extern float filament_width_meas; //holds the filament diameter as accurately measured
-  extern signed char measurement_delay[];  //ring buffer to delay measurement
+  extern int8_t measurement_delay[];  //ring buffer to delay measurement
   extern int delay_index1, delay_index2;  //ring buffer index. used by planner, temperature, and main code
   extern float delay_dist; //delay distance counter
   extern int meas_delay_cm; //delay distance
