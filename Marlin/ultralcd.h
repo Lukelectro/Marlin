@@ -83,8 +83,8 @@
   void lcd_buzz(long duration,uint16_t freq);
   void lcd_quick_feedback(); // Audible feedback for a button click - could also be visual
   bool lcd_clicked();
-
   void lcd_ignore_click(bool b=true);
+  bool lcd_blink();
 
   #if ENABLED(NEWPANEL)
     #define EN_C (_BV(BLEN_C))
