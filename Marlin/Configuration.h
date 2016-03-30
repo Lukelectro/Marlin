@@ -850,7 +850,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // JFR -was true // set to true to i
  * Note may require analog pins to be defined for different motherboards
  **********************************************************************/
 // Uncomment below to enable
-//#define FILAMENT_SENSOR
+//#define FILAMENT_WIDTH_SENSOR
 
 #define FILAMENT_SENSOR_EXTRUDER_NUM  0  //The number of the extruder that has the filament sensor (0,1,2)
 #define MEASUREMENT_DELAY_CM      14  //measurement delay in cm.  This is the distance from filament sensor to middle of barrel
@@ -860,7 +860,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // JFR -was true // set to true to i
 #define MEASURED_LOWER_LIMIT          1.90  //lower limit factor for sensor reading validation in mm
 #define MAX_MEASUREMENT_DELAY     20  //delay buffer size in bytes (1 byte = 1cm)- limits maximum measurement delay allowable (must be larger than MEASUREMENT_DELAY_CM  and lower number saves RAM)
 
-#if ENABLED(FILAMENT_SENSOR)
+#if ENABLED(FILAMENT_WIDTH_SENSOR)
   #define FILAMENT_SENSOR_EXTRUDER_NUM 0   //The number of the extruder that has the filament sensor (0,1,2)
   #define MEASUREMENT_DELAY_CM        14   //measurement delay in cm.  This is the distance from filament sensor to middle of barrel
 
