@@ -591,7 +591,7 @@ void plan_buffer_line(float x, float y, float z, const float &e, float feed_rate
        dz = target[Z_AXIS] - position[Z_AXIS];
 
   // DRYRUN ignores all temperature constraints and assures that the extruder is instantly satisfied
-  if (marlin_debug_flags & DEBUG_DRYRUN)
+  if (DEBUGGING(DRYRUN))
     position[E_AXIS] = target[E_AXIS];
 
   long de = target[E_AXIS] - position[E_AXIS];
