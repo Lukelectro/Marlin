@@ -2311,6 +2311,14 @@ char* ftostr52(const float& x) {
           mbl.active = 1;
           enqueue_and_echo_commands_P(PSTR("G28"));
           lcd_return_to_status();
+          #if ENABLED(NEWPANEL)
+            lcd_quick_feedback();
+          #endif
+          LCD_ALERTMESSAGEPGM("Leveling Done!");
+          #if HAS_BUZZER
+            buzz(200, 659);
+            buzz(200, 698);
+          #endif
         }
         else {
           current_position[Z_AXIS] = MESH_HOME_SEARCH_Z;
@@ -2343,7 +2351,7 @@ char* ftostr52(const float& x) {
       current_position[Y_AXIS] = MESH_MIN_Y;
       line_to_current(manual_feedrate[X_AXIS] <= manual_feedrate[Y_AXIS] ? X_AXIS : Y_AXIS);
       _lcd_level_bed_position = 0;
-      lcd_goto_menu(_lcd_level_bed);
+      lcd_goto_menu(_lcd_level_bed, true);
     }
   }
 
