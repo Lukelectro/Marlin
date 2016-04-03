@@ -4050,7 +4050,7 @@ inline void gcode_M104() {
   if (print_job_stop()) LCD_MESSAGEPGM(WELCOME_MSG);
 }
 
-#if HAS_TEMP_0 || HAS_TEMP_BED || ENABLED(HEATER_0_USES_MAX6675)
+#if HAS_TEMP_HOTEND || HAS_TEMP_BED
 
   #if HAS_TEMP_0
     SERIAL_PROTOCOLPGM("ok T:");
@@ -4160,7 +4160,7 @@ inline void gcode_M109() {
     now = millis();
     if (now > next_temp_ms) { //Print temp & remaining time every 1s while waiting
       next_temp_ms = now + 1000UL;
-      #if HAS_TEMP_0 || HAS_TEMP_BED || ENABLED(HEATER_0_USES_MAX6675)
+      #if HAS_TEMP_HOTEND || HAS_TEMP_BED
         print_heaterstates();
       #endif
       #ifdef TEMP_RESIDENCY_TIME
