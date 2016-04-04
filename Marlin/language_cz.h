@@ -78,6 +78,7 @@
 #define MSG_MOVE_1MM                        "Posunout o 1mm"
 #define MSG_MOVE_10MM                       "Posunout o 10mm"
 #define MSG_SPEED                           "Rychlost"
+#define MSG_BED_Z                           "Vyska podl."
 #define MSG_NOZZLE                          "Tryska"
 #define MSG_NOZZLE1                         "Tryska 2"
 #define MSG_NOZZLE2                         "Tryska 3"
