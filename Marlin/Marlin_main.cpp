@@ -1120,6 +1120,12 @@ XYZ_CONSTS_FROM_CONFIG(signed char, home_dir, HOME_DIR);
 #endif
 
 static void set_axis_is_at_home(AxisEnum axis) {
+  #if ENABLED(DEBUG_LEVELING_FEATURE)
+    if (DEBUGGING(LEVELING)) {
+      SERIAL_ECHOPAIR("set_axis_is_at_home(", (unsigned long)axis);
+      SERIAL_ECHOLNPGM(") >>>");
+    }
+  #endif
 
   #if ENABLED(DUAL_X_CARRIAGE)
     if (axis == X_AXIS) {
@@ -2818,12 +2824,12 @@ inline void gcode_G28() {
   #endif
 
   #if ENABLED(ENDSTOPS_ONLY_FOR_HOMING)
+    enable_endstops(false);
     #if ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) {
         SERIAL_ECHOLNPGM("ENDSTOPS_ONLY_FOR_HOMING enable_endstops(false)");
       }
     #endif
-    enable_endstops(false);
   #endif
 
   // For mesh leveling move back to Z=0
@@ -3040,6 +3046,7 @@ inline void gcode_G28() {
     #if ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) {
         SERIAL_ECHOLNPGM("gcode_G29 >>>");
+        print_xyz("> current_position", current_position);
       }
     #endif
 
