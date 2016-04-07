@@ -1122,7 +1122,7 @@ XYZ_CONSTS_FROM_CONFIG(signed char, home_dir, HOME_DIR);
 static void set_axis_is_at_home(AxisEnum axis) {
   #if ENABLED(DEBUG_LEVELING_FEATURE)
     if (DEBUGGING(LEVELING)) {
-      SERIAL_ECHOPAIR("set_axis_is_at_home(", (unsigned long)axis);
+      SERIAL_ECHOPAIR("set_axis_is_at_home(", axis);
       SERIAL_ECHOLNPGM(") >>>");
     }
   #endif
@@ -1791,7 +1791,7 @@ static void retract_z_probe() {
     #if ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) {
         SERIAL_ECHOLNPGM("probe_pt >>>");
-        SERIAL_ECHOPAIR("> ProbeAction:", (unsigned long)probe_action);
+        SERIAL_ECHOPAIR("> ProbeAction:", probe_action);
         SERIAL_EOL;
         DEBUG_POS("", current_position);
       }
@@ -2012,7 +2012,7 @@ static void retract_z_probe() {
 static void homeaxis(AxisEnum axis) {
   #if ENABLED(DEBUG_LEVELING_FEATURE)
     if (DEBUGGING(LEVELING)) {
-      SERIAL_ECHOPAIR(">>> homeaxis(", (unsigned long)axis);
+      SERIAL_ECHOPAIR(">>> homeaxis(", axis);
       SERIAL_ECHOLNPGM(")");
     }
   #endif
@@ -2200,7 +2200,7 @@ static void homeaxis(AxisEnum axis) {
 
   #if ENABLED(DEBUG_LEVELING_FEATURE)
     if (DEBUGGING(LEVELING)) {
-      SERIAL_ECHOPAIR("<<< homeaxis(", (unsigned long)axis);
+      SERIAL_ECHOPAIR("<<< homeaxis(", axis);
       SERIAL_ECHOLNPGM(")");
     }
   #endif
@@ -2528,7 +2528,7 @@ inline void gcode_G28() {
         feedrate = max_feedrate[Z_AXIS] * 60;  // feedrate (mm/m) = max_feedrate (mm/s)
         #if ENABLED(DEBUG_LEVELING_FEATURE)
           if (DEBUGGING(LEVELING)) {
-            SERIAL_ECHOPAIR("Raise Z (before homing) to ", (float)(MIN_Z_HEIGHT_FOR_HOMING));
+            SERIAL_ECHOPAIR("Raise Z (before homing) to ", (MIN_Z_HEIGHT_FOR_HOMING));
             SERIAL_EOL;
             DEBUG_POS("> (home_all_axis || homeZ)", current_position);
             DEBUG_POS("> (home_all_axis || homeZ)", destination);
@@ -3155,7 +3155,7 @@ inline void gcode_G28() {
           if (probePointCounter) {
             #if ENABLED(DEBUG_LEVELING_FEATURE)
               if (DEBUGGING(LEVELING)) {
-                SERIAL_ECHOPAIR("z_before = (between) ", (float)(Z_RAISE_BETWEEN_PROBINGS + current_position[Z_AXIS]));
+                SERIAL_ECHOPAIR("z_before = (between) ", (Z_RAISE_BETWEEN_PROBINGS + current_position[Z_AXIS]));
                 SERIAL_EOL;
               }
             #endif
@@ -3163,7 +3163,7 @@ inline void gcode_G28() {
           else {
             #if ENABLED(DEBUG_LEVELING_FEATURE)
               if (DEBUGGING(LEVELING)) {
-                SERIAL_ECHOPAIR("z_before = (before) ", (float)Z_RAISE_BEFORE_PROBING);
+                SERIAL_ECHOPAIR("z_before = (before) ", Z_RAISE_BEFORE_PROBING);
                 SERIAL_EOL;
               }
             #endif
@@ -3420,6 +3420,9 @@ inline void gcode_G92() {
    */
   inline void gcode_M0_M1() {
     char* args = current_command_args;
+
+    uint8_t test_value = 12;
+    SERIAL_ECHOPAIR("TEST", test_value);
 
     millis_t codenum = 0;
     bool hasP = false, hasS = false;
