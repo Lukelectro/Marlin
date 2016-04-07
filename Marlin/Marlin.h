@@ -336,7 +336,7 @@ extern int fanSpeed;
 #endif
 
 // Print job timer
-extern stopwatch print_job_timer;
+extern Stopwatch print_job_timer;
 
 // Handling multiple extruders pins
 extern uint8_t active_extruder;

@@ -4006,17 +4006,17 @@ inline void gcode_M104() {
     #endif
 
     /**
-     * We use halve EXTRUDE_MINTEMP here to allow nozzles to be put into hot
+     * We use half EXTRUDE_MINTEMP here to allow nozzles to be put into hot
      * stand by mode, for instance in a dual extruder setup, without affecting
      * the running print timer.
      */
-    if (temp <= (EXTRUDE_MINTEMP/2)) {
+    if (temp <= (EXTRUDE_MINTEMP)/2) {
       print_job_timer.stop();
       LCD_MESSAGEPGM(WELCOME_MSG);
     }
     /**
      * We do not check if the timer is already running because this check will
-     * be done for us inside the stopwatch::start() method thus a running timer
+     * be done for us inside the Stopwatch::start() method thus a running timer
      * will not restart.
      */
     else print_job_timer.start();
@@ -4099,17 +4099,17 @@ inline void gcode_M109() {
     #endif
 
     /**
-     * We use halve EXTRUDE_MINTEMP here to allow nozzles to be put into hot
+     * We use half EXTRUDE_MINTEMP here to allow nozzles to be put into hot
      * stand by mode, for instance in a dual extruder setup, without affecting
      * the running print timer.
      */
-    if (temp <= (EXTRUDE_MINTEMP/2)) {
+    if (temp <= (EXTRUDE_MINTEMP)/2) {
       print_job_timer.stop();
       LCD_MESSAGEPGM(WELCOME_MSG);
     }
     /**
      * We do not check if the timer is already running because this check will
-     * be done for us inside the stopwatch::start() method thus a running timer
+     * be done for us inside the Stopwatch::start() method thus a running timer
      * will not restart.
      */
     else print_job_timer.start();
