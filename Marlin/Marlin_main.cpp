@@ -4267,6 +4267,27 @@ inline void gcode_M111() {
  */
 inline void gcode_M112() { kill(PSTR(MSG_KILLED)); }
 
+#if ENABLED(HOST_KEEPALIVE_FEATURE)
+
+  /**
+   * M113: Get or set Host Keepalive interval (0 to disable)
+   *
+   *   S<seconds> Optional. Set the keepalive interval.
+   */
+  inline void gcode_M113() {
+    if (code_seen('S')) {
+      host_keepalive_interval = (uint8_t)code_value_short();
+      NOMORE(host_keepalive_interval, 60);
+    }
+    else {
+      SERIAL_ECHO_START;
+      SERIAL_ECHOPAIR("M113 S", (unsigned long)host_keepalive_interval);
+      SERIAL_EOL;
+    }
+  }
+
+#endif
+
 #if ENABLED(BARICUDA)
 
   #if HAS_HEATER_1
