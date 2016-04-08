@@ -1687,7 +1687,7 @@ menu_edit_type(unsigned long, long5, ftostr5, 0.01);
     lcd_move_y();
   }
   static void reprapworld_keypad_move_home() {
-    enqueue_and_echo_commands_P((PSTR("G28"))); // move all axis home
+    enqueue_and_echo_commands_P(PSTR("G28")); // move all axes home
   }
 #endif // REPRAPWORLD_KEYPAD
 
