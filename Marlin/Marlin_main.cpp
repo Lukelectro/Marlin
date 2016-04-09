@@ -1225,10 +1225,16 @@ inline void line_to_destination() {
   line_to_destination(feedrate);
 }
 inline void sync_plan_position() {
+  #if ENABLED(DEBUG_LEVELING_FEATURE)
+    if (DEBUGGING(LEVELING)) DEBUG_POS("sync_plan_position", current_position);
+  #endif
   plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
 }
 #if ENABLED(DELTA) || ENABLED(SCARA)
   inline void sync_plan_position_delta() {
+    #if ENABLED(DEBUG_LEVELING_FEATURE)
+      if (DEBUGGING(LEVELING)) DEBUG_POS("sync_plan_position_delta", current_position);
+    #endif
     calculate_delta(current_position);
     plan_set_position(delta[X_AXIS], delta[Y_AXIS], delta[Z_AXIS], current_position[E_AXIS]);
   }
@@ -1269,8 +1275,12 @@ static void setup_for_endstop_move() {
     #if DISABLED(DELTA)
 
       static void set_bed_level_equation_lsq(double* plane_equation_coefficients) {
+        #if ENABLED(DEBUG_LEVELING_FEATURE)
+          if (DEBUGGING(LEVELING)) DEBUG_POS("BEFORE set_bed_level_equation_lsq", current_position);
+        #endif
+
         vector_3 planeNormal = vector_3(-plane_equation_coefficients[0], -plane_equation_coefficients[1], 1);
-        planeNormal.debug("planeNormal");
+        // planeNormal.debug("planeNormal");
         plan_bed_level_matrix = matrix_3x3::create_look_at(planeNormal);
         //bedLevel.debug("bedLevel");
 
@@ -1285,7 +1295,7 @@ static void setup_for_endstop_move() {
         current_position[Z_AXIS] = corrected_position.z;
 
         #if ENABLED(DEBUG_LEVELING_FEATURE)
-          if (DEBUGGING(LEVELING)) DEBUG_POS("set_bed_level_equation_lsq", current_position);
+          if (DEBUGGING(LEVELING)) DEBUG_POS("AFTER set_bed_level_equation_lsq", current_position);
         #endif
 
         sync_plan_position();
