@@ -1285,7 +1285,7 @@ static void setup_for_endstop_move() {
         //bedLevel.debug("bedLevel");
 
         //plan_bed_level_matrix.debug("bed level before");
-        //vector_3 uncorrected_position = plan_get_position_mm();
+        //vector_3 uncorrected_position = plan_get_position();
         //uncorrected_position.debug("position before");
 
         vector_3 corrected_position = plan_get_position();
@@ -3072,15 +3072,8 @@ inline void gcode_G28() {
 
     #endif // AUTO_BED_LEVELING_GRID
 
-    #if ENABLED(Z_PROBE_SLED)
-      dock_sled(false); // engage (un-dock) the Z probe
-    #elif ENABLED(Z_PROBE_ALLEN_KEY) || (ENABLED(DELTA) && SERVO_LEVELING)
-      deploy_z_probe();
-    #endif
-
-    st_synchronize();
-
     if (!dryrun) {
+
       // make sure the bed_level_rotation_matrix is identity or the planner will get it wrong
       plan_bed_level_matrix.set_to_identity();
 
@@ -3102,6 +3095,14 @@ inline void gcode_G28() {
 
       #endif // !DELTA
     }
+
+    #if ENABLED(Z_PROBE_SLED)
+      dock_sled(false); // engage (un-dock) the Z probe
+    #elif ENABLED(Z_PROBE_ALLEN_KEY) || (ENABLED(DELTA) && SERVO_LEVELING)
+      deploy_z_probe();
+    #endif
+
+    st_synchronize();
 
     setup_for_endstop_move();
 
