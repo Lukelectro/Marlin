@@ -416,7 +416,7 @@ bool Stopped = false;
   };
 
   static MarlinBusyState busy_state = NOT_BUSY;
-  static millis_t next_busy_signal_ms = -1;
+  static millis_t prev_busy_signal_ms = -1;
   uint8_t host_keepalive_interval = DEFAULT_KEEPALIVE_INTERVAL;
   #define KEEPALIVE_STATE(n) do{ busy_state = n; }while(0)
 #else
@@ -2315,8 +2315,8 @@ void unknown_command_error() {
    */
   void host_keepalive() {
     millis_t ms = millis();
-    if (busy_state != NOT_BUSY) {
-      if (ms < next_busy_signal_ms) return;
+    if (host_keepalive_interval && busy_state != NOT_BUSY) {
+      if (ms - prev_busy_signal_ms < 1000UL * host_keepalive_interval) return;
       switch (busy_state) {
         case IN_HANDLER:
         case IN_PROCESS:
@@ -2335,7 +2335,7 @@ void unknown_command_error() {
           break;
       }
     }
-    next_busy_signal_ms = host_keepalive_interval ? ms + 1000UL * host_keepalive_interval : -1;
+    prev_busy_signal_ms = ms;
   }
 
 #endif //HOST_KEEPALIVE_FEATURE
