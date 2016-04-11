@@ -3097,6 +3097,8 @@ inline void gcode_G28() {
       current_position[Z_AXIS] = uncorrected_position.z;
       plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
 
+        sync_plan_position();
+
       #endif // !DELTA
     }
 
