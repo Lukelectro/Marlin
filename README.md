@@ -32,7 +32,7 @@ The current Marlin dev team consists of:
  - Scott Lahteine [@thinkyhead] - English
  - [@Wurstnase] - Deutsch, English
  - F. Malpartida [@fmalpartida] - English, Spanish
- - [@CONSULitAS] - Deutsch, English
+ - Jochen Groppe [@CONSULitAS] - Deutsch, English
  - [@maverikou]
  - Chris Palmer [@nophead]
  - [@paclema]
