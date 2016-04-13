@@ -2537,7 +2537,7 @@ inline void gcode_G28() {
    */
   #if ENABLED(MESH_BED_LEVELING)
     uint8_t mbl_was_active = mbl.active;
-    mbl.active = 0;
+    mbl.active = false;
   #endif
 
   setup_for_endstop_move();
