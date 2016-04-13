@@ -2886,6 +2886,28 @@ inline void gcode_G28() {
 
   enum MeshLevelingState { MeshReport, MeshStart, MeshNext };
 
+  inline void _mbl_goto_xy(float x, float y) {
+    saved_feedrate = feedrate;
+    feedrate = homing_feedrate[X_AXIS];
+
+    #if MIN_Z_HEIGHT_FOR_HOMING > 0
+      current_position[Z_AXIS] = MESH_HOME_SEARCH_Z + MIN_Z_HEIGHT_FOR_HOMING;
+      line_to_current_position();
+    #endif
+
+    current_position[X_AXIS] = x + home_offset[X_AXIS];
+    current_position[Y_AXIS] = y + home_offset[Y_AXIS];
+    line_to_current_position();
+
+    #if MIN_Z_HEIGHT_FOR_HOMING > 0
+      current_position[Z_AXIS] = MESH_HOME_SEARCH_Z;
+      line_to_current_position();
+    #endif
+
+    feedrate = saved_feedrate;
+    st_synchronize();
+  }
+
   /**
    * G29: Mesh-based Z probe, probes a grid and produces a
    *      mesh to compensate for variable bed height
