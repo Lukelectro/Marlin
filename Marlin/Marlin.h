@@ -313,8 +313,8 @@ extern float zprobe_zoffset;
 extern int fanSpeed;
 
 #if ENABLED(BARICUDA)
-  extern int ValvePressure;
-  extern int EtoPPressure;
+  extern int baricuda_valve_pressure;
+  extern int baricuda_e_to_p_pressure;
 #endif
 
 #if ENABLED(FILAMENT_WIDTH_SENSOR)
