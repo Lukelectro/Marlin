@@ -436,6 +436,8 @@ bool Stopped = false;
  * ***************************************************************************
  */
 
+void stop();
+
 void get_available_commands();
 void process_next_command();
 
@@ -7899,7 +7901,7 @@ void kill(const char* lcd_msg) {
   }
 #endif // FAST_PWM_FAN
 
-void Stop() {
+void stop() {
   disable_all_heaters();
   if (IsRunning()) {
     Running = false;
