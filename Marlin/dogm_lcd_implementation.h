@@ -344,6 +344,23 @@ FORCE_INLINE void _draw_heater_status(int x, int heater) {
   }
 }
 
+FORCE_INLINE void _draw_axis_label(AxisEnum axis, const char *pstr, bool blink) {
+  if (blink)
+    lcd_printPGM(pstr);
+  else {
+    if (!axis_homed[axis])
+      lcd_printPGM(PSTR("?"));
+    else {
+      #if DISABLED(DISABLE_REDUCED_ACCURACY_WARNING)
+        if (!axis_known_position[axis])
+          lcd_printPGM(PSTR(" "));
+        else
+      #endif
+      lcd_printPGM(pstr);
+    }
+  }
+}
+
 static void lcd_implementation_status_screen() {
   u8g.setColorIndex(1); // black on white
 
