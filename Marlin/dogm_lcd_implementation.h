@@ -388,8 +388,10 @@ static void lcd_implementation_status_screen() {
   // Extruders
   for (int i = 0; i < EXTRUDERS; i++) _draw_heater_status(5 + i * 25, i);
 
-  // Heatbed
-  if (EXTRUDERS < 4) _draw_heater_status(81, -1);
+  // Heated bed
+  #if EXTRUDERS < 4 && HAS_TEMP_BED
+    _draw_heater_status(81, -1);
+  #endif
 
   // Fan
   lcd_setFont(FONT_STATUSMENU);
