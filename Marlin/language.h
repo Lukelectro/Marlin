@@ -27,6 +27,10 @@
 
 #define GENERATE_LANGUAGE_INCLUDE(M)  STRINGIFY_(language_##M.h)
 
+// For character-based LCD controllers (DISPLAY_CHARSET_HD44780)
+#define JAPANESE 1
+#define WESTERN  2
+#define CYRILLIC 3
 
 // NOTE: IF YOU CHANGE LANGUAGE FILES OR MERGE A FILE WITH CHANGES
 //
