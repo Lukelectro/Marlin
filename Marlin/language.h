@@ -25,7 +25,10 @@
 
 #include "Configuration.h"
 
-#define GENERATE_LANGUAGE_INCLUDE(M)  STRINGIFY_(language_##M.h)
+// Fallback if no language is set. DON'T CHANGE
+#ifndef LCD_LANGUAGE
+  #define LCD_LANGUAGE en
+#endif
 
 // For character-based LCD controllers (DISPLAY_CHARSET_HD44780)
 #define JAPANESE 1
