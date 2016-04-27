@@ -4168,6 +4168,15 @@ inline void gcode_M77() {
   print_job_timer.stop();
 }
 
+#if ENABLED(PRINTCOUNTER)
+  /*+
+   * M78: Show print statistics
+   */
+  inline void gcode_M78() {
+    print_job_timer.showStats();
+  }
+#endif
+
 /**
  * M104: Set hot end temperature
  */
@@ -6503,6 +6512,12 @@ void process_next_command() {
         gcode_M77();
         break;
 
+      #if ENABLED(PRINTCOUNTER)
+        case 78: // Show print statistics
+          gcode_M78();
+          break;
+      #endif
+
       #if ENABLED(M100_FREE_MEMORY_WATCHER)
         case 100:
           gcode_M100();
@@ -7658,6 +7673,9 @@ void idle(
   );
   host_keepalive();
   lcd_update();
+  #if ENABLED(PRINTCOUNTER)
+      print_job_timer.tick();
+  #endif
 }
 
 /**
