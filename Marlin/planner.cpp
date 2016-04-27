@@ -1089,7 +1089,7 @@ void plan_buffer_line(float x, float y, float z, const float &e, float feed_rate
 
   planner_recalculate();
 
-  st_wake_up();
+  stepper.wake_up();
 
 } // plan_buffer_line()
 
@@ -1117,7 +1117,7 @@ void plan_set_position(const float &x, const float &y, const float &z, const flo
          ny = position[Y_AXIS] = lround(y * axis_steps_per_unit[Y_AXIS]),
          nz = position[Z_AXIS] = lround(z * axis_steps_per_unit[Z_AXIS]),
          ne = position[E_AXIS] = lround(e * axis_steps_per_unit[E_AXIS]);
-    st_set_position(nx, ny, nz, ne);
+    stepper.set_position(nx, ny, nz, ne);
     previous_nominal_speed = 0.0; // Resets planner junction speeds. Assumes start from rest.
 
     for (int i = 0; i < NUM_AXIS; i++) previous_speed[i] = 0.0;
@@ -1125,7 +1125,7 @@ void plan_set_position(const float &x, const float &y, const float &z, const flo
 
 void plan_set_e_position(const float& e) {
   position[E_AXIS] = lround(e * axis_steps_per_unit[E_AXIS]);
-  st_set_e_position(position[E_AXIS]);
+  stepper.set_e_position(position[E_AXIS]);
 }
 
 // Calculate the steps/s^2 acceleration rates, based on the mm/s^s
