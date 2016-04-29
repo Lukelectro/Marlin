@@ -481,10 +481,6 @@ static void report_current_position();
   }
 #endif
 
-#if ENABLED(PREVENT_DANGEROUS_EXTRUDE)
-  float extrude_min_temp = EXTRUDE_MINTEMP;
-#endif
-
 #if ENABLED(SDSUPPORT)
   #include "SdFatUtil.h"
   int freeMemory() { return SdFatUtil::FreeRam(); }
@@ -753,7 +749,7 @@ void setup() {
 
   lcd_init();
 
-  tp_init();    // Initialize temperature loop
+  thermalManager.init();    // Initialize temperature loop
 
   #if ENABLED(DELTA) || ENABLED(SCARA)
     // Vital to init kinematic equivalent for X0 Y0 Z0
@@ -3747,7 +3743,7 @@ inline void gcode_M31() {
   SERIAL_ECHO_START;
   SERIAL_ECHOLN(time);
   lcd_setstatus(time);
-  autotempShutdown();
+  thermalManager.autotempShutdown();
 }
 
 #if ENABLED(SDSUPPORT)
@@ -4182,10 +4178,10 @@ inline void gcode_M104() {
 
   if (code_seen('S')) {
     float temp = code_value();
-    setTargetHotend(temp, target_extruder);
+    thermalManager.setTargetHotend(temp, target_extruder);
     #if ENABLED(DUAL_X_CARRIAGE)
       if (dual_x_carriage_mode == DXC_DUPLICATION_MODE && target_extruder == 0)
-        setTargetHotend1(temp == 0.0 ? 0.0 : temp + duplicate_extruder_temp_offset);
+        thermalManager.setTargetHotend(temp == 0.0 ? 0.0 : temp + duplicate_extruder_temp_offset, 1);
     #endif
 
     /**
@@ -4204,7 +4200,7 @@ inline void gcode_M104() {
      */
     else print_job_timer.start();
 
-    if (temp > degHotend(target_extruder)) LCD_MESSAGEPGM(MSG_HEATING);
+    if (temp > thermalManager.degHotend(target_extruder)) LCD_MESSAGEPGM(MSG_HEATING);
   }
 }
 
@@ -4281,10 +4277,10 @@ inline void gcode_M109() {
   bool no_wait_for_cooling = code_seen('S');
   if (no_wait_for_cooling || code_seen('R')) {
     float temp = code_value();
-    setTargetHotend(temp, target_extruder);
+    thermalManager.setTargetHotend(temp, target_extruder);
     #if ENABLED(DUAL_X_CARRIAGE)
       if (dual_x_carriage_mode == DXC_DUPLICATION_MODE && target_extruder == 0)
-        setTargetHotend1(temp == 0.0 ? 0.0 : temp + duplicate_extruder_temp_offset);
+        thermalManager.setTargetHotend(temp == 0.0 ? 0.0 : temp + duplicate_extruder_temp_offset, 1);
     #endif
 
     /**
@@ -4303,7 +4299,7 @@ inline void gcode_M109() {
      */
     else print_job_timer.start();
 
-    if (temp > degHotend(target_extruder)) LCD_MESSAGEPGM(MSG_HEATING);
+    if (temp > thermalManager.degHotend(target_extruder)) LCD_MESSAGEPGM(MSG_HEATING);
   }
 
   #if ENABLED(AUTOTEMP)
@@ -4316,7 +4312,7 @@ inline void gcode_M109() {
     #define TEMP_CONDITIONS (!residency_start_ms || PENDING(now, residency_start_ms + (TEMP_RESIDENCY_TIME) * 1000UL))
   #else
     // Loop until the temperature is very close target
-    #define TEMP_CONDITIONS (wants_to_cool ? isCoolingHotend(target_extruder) : isHeatingHotend(target_extruder))
+    #define TEMP_CONDITIONS (wants_to_cool ? thermalManager.isCoolingHotend(target_extruder) : thermalManager.isHeatingHotend(target_extruder))
   #endif //TEMP_RESIDENCY_TIME > 0
 
   float theTarget = -1;
@@ -4327,7 +4323,6 @@ inline void gcode_M109() {
   KEEPALIVE_STATE(NOT_BUSY);
 
   do {
-
     now = millis();
     if (ELAPSED(now, next_temp_ms)) { //Print temp & remaining time every 1s while waiting
       next_temp_ms = now + 1000UL;
@@ -4349,9 +4344,9 @@ inline void gcode_M109() {
     }
 
     // Target temperature might be changed during the loop
-    if (theTarget != degTargetHotend(target_extruder)) {
-      theTarget = degTargetHotend(target_extruder);
-      wants_to_cool = isCoolingHotend(target_extruder);
+    if (theTarget != thermalManager.degTargetHotend(target_extruder)) {
+      wants_to_cool = thermalManager.isCoolingHotend(target_extruder);
+      theTarget = thermalManager.degTargetHotend(target_extruder);
 
       // Exit if S<lower>, continue if S<higher>, R<lower>, or R<higher>
       if (no_wait_for_cooling && wants_to_cool) break;
@@ -4366,7 +4361,7 @@ inline void gcode_M109() {
 
     #if TEMP_RESIDENCY_TIME > 0
 
-      float temp_diff = fabs(theTarget - degHotend(target_extruder));
+      float temp_diff = fabs(theTarget - thermalManager.degHotend(target_extruder));
 
       if (!residency_start_ms) {
         // Start the TEMP_RESIDENCY_TIME timer when we reach target temp for the first time.
@@ -4396,7 +4391,7 @@ inline void gcode_M109() {
 
     LCD_MESSAGEPGM(MSG_BED_HEATING);
     bool no_wait_for_cooling = code_seen('S');
-    if (no_wait_for_cooling || code_seen('R')) setTargetBed(code_value());
+    if (no_wait_for_cooling || code_seen('R')) thermalManager.setTargetBed(code_value());
 
     #if TEMP_BED_RESIDENCY_TIME > 0
       millis_t residency_start_ms = 0;
@@ -4404,7 +4399,7 @@ inline void gcode_M109() {
       #define TEMP_BED_CONDITIONS (!residency_start_ms || PENDING(now, residency_start_ms + (TEMP_BED_RESIDENCY_TIME) * 1000UL))
     #else
       // Loop until the temperature is very close target
-      #define TEMP_BED_CONDITIONS (wants_to_cool ? isCoolingBed() : isHeatingBed())
+      #define TEMP_BED_CONDITIONS (wants_to_cool ? thermalManager.isCoolingBed() : thermalManager.isHeatingBed())
     #endif //TEMP_BED_RESIDENCY_TIME > 0
 
     float theTarget = -1;
@@ -4434,16 +4429,16 @@ inline void gcode_M109() {
       }
 
       // Target temperature might be changed during the loop
-      if (theTarget != degTargetBed()) {
-        theTarget = degTargetBed();
-        wants_to_cool = isCoolingBed();
+      if (theTarget != thermalManager.degTargetBed()) {
+        wants_to_cool = thermalManager.isCoolingBed();
+        theTarget = thermalManager.degTargetBed();
 
         // Exit if S<lower>, continue if S<higher>, R<lower>, or R<higher>
         if (no_wait_for_cooling && wants_to_cool) break;
 
         // Prevent a wait-forever situation if R is misused i.e. M190 R0
-        // Simply don't wait for cooling below 30C
-        if (wants_to_cool && theTarget < (EXTRUDE_MINTEMP)/2) break;
+        // Simply don't wait to cool a bed under 30C
+        if (wants_to_cool && theTarget < 30) break;
       }
 
       idle();
@@ -4451,7 +4446,7 @@ inline void gcode_M109() {
 
       #if TEMP_BED_RESIDENCY_TIME > 0
 
-        float temp_diff = fabs(degBed() - degTargetBed());
+        float temp_diff = fabs(theTarget - thermalManager.degBed());
 
         if (!residency_start_ms) {
           // Start the TEMP_BED_RESIDENCY_TIME timer when we reach target temp for the first time.
@@ -4574,7 +4569,7 @@ inline void gcode_M112() { kill(PSTR(MSG_KILLED)); }
  */
 inline void gcode_M140() {
   if (DEBUGGING(DRYRUN)) return;
-  if (code_seen('S')) setTargetBed(code_value());
+  if (code_seen('S')) thermalManager.setTargetBed(code_value());
 }
 
 #if ENABLED(ULTIPANEL)
@@ -4665,7 +4660,7 @@ inline void gcode_M140() {
  *      This code should ALWAYS be available for EMERGENCY SHUTDOWN!
  */
 inline void gcode_M81() {
-  disable_all_heaters();
+  thermalManager.disable_all_heaters();
   stepper.finish_and_disable();
   #if FAN_COUNT > 0
     #if FAN_COUNT > 1
@@ -5323,7 +5318,7 @@ inline void gcode_M226() {
         NOMORE(lpq_len, LPQ_MAX_LEN);
       #endif
 
-      updatePID();
+      thermalManager.updatePID();
       SERIAL_ECHO_START;
       #if ENABLED(PID_PARAMS_PER_EXTRUDER)
         SERIAL_ECHO(" e:"); // specify extruder in serial output
@@ -5353,18 +5348,19 @@ inline void gcode_M226() {
 #if ENABLED(PIDTEMPBED)
 
   inline void gcode_M304() {
-    if (code_seen('P')) bedKp = code_value();
-    if (code_seen('I')) bedKi = scalePID_i(code_value());
-    if (code_seen('D')) bedKd = scalePID_d(code_value());
+    if (code_seen('P')) thermalManager.bedKp = code_value();
+    if (code_seen('I')) thermalManager.bedKi = scalePID_i(code_value());
+    if (code_seen('D')) thermalManager.bedKd = scalePID_d(code_value());
 
-    updatePID();
+    thermalManager.updatePID();
+
     SERIAL_ECHO_START;
     SERIAL_ECHO(" p:");
-    SERIAL_ECHO(bedKp);
+    SERIAL_ECHO(thermalManager.bedKp);
     SERIAL_ECHO(" i:");
-    SERIAL_ECHO(unscalePID_i(bedKi));
+    SERIAL_ECHO(unscalePID_i(thermalManager.bedKi));
     SERIAL_ECHO(" d:");
-    SERIAL_ECHOLN(unscalePID_d(bedKd));
+    SERIAL_ECHOLN(unscalePID_d(thermalManager.bedKd));
   }
 
 #endif // PIDTEMPBED
@@ -5421,13 +5417,11 @@ inline void gcode_M226() {
 
 #if ENABLED(PREVENT_DANGEROUS_EXTRUDE)
 
-  void set_extrude_min_temp(float temp) { extrude_min_temp = temp; }
-
   /**
    * M302: Allow cold extrudes, or set the minimum extrude S<temperature>.
    */
   inline void gcode_M302() {
-    set_extrude_min_temp(code_seen('S') ? code_value() : 0);
+    thermalManager.extrude_min_temp = code_seen('S') ? code_value() : 0;
   }
 
 #endif // PREVENT_DANGEROUS_EXTRUDE
@@ -5453,7 +5447,7 @@ inline void gcode_M303() {
 
     KEEPALIVE_STATE(NOT_BUSY); // don't send "busy: processing" messages during autotune output
 
-    PID_autotune(temp, e, c, u);
+    thermalManager.PID_autotune(temp, e, c, u);
 
     KEEPALIVE_STATE(IN_HANDLER);
   #else
@@ -5635,7 +5629,7 @@ inline void gcode_M400() { stepper.synchronize(); }
     NOMORE(meas_delay_cm, MAX_MEASUREMENT_DELAY);
 
     if (filwidth_delay_index2 == -1) { // Initialize the ring buffer if not done since startup
-      int temp_ratio = widthFil_to_size_ratio();
+      int temp_ratio = thermalManager.widthFil_to_size_ratio();
 
       for (uint8_t i = 0; i < COUNT(measurement_delay); ++i)
         measurement_delay[i] = temp_ratio - 100;  // Subtract 100 to scale within a signed byte
@@ -5838,7 +5832,7 @@ inline void gcode_M503() {
    */
   inline void gcode_M600() {
 
-    if (degHotend(active_extruder) < extrude_min_temp) {
+    if (thermalManager.tooColdToExtrude(active_extruder)) {
       SERIAL_ERROR_START;
       SERIAL_ERRORLNPGM(MSG_TOO_COLD_FOR_M600);
       return;
@@ -7159,7 +7153,7 @@ void mesh_buffer_line(float x, float y, float z, const float e, float feed_rate,
     if (DEBUGGING(DRYRUN)) return;
     float de = dest_e - curr_e;
     if (de) {
-      if (degHotend(active_extruder) < extrude_min_temp) {
+      if (thermalManager.tooColdToExtrude(active_extruder)) {
         curr_e = dest_e; // Behave as if the move really took place, but ignore E part
         SERIAL_ECHO_START;
         SERIAL_ECHOLNPGM(MSG_ERR_COLD_EXTRUDE_STOP);
@@ -7578,9 +7572,9 @@ void controllerFan()
     if (ELAPSED(millis(), next_status_led_update_ms)) {
       next_status_led_update_ms += 500; // Update every 0.5s
       for (int8_t cur_extruder = 0; cur_extruder < EXTRUDERS; ++cur_extruder)
-        max_temp = max(max(max_temp, degHotend(cur_extruder)), degTargetHotend(cur_extruder));
+        max_temp = max(max(max_temp, thermalManager.degHotend(cur_extruder)), thermalManager.degTargetHotend(cur_extruder));
       #if HAS_TEMP_BED
-        max_temp = max(max(max_temp, degTargetBed()), degBed());
+        max_temp = max(max(max_temp, thermalManager.degTargetBed()), thermalManager.degBed());
       #endif
       bool new_led = (max_temp > 55.0) ? true : (max_temp < 54.0) ? false : red_led;
       if (new_led != red_led) {
@@ -7621,7 +7615,7 @@ void idle(
     bool no_stepper_sleep/*=false*/
   #endif
 ) {
-  manage_heater();
+  thermalManager.manage_heater();
   manage_inactivity(
     #if ENABLED(FILAMENTCHANGEENABLE)
       no_stepper_sleep
@@ -7726,7 +7720,7 @@ void manage_inactivity(bool ignore_stepper_queue/*=false*/) {
 
   #if ENABLED(EXTRUDER_RUNOUT_PREVENT)
     if (ELAPSED(ms, previous_cmd_ms + (EXTRUDER_RUNOUT_SECONDS) * 1000UL))
-      if (degHotend(active_extruder) > EXTRUDER_RUNOUT_MINTEMP) {
+      if (thermalManager.degHotend(active_extruder) > EXTRUDER_RUNOUT_MINTEMP) {
         bool oldstatus;
         switch (active_extruder) {
           case 0:
@@ -7809,7 +7803,7 @@ void kill(const char* lcd_msg) {
   #endif
 
   cli(); // Stop interrupts
-  disable_all_heaters();
+  thermalManager.disable_all_heaters();
   disable_all_steppers();
 
   #if HAS_POWER_SWITCH
@@ -7905,7 +7899,7 @@ void kill(const char* lcd_msg) {
 #endif // FAST_PWM_FAN
 
 void stop() {
-  disable_all_heaters();
+  thermalManager.disable_all_heaters();
   if (IsRunning()) {
     Running = false;
     Stopped_gcode_LastN = gcode_LastN; // Save last g_code for restart

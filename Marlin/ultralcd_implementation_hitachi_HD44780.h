@@ -636,7 +636,7 @@ static void lcd_implementation_status_screen() {
     //
     // Hotend 0 Temperature
     //
-    LCD_TEMP_ONLY(degHotend(0), degTargetHotend(0));
+    LCD_TEMP_ONLY(thermalManager.degHotend(0), thermalManager.degTargetHotend(0));
 
     //
     // Hotend 1 or Bed Temperature
@@ -646,10 +646,10 @@ static void lcd_implementation_status_screen() {
       lcd.setCursor(8, 0);
       #if EXTRUDERS > 1
         lcd.print(LCD_STR_THERMOMETER[0]);
-        LCD_TEMP_ONLY(degHotend(1), degTargetHotend(1));
+        LCD_TEMP_ONLY(thermalManager.degHotend(1), thermalManager.degTargetHotend(1));
       #else
         lcd.print(LCD_STR_BEDTEMP[0]);
-        LCD_TEMP_ONLY(degBed(), degTargetBed());
+        LCD_TEMP_ONLY(thermalManager.degBed(), thermalManager.degTargetBed());
       #endif
 
     #endif // EXTRUDERS > 1 || TEMP_SENSOR_BED != 0
@@ -659,7 +659,7 @@ static void lcd_implementation_status_screen() {
     //
     // Hotend 0 Temperature
     //
-    LCD_TEMP(degHotend(0), degTargetHotend(0), LCD_STR_THERMOMETER[0]);
+    LCD_TEMP(thermalManager.degHotend(0), thermalManager.degTargetHotend(0), LCD_STR_THERMOMETER[0]);
 
     //
     // Hotend 1 or Bed Temperature
@@ -667,9 +667,9 @@ static void lcd_implementation_status_screen() {
     #if EXTRUDERS > 1 || TEMP_SENSOR_BED != 0
       lcd.setCursor(10, 0);
       #if EXTRUDERS > 1
-        LCD_TEMP(degHotend(1), degTargetHotend(1), LCD_STR_THERMOMETER[0]);
+        LCD_TEMP(thermalManager.degHotend(1), thermalManager.degTargetHotend(1), LCD_STR_THERMOMETER[0]);
       #else
-        LCD_TEMP(degBed(), degTargetBed(), LCD_STR_BEDTEMP[0]);
+        LCD_TEMP(thermalManager.degBed(), thermalManager.degTargetBed(), LCD_STR_BEDTEMP[0]);
       #endif
 
     #endif  // EXTRUDERS > 1 || TEMP_SENSOR_BED != 0
@@ -705,7 +705,7 @@ static void lcd_implementation_status_screen() {
         // If we both have a 2nd extruder and a heated bed,
         // show the heated bed temp on the left,
         // since the first line is filled with extruder temps
-        LCD_TEMP(degBed(), degTargetBed(), LCD_STR_BEDTEMP[0]);
+        LCD_TEMP(thermalManager.degBed(), thermalManager.degTargetBed(), LCD_STR_BEDTEMP[0]);
 
       #else
         // Before homing the axis letters are blinking 'X' <-> '?'.
@@ -1004,9 +1004,9 @@ static void lcd_implementation_drawmenu_sddirectory(uint8_t row, const char* pst
     static uint8_t ledsprev = 0;
     uint8_t leds = 0;
 
-    if (target_temperature_bed > 0) leds |= LED_A;
+    if (thermalManager.degTargetBed() > 0) leds |= LED_A;
 
-    if (target_temperature[0] > 0) leds |= LED_B;
+    if (thermalManager.degTargetHotend(0) > 0) leds |= LED_B;
 
     #if FAN_COUNT > 0
       if (0
@@ -1023,7 +1023,7 @@ static void lcd_implementation_drawmenu_sddirectory(uint8_t row, const char* pst
     #endif // FAN_COUNT > 0
 
     #if EXTRUDERS > 1
-      if (target_temperature[1] > 0) leds |= LED_C;
+      if (thermalManager.degTargetHotend(1) > 0) leds |= LED_C;
     #endif
 
     if (leds != ledsprev) {

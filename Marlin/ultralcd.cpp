@@ -479,7 +479,7 @@ inline void line_to_current(AxisEnum axis) {
     stepper.quick_stop();
     card.sdprinting = false;
     card.closefile();
-    autotempShutdown();
+    thermalManager.autotempShutdown();
     cancel_heatup = true;
     lcd_setstatus(MSG_PRINT_ABORTED, true);
   }
@@ -664,9 +664,9 @@ static void lcd_tune_menu()
  *
  */
 void _lcd_preheat(int endnum, const float temph, const float tempb, const int fan) {
-  if (temph > 0) setTargetHotend(temph, endnum);
+  if (temph > 0) thermalManager.setTargetHotend(temph, endnum);
   #if TEMP_SENSOR_BED != 0
-    setTargetBed(tempb);
+    thermalManager.setTargetBed(tempb);
   #else
     UNUSED(tempb);
   #endif
@@ -701,19 +701,27 @@ void _lcd_preheat(int endnum, const float temph, const float tempb, const int fa
 
   void lcd_preheat_pla0123() {
     #if EXTRUDERS > 1
-      setTargetHotend0(plaPreheatHotendTemp);
-      setTargetHotend1(plaPreheatHotendTemp);
-      setTargetHotend2(plaPreheatHotendTemp);
+      thermalManager.setTargetHotend(plaPreheatHotendTemp, 1);
+      #if EXTRUDERS > 2
+        thermalManager.setTargetHotend(plaPreheatHotendTemp, 2);
+        #if EXTRUDERS > 3
+          thermalManager.setTargetHotend(plaPreheatHotendTemp, 3);
+        #endif
+      #endif
     #endif
-    _lcd_preheat(EXTRUDERS - 1, plaPreheatHotendTemp, plaPreheatHPBTemp, plaPreheatFanSpeed);
+    lcd_preheat_pla0();
   }
   void lcd_preheat_abs0123() {
     #if EXTRUDERS > 1
-      setTargetHotend0(absPreheatHotendTemp);
-      setTargetHotend1(absPreheatHotendTemp);
-      setTargetHotend2(absPreheatHotendTemp);
+      thermalManager.setTargetHotend(absPreheatHotendTemp, 1);
+      #if EXTRUDERS > 2
+        thermalManager.setTargetHotend(absPreheatHotendTemp, 2);
+        #if EXTRUDERS > 3
+          thermalManager.setTargetHotend(absPreheatHotendTemp, 3);
+        #endif
+      #endif
     #endif
-    _lcd_preheat(EXTRUDERS - 1, absPreheatHotendTemp, absPreheatHPBTemp, absPreheatFanSpeed);
+    lcd_preheat_abs0();
   }
 
 #endif // EXTRUDERS > 1
@@ -750,7 +758,7 @@ void lcd_cooldown() {
   #if FAN_COUNT > 0
     for (uint8_t i = 0; i < FAN_COUNT; i++) fanSpeeds[i] = 0;
   #endif
-  disable_all_heaters();
+  thermalManager.disable_all_heaters();
   lcd_return_to_status();
 }
 
@@ -1285,14 +1293,14 @@ static void lcd_control_menu() {
       UNUSED(e);
     #endif
     PID_PARAM(Ki, e) = scalePID_i(raw_Ki);
-    updatePID();
+    thermalManager.updatePID();
   }
   void copy_and_scalePID_d(int e) {
     #if DISABLED(PID_PARAMS_PER_EXTRUDER)
       UNUSED(e);
     #endif
     PID_PARAM(Kd, e) = scalePID_d(raw_Kd);
-    updatePID();
+    thermalManager.updatePID();
   }
   #define _PIDTEMP_BASE_FUNCTIONS(eindex) \
     void copy_and_scalePID_i_E ## eindex() { copy_and_scalePID_i(eindex); } \
