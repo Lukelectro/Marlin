@@ -623,7 +623,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // JFR -was true // set to true to i
 //
 // When enabled Marlin will keep track of some print statistical data such as:
 //  - Total print jobs
-//  - Total successfull print jobs
+//  - Total successful print jobs
 //  - Total failed print jobs
 //  - Total time printing
 //
