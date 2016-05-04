@@ -1893,7 +1893,7 @@ static void retract_z_probe() {
 
     endstops.enable_z_probe(false);
   }
-  #endif // HAS_Z_MIN_PROBE
+  #endif // HAS_BED_PROBE
 
   enum ProbeAction {
     ProbeStay          = 0,
@@ -3850,7 +3850,7 @@ inline void gcode_M42() {
    *  Z_MIN_PROBE_PIN, but here for clarity.
    */
   #if ENABLED(Z_MIN_PROBE_ENDSTOP)
-    #if !HAS_Z_PROBE
+    #if !HAS_Z_MIN_PROBE_PIN
       #error You must define Z_MIN_PROBE_PIN to enable Z probe repeatability calculation.
     #endif
   #elif !HAS_Z_MIN
