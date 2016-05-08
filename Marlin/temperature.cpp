@@ -1262,7 +1262,10 @@ void thermal_runaway_protection(int *state, unsigned long *timer, float temperat
         // If the timer goes too long without a reset, trigger shutdown
         else if (ELAPSED(millis(), *timer + period_seconds * 1000UL))
           *state = TRRunaway;
-        break;
+        else {
+          *timer = millis() + period_seconds * 1000UL;
+          break;
+        }
       case TRRunaway:
         _temp_error(heater_id, PSTR(MSG_T_THERMAL_RUNAWAY), PSTR(MSG_THERMAL_RUNAWAY));
     }
