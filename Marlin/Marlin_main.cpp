@@ -3702,7 +3702,7 @@ inline void gcode_M17() {
    */
   inline void gcode_M26() {
     if (card.cardOK && code_seen('S'))
-      card.setIndex(code_value_short());
+      card.setIndex(code_value_long());
   }
 
   /**
@@ -3774,7 +3774,7 @@ inline void gcode_M31() {
       card.openFile(namestartpos, true, call_procedure);
 
       if (code_seen('S') && seen_pointer < namestartpos) // "S" (must occur _before_ the filename!)
-        card.setIndex(code_value_short());
+        card.setIndex(code_value_long());
 
       card.startFileprint();
 
