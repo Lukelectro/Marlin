@@ -1557,7 +1557,12 @@ static void setup_for_endstop_move() {
       destination[X_AXIS] = x;
       destination[Y_AXIS] = y;
       destination[Z_AXIS] = z;
-      prepare_move_raw(); // this will also set_current_to_destination
+
+      if (x == current_position[X_AXIS] && y == current_position[Y_AXIS])
+        prepare_move_raw(); // this will also set_current_to_destination
+      else
+        prepare_move();     // this will also set_current_to_destination
+
       stepper.synchronize();
 
     #else
@@ -3244,6 +3249,8 @@ inline void gcode_G28() {
     setup_for_endstop_move();
 
     feedrate = homing_feedrate[Z_AXIS];
+
+    bed_leveling_in_progress = true;
 
     #if ENABLED(AUTO_BED_LEVELING_GRID)
 
@@ -7196,7 +7203,7 @@ void mesh_buffer_line(float x, float y, float z, const float e, float feed_rate,
       calculate_delta(target);
 
       #if ENABLED(AUTO_BED_LEVELING_FEATURE)
-        adjust_delta(target);
+        if (!bed_leveling_in_progress) adjust_delta(target);
       #endif
 
       //DEBUG_POS("prepare_move_delta", target);
