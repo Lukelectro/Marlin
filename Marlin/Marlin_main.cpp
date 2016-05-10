@@ -424,7 +424,7 @@ bool Stopped = false;
 
   static MarlinBusyState busy_state = NOT_BUSY;
   static millis_t next_busy_signal_ms = 0;
-  uint8_t host_keepalive_interval = HOST_KEEPALIVE_INTERVAL;
+  uint8_t host_keepalive_interval = DEFAULT_KEEPALIVE_INTERVAL;
   #define KEEPALIVE_STATE(n) do{ busy_state = n; }while(0)
 #else
   #define host_keepalive() ;
