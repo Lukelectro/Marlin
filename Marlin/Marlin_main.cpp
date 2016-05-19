@@ -2559,14 +2559,7 @@ inline void gcode_G4() {
   inline void gcode_G5() {
     if (IsRunning()) {
 
-      #ifdef SF_ARC_FIX
-        bool relative_mode_backup = relative_mode;
-        relative_mode = true;
-      #endif
       gcode_get_destination();
-      #ifdef SF_ARC_FIX
-        relative_mode = relative_mode_backup;
-      #endif
 
       float offset[] = {
         code_seen('I') ? code_value() : 0.0,
