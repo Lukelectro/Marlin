@@ -3,10 +3,7 @@ language: c
   #
 before_install:
   #
-  # Travis runs a detached head. We need to find the current branch
-  - git checkout `git branch --contains HEAD | grep -v '*'`
-  #
-  # Also tags for the root(s) of the minor version(s)
+  # Fetch the tag information for the current branch
   - git fetch origin --tags
   #
   # Publish the buildroot script folder
