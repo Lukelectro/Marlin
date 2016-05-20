@@ -243,8 +243,8 @@ static bool thermal_runaway = false;
                 babystepsTodo[CORE_AXIS_1] += distance * 2;
                 babystepsTodo[CORE_AXIS_2] -= distance * 2;
                 break;
-              case CORE_AXIS_3: // Z on CoreXY, Y on CoreXZ, X on CoreYZ
-                babystepsTodo[CORE_AXIS_3] += distance;
+              case NORMAL_AXIS: // Z on CoreXY, Y on CoreXZ, X on CoreYZ
+                babystepsTodo[NORMAL_AXIS] += distance;
                 break;
             }
           #elif ENABLED(COREXZ) || ENABLED(COREYZ)
