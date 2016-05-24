@@ -193,6 +193,7 @@ void Config_StoreSettings()  {
   EEPROM_WRITE_VAR(i, planner.max_e_jerk);
   EEPROM_WRITE_VAR(i, home_offset);
 
+  uint8_t dummy_uint8 = 0;
   uint8_t mesh_num_x = 3;
   uint8_t mesh_num_y = 3;
   #if defined(MESH_BED_LEVELING)
@@ -200,13 +201,13 @@ void Config_StoreSettings()  {
     typedef char c_assert[(sizeof(mbl.z_values) == (MESH_NUM_X_POINTS) * (MESH_NUM_Y_POINTS) * sizeof(dummy)) ? 1 : -1];
     mesh_num_x = MESH_NUM_X_POINTS;
     mesh_num_y = MESH_NUM_Y_POINTS;
-    EEPROM_WRITE_VAR(i, mbl.active);
+    dummy_uint8 = mbl.status & 0x01; // Do not save 'is active'
+    EEPROM_WRITE_VAR(i, dummy_uint8);
     EEPROM_WRITE_VAR(i, mbl.z_offset);
     EEPROM_WRITE_VAR(i, mesh_num_x);
     EEPROM_WRITE_VAR(i, mesh_num_y);
     EEPROM_WRITE_VAR(i, mbl.z_values);
   #else
-    uint8_t dummy_uint8 = 0;
     dummy = 0.0f;
     EEPROM_WRITE_VAR(i, dummy_uint8);
     EEPROM_WRITE_VAR(i, dummy);
@@ -381,7 +382,7 @@ void Config_RetrieveSettings() {
     EEPROM_READ_VAR(i, mesh_num_x);
     EEPROM_READ_VAR(i, mesh_num_y);
     #if ENABLED(MESH_BED_LEVELING)
-      mbl.active = dummy_uint8;
+      mbl.status = dummy_uint8;
       mbl.z_offset = dummy;
       if (mesh_num_x == MESH_NUM_X_POINTS && mesh_num_y == MESH_NUM_Y_POINTS) {
         EEPROM_READ_VAR(i, mbl.z_values);
@@ -551,7 +552,7 @@ void Config_ResetDefault() {
   home_offset[X_AXIS] = home_offset[Y_AXIS] = home_offset[Z_AXIS] = 0;
 
   #if ENABLED(MESH_BED_LEVELING)
-    mbl.active = false;
+    mbl.reset();
   #endif
 
   #if ENABLED(AUTO_BED_LEVELING_FEATURE)
@@ -730,7 +731,7 @@ void Config_PrintSettings(bool forReplay) {
       SERIAL_ECHOLNPGM("Mesh bed leveling:");
       CONFIG_ECHO_START;
     }
-    SERIAL_ECHOPAIR("  M420 S", mbl.active);
+    SERIAL_ECHOPAIR("  M420 S", mbl.has_mesh() ? 1 : 0);
     SERIAL_ECHOPAIR(" X", MESH_NUM_X_POINTS);
     SERIAL_ECHOPAIR(" Y", MESH_NUM_Y_POINTS);
     SERIAL_EOL;
