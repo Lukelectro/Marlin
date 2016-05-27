@@ -42,9 +42,9 @@ class Temperature {
 
   public:
 
-    static int current_temperature_raw[EXTRUDERS];
-    static float current_temperature[EXTRUDERS];
-    static int target_temperature[EXTRUDERS];
+    static int current_temperature_raw[HOTENDS];
+    static float current_temperature[HOTENDS];
+    static int target_temperature[HOTENDS];
 
     static int current_temperature_bed_raw;
     static float current_temperature_bed;
@@ -66,11 +66,11 @@ class Temperature {
 
     #if ENABLED(PIDTEMP)
 
-      #if ENABLED(PID_PARAMS_PER_EXTRUDER)
+      #if ENABLED(PID_PARAMS_PER_HOTEND)
 
-        static float Kp[EXTRUDERS], Ki[EXTRUDERS], Kd[EXTRUDERS];
+        static float Kp[HOTENDS], Ki[HOTENDS], Kd[HOTENDS];
         #if ENABLED(PID_ADD_EXTRUSION_RATE)
-          static float Kc[EXTRUDERS];
+          static float Kc[HOTENDS];
         #endif
         #define PID_PARAM(param, e) Temperature::param[e]
 
@@ -82,7 +82,7 @@ class Temperature {
         #endif
         #define PID_PARAM(param, e) Temperature::param
 
-      #endif // PID_PARAMS_PER_EXTRUDER
+      #endif // PID_PARAMS_PER_HOTEND
 
       // Apply the scale factors to the PID values
       #define scalePID_i(i)   ( (i) * PID_dT )
@@ -101,8 +101,8 @@ class Temperature {
     #endif
 
     #if ENABLED(THERMAL_PROTECTION_HOTENDS) && WATCH_TEMP_PERIOD > 0
-      static int watch_target_temp[EXTRUDERS];
-      static millis_t watch_heater_next_ms[EXTRUDERS];
+      static int watch_target_temp[HOTENDS];
+      static millis_t watch_heater_next_ms[HOTENDS];
     #endif
 
 #if (defined (THERMAL_RUNAWAY_PROTECTION_PERIOD) && THERMAL_RUNAWAY_PROTECTION_PERIOD > 0) || (defined (THERMAL_RUNAWAY_PROTECTION_BED_PERIOD) && THERMAL_RUNAWAY_PROTECTION_BED_PERIOD > 0)
@@ -156,15 +156,36 @@ static bool thermal_runaway = false;
     //inline so that there is no performance decrease.
     //deg=degreeCelsius
 
-    static float degHotend(uint8_t extruder) { return current_temperature[extruder]; }
+    #if HOTENDS == 1
+      #define HOTEND_ARG 0
+    #else
+      #define HOTEND_ARG hotend
+    #endif
+
+    static float degHotend(uint8_t hotend) {
+      #if HOTENDS == 1
+        UNUSED(hotend);
+      #endif
+      return current_temperature[HOTEND_ARG];
+    }
     static float degBed() { return current_temperature_bed; }
 
     #if ENABLED(SHOW_TEMP_ADC_VALUES)
-    static float rawHotendTemp(uint8_t extruder) { return current_temperature_raw[extruder]; }
+    static float rawHotendTemp(uint8_t hotend) {
+      #if HOTENDS == 1
+        UNUSED(hotend);
+      #endif
+      return current_temperature_raw[HOTEND_ARG];
+    }
     static float rawBedTemp() { return current_temperature_bed_raw; }
     #endif
 
-    static float degTargetHotend(uint8_t extruder) { return target_temperature[extruder]; }
+    static float degTargetHotend(uint8_t hotend) {
+      #if HOTENDS == 1
+        UNUSED(hotend);
+      #endif
+      return target_temperature[HOTEND_ARG];
+    }
     static float degTargetBed() { return target_temperature_bed; }
 
     #if ENABLED(THERMAL_PROTECTION_HOTENDS) && WATCH_TEMP_PERIOD > 0
@@ -175,10 +196,13 @@ static bool thermal_runaway = false;
       static void start_watching_bed();
     #endif
 
-    static void setTargetHotend(const float& celsius, uint8_t extruder) {
-      target_temperature[extruder] = celsius;
+    static void setTargetHotend(const float& celsius, uint8_t hotend) {
+      #if HOTENDS == 1
+        UNUSED(hotend);
+      #endif
+      target_temperature[HOTEND_ARG] = celsius;
       #if ENABLED(THERMAL_PROTECTION_HOTENDS) && WATCH_TEMP_PERIOD > 0
-        start_watching_heater(extruder);
+        start_watching_heater(HOTEND_ARG);
       #endif
     }
 
@@ -189,10 +213,20 @@ static bool thermal_runaway = false;
       #endif
     }
 
-    static bool isHeatingHotend(uint8_t extruder) { return target_temperature[extruder] > current_temperature[extruder]; }
+    static bool isHeatingHotend(uint8_t hotend) {
+      #if HOTENDS == 1
+        UNUSED(hotend);
+      #endif
+      return target_temperature[HOTEND_ARG] > current_temperature[HOTEND_ARG];
+    }
     static bool isHeatingBed() { return target_temperature_bed > current_temperature_bed; }
 
-    static bool isCoolingHotend(uint8_t extruder) { return target_temperature[extruder] < current_temperature[extruder]; }
+    static bool isCoolingHotend(uint8_t hotend) {
+      #if HOTENDS == 1
+        UNUSED(hotend);
+      #endif
+      return target_temperature[HOTEND_ARG] < current_temperature[HOTEND_ARG];
+    }
     static bool isCoolingBed() { return target_temperature_bed < current_temperature_bed; }
 
     /**
@@ -209,7 +243,7 @@ static bool thermal_runaway = false;
      * Perform auto-tuning for hotend or bed in response to M303
      */
     #if HAS_PID_HEATING
-      static void PID_autotune(float temp, int extruder, int ncycles, bool set_result=false);
+      static void PID_autotune(float temp, int hotend, int ncycles, bool set_result=false);
     #endif
 
     /**
@@ -288,8 +322,8 @@ static bool thermal_runaway = false;
       static void thermal_runaway_protection(TRState* state, millis_t* timer, float temperature, float target_temperature, int heater_id, int period_seconds, int hysteresis_degc);
 
       #if ENABLED(THERMAL_PROTECTION_HOTENDS)
-        static TRState thermal_runaway_state_machine[EXTRUDERS];
-        static millis_t thermal_runaway_timer[EXTRUDERS];
+        static TRState thermal_runaway_state_machine[HOTENDS];
+        static millis_t thermal_runaway_timer[HOTENDS];
       #endif
 
       #if HAS_THERMALLY_PROTECTED_BED

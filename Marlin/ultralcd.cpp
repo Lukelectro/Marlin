@@ -673,24 +673,24 @@ void _lcd_preheat(int endnum, const float temph, const float tempb, const int fa
   void lcd_preheat_abs0() { _lcd_preheat(0, absPreheatHotendTemp, absPreheatHPBTemp, absPreheatFanSpeed); }
 #endif
 
-#if EXTRUDERS > 1
+#if HOTENDS > 1
   void lcd_preheat_pla1() { _lcd_preheat(1, plaPreheatHotendTemp, plaPreheatHPBTemp, plaPreheatFanSpeed); }
   void lcd_preheat_abs1() { _lcd_preheat(1, absPreheatHotendTemp, absPreheatHPBTemp, absPreheatFanSpeed); }
-  #if EXTRUDERS > 2
+  #if HOTENDS > 2
     void lcd_preheat_pla2() { _lcd_preheat(2, plaPreheatHotendTemp, plaPreheatHPBTemp, plaPreheatFanSpeed); }
     void lcd_preheat_abs2() { _lcd_preheat(2, absPreheatHotendTemp, absPreheatHPBTemp, absPreheatFanSpeed); }
-    #if EXTRUDERS > 3
+    #if HOTENDS > 3
       void lcd_preheat_pla3() { _lcd_preheat(3, plaPreheatHotendTemp, plaPreheatHPBTemp, plaPreheatFanSpeed); }
       void lcd_preheat_abs3() { _lcd_preheat(3, absPreheatHotendTemp, absPreheatHPBTemp, absPreheatFanSpeed); }
     #endif
   #endif
 
   void lcd_preheat_pla0123() {
-    #if EXTRUDERS > 1
+    #if HOTENDS > 1
       thermalManager.setTargetHotend(plaPreheatHotendTemp, 1);
-      #if EXTRUDERS > 2
+      #if HOTENDS > 2
         thermalManager.setTargetHotend(plaPreheatHotendTemp, 2);
-        #if EXTRUDERS > 3
+        #if HOTENDS > 3
           thermalManager.setTargetHotend(plaPreheatHotendTemp, 3);
         #endif
       #endif
@@ -698,11 +698,11 @@ void _lcd_preheat(int endnum, const float temph, const float tempb, const int fa
     lcd_preheat_pla0();
   }
   void lcd_preheat_abs0123() {
-    #if EXTRUDERS > 1
+    #if HOTENDS > 1
       thermalManager.setTargetHotend(absPreheatHotendTemp, 1);
-      #if EXTRUDERS > 2
+      #if HOTENDS > 2
         thermalManager.setTargetHotend(absPreheatHotendTemp, 2);
-        #if EXTRUDERS > 3
+        #if HOTENDS > 3
           thermalManager.setTargetHotend(absPreheatHotendTemp, 3);
         #endif
       #endif
@@ -710,7 +710,7 @@ void _lcd_preheat(int endnum, const float temph, const float tempb, const int fa
     lcd_preheat_abs0();
   }
 
-#endif // EXTRUDERS > 1
+#endif // HOTENDS > 1
 
 #if TEMP_SENSOR_BED != 0
   void lcd_preheat_pla_bedonly() { _lcd_preheat(0, 0, plaPreheatHPBTemp, plaPreheatFanSpeed); }
@@ -1251,8 +1251,8 @@ static void lcd_control_menu() {
 #if ENABLED(PID_AUTOTUNE_MENU)
 
   #if ENABLED(PIDTEMP)
-    int autotune_temp[EXTRUDERS] = ARRAY_BY_EXTRUDERS1(150);
-    const int heater_maxtemp[EXTRUDERS] = ARRAY_BY_EXTRUDERS(HEATER_0_MAXTEMP, HEATER_1_MAXTEMP, HEATER_2_MAXTEMP, HEATER_3_MAXTEMP);
+    int autotune_temp[HOTENDS] = ARRAY_BY_HOTENDS1(150);
+    const int heater_maxtemp[HOTENDS] = ARRAY_BY_HOTENDS(HEATER_0_MAXTEMP, HEATER_1_MAXTEMP, HEATER_2_MAXTEMP, HEATER_3_MAXTEMP);
   #endif
 
   #if ENABLED(PIDTEMPBED)
@@ -1280,14 +1280,14 @@ static void lcd_control_menu() {
   // Helpers for editing PID Ki & Kd values
   // grab the PID value out of the temp variable; scale it; then update the PID driver
   void copy_and_scalePID_i(int e) {
-    #if DISABLED(PID_PARAMS_PER_EXTRUDER)
+    #if DISABLED(PID_PARAMS_PER_HOTEND)
       UNUSED(e);
     #endif
     PID_PARAM(Ki, e) = scalePID_i(raw_Ki);
     thermalManager.updatePID();
   }
   void copy_and_scalePID_d(int e) {
-    #if DISABLED(PID_PARAMS_PER_EXTRUDER)
+    #if DISABLED(PID_PARAMS_PER_HOTEND)
       UNUSED(e);
     #endif
     PID_PARAM(Kd, e) = scalePID_d(raw_Kd);
@@ -1306,17 +1306,17 @@ static void lcd_control_menu() {
   #endif
 
   _PIDTEMP_FUNCTIONS(0);
-  #if ENABLED(PID_PARAMS_PER_EXTRUDER)
-    #if EXTRUDERS > 1
+  #if ENABLED(PID_PARAMS_PER_HOTEND)
+    #if HOTENDS > 1
       _PIDTEMP_FUNCTIONS(1);
-      #if EXTRUDERS > 2
+      #if HOTENDS > 2
         _PIDTEMP_FUNCTIONS(2);
-        #if EXTRUDERS > 3
+        #if HOTENDS > 3
           _PIDTEMP_FUNCTIONS(3);
-        #endif //EXTRUDERS > 3
-      #endif //EXTRUDERS > 2
-    #endif //EXTRUDERS > 1
-  #endif //PID_PARAMS_PER_EXTRUDER
+        #endif //HOTENDS > 3
+      #endif //HOTENDS > 2
+    #endif //HOTENDS > 1
+  #endif //PID_PARAMS_PER_HOTEND
 
 #endif //PIDTEMP
 
@@ -1387,18 +1387,18 @@ static void lcd_control_temperature_menu() {
       #define PID_MENU_ITEMS(ELABEL, eindex) _PID_MENU_ITEMS(ELABEL, eindex)
     #endif
 
-    #if ENABLED(PID_PARAMS_PER_EXTRUDER) && EXTRUDERS > 1
+    #if ENABLED(PID_PARAMS_PER_HOTEND) && HOTENDS > 1
       PID_MENU_ITEMS(MSG_E1, 0);
       PID_MENU_ITEMS(MSG_E2, 1);
-      #if EXTRUDERS > 2
+      #if HOTENDS > 2
         PID_MENU_ITEMS(MSG_E3, 2);
-        #if EXTRUDERS > 3
+        #if HOTENDS > 3
           PID_MENU_ITEMS(MSG_E4, 3);
-        #endif //EXTRUDERS > 3
-      #endif //EXTRUDERS > 2
-    #else //!PID_PARAMS_PER_EXTRUDER || EXTRUDERS == 1
+        #endif //HOTENDS > 3
+      #endif //HOTENDS > 2
+    #else //!PID_PARAMS_PER_HOTEND || HOTENDS == 1
       PID_MENU_ITEMS("", 0);
-    #endif //!PID_PARAMS_PER_EXTRUDER || EXTRUDERS == 1
+    #endif //!PID_PARAMS_PER_HOTEND || HOTENDS == 1
 
   #endif //PIDTEMP
 
