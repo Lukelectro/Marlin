@@ -1150,7 +1150,7 @@ void plan_set_position(const float &x, const float &y, const float &z, const flo
 /**
  * Directly set the planner E position (hence the stepper E position).
  */
-void Planner::set_e_position(const float& e) {
+void Planner::set_e_position_mm(const float& e) {
   position[E_AXIS] = lround(e * axis_steps_per_unit[E_AXIS]);
   stepper.set_e_position(position[E_AXIS]);
 }
