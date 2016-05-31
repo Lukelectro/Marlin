@@ -156,16 +156,16 @@ static bool thermal_runaway = false;
     //inline so that there is no performance decrease.
     //deg=degreeCelsius
 
-    static FORCE_INLINE float degHotend(uint8_t extruder) { return current_temperature[extruder]; }
-    static FORCE_INLINE float degBed() { return current_temperature_bed; }
+    static float degHotend(uint8_t extruder) { return current_temperature[extruder]; }
+    static float degBed() { return current_temperature_bed; }
 
     #if ENABLED(SHOW_TEMP_ADC_VALUES)
-    static FORCE_INLINE float rawHotendTemp(uint8_t extruder) { return current_temperature_raw[extruder]; }
-    static FORCE_INLINE float rawBedTemp() { return current_temperature_bed_raw; }
+    static float rawHotendTemp(uint8_t extruder) { return current_temperature_raw[extruder]; }
+    static float rawBedTemp() { return current_temperature_bed_raw; }
     #endif
 
-    static FORCE_INLINE float degTargetHotend(uint8_t extruder) { return target_temperature[extruder]; }
-    static FORCE_INLINE float degTargetBed() { return target_temperature_bed; }
+    static float degTargetHotend(uint8_t extruder) { return target_temperature[extruder]; }
+    static float degTargetBed() { return target_temperature_bed; }
 
     #if ENABLED(THERMAL_PROTECTION_HOTENDS) && WATCH_TEMP_PERIOD > 0
       static void start_watching_heater(int e = 0);
@@ -175,25 +175,25 @@ static bool thermal_runaway = false;
       static void start_watching_bed();
     #endif
 
-    static FORCE_INLINE void setTargetHotend(const float& celsius, uint8_t extruder) {
+    static void setTargetHotend(const float& celsius, uint8_t extruder) {
       target_temperature[extruder] = celsius;
       #if ENABLED(THERMAL_PROTECTION_HOTENDS) && WATCH_TEMP_PERIOD > 0
         start_watching_heater(extruder);
       #endif
     }
 
-    static FORCE_INLINE void setTargetBed(const float& celsius) {
+    static void setTargetBed(const float& celsius) {
       target_temperature_bed = celsius;
       #if ENABLED(THERMAL_PROTECTION_BED) && WATCH_BED_TEMP_PERIOD > 0
         start_watching_bed();
       #endif
     }
 
-    static FORCE_INLINE bool isHeatingHotend(uint8_t extruder) { return target_temperature[extruder] > current_temperature[extruder]; }
-    static FORCE_INLINE bool isHeatingBed() { return target_temperature_bed > current_temperature_bed; }
+    static bool isHeatingHotend(uint8_t extruder) { return target_temperature[extruder] > current_temperature[extruder]; }
+    static bool isHeatingBed() { return target_temperature_bed > current_temperature_bed; }
 
-    static FORCE_INLINE bool isCoolingHotend(uint8_t extruder) { return target_temperature[extruder] < current_temperature[extruder]; }
-    static FORCE_INLINE bool isCoolingBed() { return target_temperature_bed < current_temperature_bed; }
+    static bool isCoolingHotend(uint8_t extruder) { return target_temperature[extruder] < current_temperature[extruder]; }
+    static bool isCoolingBed() { return target_temperature_bed < current_temperature_bed; }
 
     /**
      * The software PWM power for a heater
@@ -217,7 +217,7 @@ static bool thermal_runaway = false;
      */
     static void updatePID();
 
-    static FORCE_INLINE void autotempShutdown() {
+    static void autotempShutdown() {
       #if ENABLED(AUTOTEMP)
         if (planner.autotemp_enabled) {
           planner.autotemp_enabled = false;
@@ -229,7 +229,7 @@ static bool thermal_runaway = false;
 
     #if ENABLED(BABYSTEPPING)
 
-      static FORCE_INLINE void babystep_axis(AxisEnum axis, int distance) {
+      static void babystep_axis(AxisEnum axis, int distance) {
         #if ENABLED(COREXY) || ENABLED(COREXZ) || ENABLED(COREYZ)
           #if ENABLED(BABYSTEP_XY)
             switch (axis) {
