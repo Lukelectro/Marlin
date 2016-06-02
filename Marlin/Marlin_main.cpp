@@ -1619,7 +1619,12 @@ static void setup_for_endstop_move() {
   }
 
   inline void raise_z_after_probing() {
-    do_blocking_move_to_z(current_position[Z_AXIS] + Z_RAISE_AFTER_PROBING);
+    #if Z_RAISE_AFTER_PROBING > 0
+      #if ENABLED(DEBUG_LEVELING_FEATURE)
+        if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("raise_z_after_probing()");
+      #endif
+      do_blocking_move_to_z(current_position[Z_AXIS] + Z_RAISE_AFTER_PROBING);
+    #endif
   }
 
   static void clean_up_after_endstop_move() {
@@ -2130,9 +2135,7 @@ static void retract_z_probe() {
 
     float oldXpos = current_position[X_AXIS]; // save x position
     if (dock) {
-      #if Z_RAISE_AFTER_PROBING > 0
-        raise_z_after_probing(); // raise Z
-      #endif
+      raise_z_after_probing(); // raise Z
       // Dock sled a bit closer to ensure proper capturing
       do_blocking_move_to_x(X_MAX_POS + SLED_DOCKING_OFFSET + offset - 1);
       digitalWrite(SLED_PIN, LOW); // turn off magnet
