@@ -394,6 +394,12 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // JFR -was true // set to true to i
   #define DISABLE_MAX_ENDSTOPS
 #endif
 
+// Probe Raise options provide clearance for the probe to deploy and stow.
+// For G28 these apply when the probe deploys and stows.
+// For G29 these apply before and after the full procedure.
+#define Z_RAISE_BEFORE_PROBING 15   // Raise before probe deploy (e.g., the first probe).
+#define Z_RAISE_AFTER_PROBING 15    // Raise before probe stow (e.g., the last probe).
+
 // For Inverting Stepper Enable Pins (Active Low) use 0, Non Inverting (Active High) use 1
 // :{0:'Low',1:'High'}
 #define X_ENABLE_ON 0
