@@ -199,15 +199,18 @@ void Config_StoreSettings()  {
   #if defined(MESH_BED_LEVELING)
     // Compile time test that sizeof(mbl.z_values) is as expected
     typedef char c_assert[(sizeof(mbl.z_values) == (MESH_NUM_X_POINTS) * (MESH_NUM_Y_POINTS) * sizeof(dummy)) ? 1 : -1];
-    mesh_num_x = MESH_NUM_X_POINTS;
-    mesh_num_y = MESH_NUM_Y_POINTS;
-    dummy_uint8 = mbl.status & 0x01; // Do not save 'is active'
+    uint8_t mesh_num_x = MESH_NUM_X_POINTS,
+            mesh_num_y = MESH_NUM_Y_POINTS,
+            dummy_uint8 = mbl.status & _BV(MBL_STATUS_HAS_MESH_BIT);
     EEPROM_WRITE_VAR(i, dummy_uint8);
     EEPROM_WRITE_VAR(i, mbl.z_offset);
     EEPROM_WRITE_VAR(i, mesh_num_x);
     EEPROM_WRITE_VAR(i, mesh_num_y);
     EEPROM_WRITE_VAR(i, mbl.z_values);
   #else
+    uint8_t mesh_num_x = 3,
+            mesh_num_y = 3,
+            dummy_uint8 = 0;
     dummy = 0.0f;
     EEPROM_WRITE_VAR(i, dummy_uint8);
     EEPROM_WRITE_VAR(i, dummy);

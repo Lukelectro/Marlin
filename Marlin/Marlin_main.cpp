@@ -2663,14 +2663,14 @@ inline void gcode_G28() {
    */
   #if ENABLED(MESH_BED_LEVELING)
     float pre_home_z = MESH_HOME_SEARCH_Z;
-    if (mbl.is_active()) {
+    if (mbl.active()) {
       // Save known Z position if already homed
       if (axis_homed[X_AXIS] && axis_homed[Y_AXIS] && axis_homed[Z_AXIS]) {
         pre_home_z = current_position[Z_AXIS];
         pre_home_z += mbl.get_z(current_position[X_AXIS] - home_offset[X_AXIS],
                                 current_position[Y_AXIS] - home_offset[Y_AXIS]);
       }
-      mbl.is_active(false);
+      mbl.set_active(false);
     }
   #endif
 
@@ -2990,7 +2990,7 @@ inline void gcode_G28() {
       if (home_all_axis || (axis_homed[X_AXIS] && axis_homed[Y_AXIS] && homeZ)) {
         current_position[Z_AXIS] = MESH_HOME_SEARCH_Z;
         sync_plan_position();
-        mbl.is_active(true);
+        mbl.set_active(true);
         #if ENABLED(MESH_G28_REST_ORIGIN)
           current_position[Z_AXIS] = 0.0;
           set_destination_to_current();
@@ -3006,7 +3006,7 @@ inline void gcode_G28() {
       else if ((axis_homed[X_AXIS] && axis_homed[Y_AXIS] && axis_homed[Z_AXIS]) && (homeX || homeY)) {
         current_position[Z_AXIS] = pre_home_z;
         sync_plan_position();
-        mbl.is_active(true);
+        mbl.set_active(true);
         current_position[Z_AXIS] = pre_home_z -
           mbl.get_z(current_position[X_AXIS] - home_offset[X_AXIS],
                     current_position[Y_AXIS] - home_offset[Y_AXIS]);
@@ -5822,7 +5822,7 @@ inline void gcode_M410() {
   /**
    * M420: Enable/Disable Mesh Bed Leveling
    */
-  inline void gcode_M420() { if (code_seen('S') && code_has_value()) mbl.has_mesh(!!code_value_short()); }
+  inline void gcode_M420() { if (code_seen('S') && code_has_value()) mbl.set_has_mesh(!!code_value_short()); }
 
   /**
    * M421: Set a single Mesh Bed Leveling Z coordinate
@@ -7250,7 +7250,7 @@ void clamp_to_software_endstops(float target[3]) {
 
 // This function is used to split lines on mesh borders so each segment is only part of one mesh area
 void mesh_buffer_line(float x, float y, float z, const float e, float feed_rate, const uint8_t& extruder, uint8_t x_splits = 0xff, uint8_t y_splits = 0xff) {
-  if (!mbl.is_active()) {
+  if (!mbl.active()) {
     planner.buffer_line(x, y, z, e, feed_rate, extruder);
     set_current_to_destination();
     return;
