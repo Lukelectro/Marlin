@@ -2160,41 +2160,23 @@ static void lcd_control_volumetric_menu()
    *
    */
   #if ENABLED(REPRAPWORLD_KEYPAD)
-    static void reprapworld_keypad_move_z_up() {
-      encoderPosition = 1;
+    static void _reprapworld_keypad_move(AxisEnum axis, int dir) {
       move_menu_scale = REPRAPWORLD_KEYPAD_MOVE_STEP;
-      lcd_move_z();
+      encoderPosition = dir;
+      switch (axis) {
+        case X_AXIS: lcd_move_x(); break;
+        case Y_AXIS: lcd_move_y(); break;
+        case Z_AXIS: lcd_move_z();
+      }
     }
-    static void reprapworld_keypad_move_z_down() {
-      encoderPosition = -1;
-      move_menu_scale = REPRAPWORLD_KEYPAD_MOVE_STEP;
-      lcd_move_z();
-    }
-    static void reprapworld_keypad_move_x_left() {
-      encoderPosition = -1;
-      move_menu_scale = REPRAPWORLD_KEYPAD_MOVE_STEP;
-      lcd_move_x();
-    }
-    static void reprapworld_keypad_move_x_right() {
-      encoderPosition = 1;
-      move_menu_scale = REPRAPWORLD_KEYPAD_MOVE_STEP;
-      lcd_move_x();
-    }
-    static void reprapworld_keypad_move_y_down() {
-      encoderPosition = 1;
-      move_menu_scale = REPRAPWORLD_KEYPAD_MOVE_STEP;
-      lcd_move_y();
-    }
-    static void reprapworld_keypad_move_y_up() {
-      encoderPosition = -1;
-      move_menu_scale = REPRAPWORLD_KEYPAD_MOVE_STEP;
-      lcd_move_y();
-    }
-    static void reprapworld_keypad_move_home() {
-      enqueue_and_echo_commands_P(PSTR("G28")); // move all axes home
-    }
+    static void reprapworld_keypad_move_z_up()    { _reprapworld_keypad_move(Z_AXIS,  1); }
+    static void reprapworld_keypad_move_z_down()  { _reprapworld_keypad_move(Z_AXIS, -1); }
+    static void reprapworld_keypad_move_x_left()  { _reprapworld_keypad_move(X_AXIS, -1); }
+    static void reprapworld_keypad_move_x_right() { _reprapworld_keypad_move(X_AXIS,  1); }
+    static void reprapworld_keypad_move_y_up()    { _reprapworld_keypad_move(Y_AXIS, -1); }
+    static void reprapworld_keypad_move_y_down()  { _reprapworld_keypad_move(Y_AXIS,  1); }
+    static void reprapworld_keypad_move_home()    { enqueue_and_echo_commands_P(PSTR("G28")); } // move all axes home and wait
   #endif // REPRAPWORLD_KEYPAD
-
 
   /**
    *
@@ -2502,7 +2484,7 @@ void lcd_update() {
         }
         timeoutToStatus = millis() + LCD_TIMEOUT_TO_STATUS;
       }
-    #endif //ULTIPANEL
+    #endif // ULTIPANEL
 
     // We arrive here every ~100ms when idling often enough.
     // Instead of tracking the changes simply redraw the Info Screen ~1 time a second.
