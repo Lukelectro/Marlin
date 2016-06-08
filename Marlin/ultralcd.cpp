@@ -2145,6 +2145,7 @@ static void lcd_control_volumetric_menu()
       currentScreen = menu_edit_callback_ ## _name; \
       callbackFunc = callback; \
     }
+
   menu_edit_type(int, int3, itostr3, 1);
   menu_edit_type(float, float3, ftostr3, 1);
   menu_edit_type(float, float32, ftostr32, 100);
@@ -2176,6 +2177,7 @@ static void lcd_control_volumetric_menu()
     static void reprapworld_keypad_move_y_up()    { _reprapworld_keypad_move(Y_AXIS, -1); }
     static void reprapworld_keypad_move_y_down()  { _reprapworld_keypad_move(Y_AXIS,  1); }
     static void reprapworld_keypad_move_home()    { enqueue_and_echo_commands_P(PSTR("G28")); } // move all axes home and wait
+    static void reprapworld_keypad_move_menu()    { lcd_goto_screen(lcd_move_menu); }
   #endif // REPRAPWORLD_KEYPAD
 
   /**
