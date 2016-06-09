@@ -1591,7 +1591,7 @@ static void setup_for_endstop_move() {
        * is not where we said to go.
        */
       long stop_steps = stepper.position(Z_AXIS);
-      float mm = start_z - float(start_steps - stop_steps) / planner.axis_steps_per_unit[Z_AXIS];
+      float mm = start_z - float(start_steps - stop_steps) / planner.axis_steps_per_mm[Z_AXIS];
       current_position[Z_AXIS] = mm;
       calculate_delta(current_position);
       plan_set_position(delta[X_AXIS], delta[Y_AXIS], delta[Z_AXIS], current_position[E_AXIS]);
@@ -4968,15 +4968,15 @@ inline void gcode_M92() {
       if (i == E_AXIS) {
         float value = code_value_per_axis_unit(i);
         if (value < 20.0) {
-          float factor = planner.axis_steps_per_unit[i] / value; // increase e constants if M92 E14 is given for netfab.
+          float factor = planner.axis_steps_per_mm[i] / value; // increase e constants if M92 E14 is given for netfab.
           planner.max_e_jerk *= factor;
           planner.max_feedrate[i] *= factor;
           planner.max_acceleration_steps_per_s2[i] *= factor;
         }
-        planner.axis_steps_per_unit[i] = value;
+        planner.axis_steps_per_mm[i] = value;
       }
       else {
-        planner.axis_steps_per_unit[i] = code_value_per_axis_unit(i);
+        planner.axis_steps_per_mm[i] = code_value_per_axis_unit(i);
       }
     }
   }
@@ -5011,9 +5011,9 @@ static void report_current_position() {
     SERIAL_EOL;
 
     SERIAL_PROTOCOLPGM("SCARA step Cal - Theta:");
-    SERIAL_PROTOCOL(delta[X_AXIS] / 90 * planner.axis_steps_per_unit[X_AXIS]);
+    SERIAL_PROTOCOL(delta[X_AXIS] / 90 * planner.axis_steps_per_mm[X_AXIS]);
     SERIAL_PROTOCOLPGM("   Psi+Theta:");
-    SERIAL_PROTOCOL((delta[Y_AXIS] - delta[X_AXIS]) / 90 * planner.axis_steps_per_unit[Y_AXIS]);
+    SERIAL_PROTOCOL((delta[Y_AXIS] - delta[X_AXIS]) / 90 * planner.axis_steps_per_mm[Y_AXIS]);
     SERIAL_EOL; SERIAL_EOL;
   #endif
 }
@@ -5168,7 +5168,7 @@ inline void gcode_M201() {
 #if 0 // Not used for Sprinter/grbl gen6
   inline void gcode_M202() {
     for (int8_t i = 0; i < NUM_AXIS; i++) {
-      if (code_seen(axis_codes[i])) axis_travel_steps_per_sqr_second[i] = code_value_axis_units(i) * planner.axis_steps_per_unit[i];
+      if (code_seen(axis_codes[i])) axis_travel_steps_per_sqr_second[i] = code_value_axis_units(i) * planner.axis_steps_per_mm[i];
     }
   }
 #endif
@@ -8071,8 +8071,8 @@ void manage_inactivity(bool ignore_stepper_queue/*=false*/) {
         }
         float oldepos = current_position[E_AXIS], oldedes = destination[E_AXIS];
         planner.buffer_line(destination[X_AXIS], destination[Y_AXIS], destination[Z_AXIS],
-                         destination[E_AXIS] + (EXTRUDER_RUNOUT_EXTRUDE) * (EXTRUDER_RUNOUT_ESTEPS) / planner.axis_steps_per_unit[E_AXIS],
-                         (EXTRUDER_RUNOUT_SPEED) / 60. * (EXTRUDER_RUNOUT_ESTEPS) / planner.axis_steps_per_unit[E_AXIS], active_extruder);
+                         destination[E_AXIS] + (EXTRUDER_RUNOUT_EXTRUDE) * (EXTRUDER_RUNOUT_ESTEPS) / planner.axis_steps_per_mm[E_AXIS],
+                         (EXTRUDER_RUNOUT_SPEED) / 60. * (EXTRUDER_RUNOUT_ESTEPS) / planner.axis_steps_per_mm[E_AXIS], active_extruder);
       current_position[E_AXIS] = oldepos;
       destination[E_AXIS] = oldedes;
       planner.set_e_position_mm(oldepos);
