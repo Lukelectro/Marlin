@@ -1304,7 +1304,7 @@ void Stepper::microstep_readings() {
 #if ENABLED(LIN_ADVANCE)
 
   void Stepper::advance_M905() {
-    if (code_seen('K')) extruder_advance_k = code_value();
+    if (code_seen('K')) extruder_advance_k = code_value_float();
     SERIAL_ECHO_START;
     SERIAL_ECHOPAIR("Advance factor: ", extruder_advance_k);
     SERIAL_EOL;
