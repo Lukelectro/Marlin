@@ -1793,7 +1793,7 @@ static void engage_z_probe() {
     #if ENABLED(HAS_SERVO_ENDSTOPS)
 
       // Engage Z Servo endstop if enabled
-      if (SERVO_ENDSTOP_EXISTS(Z_AXIS)
+      if (SERVO_ENDSTOP_EXISTS(Z_AXIS))
         DEPLOY_SERVO_ENDSTOP(Z_AXIS);
 
     #elif ENABLED(Z_PROBE_ALLEN_KEY)
