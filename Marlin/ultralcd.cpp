@@ -1188,7 +1188,7 @@ void lcd_cooldown() {
       #if EXTRUDERS == 1
         pos_label = PSTR(MSG_MOVE_E);
       #else
-        switch (e) {
+        switch (eindex) {
           case 0: pos_label = PSTR(MSG_MOVE_E MSG_MOVE_E1); break;
           case 1: pos_label = PSTR(MSG_MOVE_E MSG_MOVE_E2); break;
           #if EXTRUDERS > 2
