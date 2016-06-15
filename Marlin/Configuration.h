@@ -407,11 +407,19 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // JFR -was true // set to true to i
   #define DISABLE_MAX_ENDSTOPS
 #endif
 
+//
 // Probe Raise options provide clearance for the probe to deploy and stow.
+//
 // For G28 these apply when the probe deploys and stows.
 // For G29 these apply before and after the full procedure.
 #define Z_RAISE_BEFORE_PROBING 15   // Raise before probe deploy (e.g., the first probe).
 #define Z_RAISE_AFTER_PROBING 15    // Raise before probe stow (e.g., the last probe).
+
+//
+// For M851 give a range for adjusting the Z probe offset
+//
+#define Z_PROBE_OFFSET_RANGE_MIN -20
+#define Z_PROBE_OFFSET_RANGE_MAX 20
 
 // For Inverting Stepper Enable Pins (Active Low) use 0, Non Inverting (Active High) use 1
 // :{0:'Low',1:'High'}
@@ -1058,14 +1066,6 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // JFR -was true // set to true to i
 // If unsure, leave commented / disabled
 //
 //#define NUM_SERVOS 3 // Servo index starts with 0 for M280 command
-
-// Servo Endstops
-//
-// This allows for servo actuated endstops, primary usage is for the Z Axis to eliminate calibration or bed height changes.
-// Use M851 to set the Z probe vertical offset from the nozzle. Store that setting with M500.
-//
-//#define Z_ENDSTOP_SERVO_NR 0
-//#define Z_SERVO_ANGLES {70,0} // Z Servo Extend and Retract angles
 
 // Servo deactivation
 //
