@@ -558,7 +558,7 @@ void Config_ResetDefault() {
     mbl.reset();
   #endif
 
-  #if ENABLED(AUTO_BED_LEVELING_FEATURE)
+  #if HAS_BED_PROBE
     zprobe_zoffset = Z_PROBE_OFFSET_FROM_EXTRUDER;
   #endif
 

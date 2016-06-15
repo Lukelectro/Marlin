@@ -6045,9 +6045,9 @@ inline void gcode_M503() {
 
 #endif // ABORT_ON_ENDSTOP_HIT_FEATURE_ENABLED
 
-#ifdef CUSTOM_M_CODE_SET_Z_PROBE_OFFSET
+#if HAS_BED_PROBE
 
-  inline void gcode_SET_Z_PROBE_OFFSET() {
+  inline void gcode_M851() {
 
     SERIAL_ECHO_START;
     SERIAL_ECHOPGM(MSG_ZPROBE_ZOFFSET);
@@ -6073,7 +6073,7 @@ inline void gcode_M503() {
     SERIAL_EOL;
   }
 
-#endif // CUSTOM_M_CODE_SET_Z_PROBE_OFFSET
+#endif // HAS_BED_PROBE
 
 #if ENABLED(FILAMENTCHANGEENABLE)
 
@@ -7186,7 +7186,7 @@ void process_next_command() {
 
       #ifdef CUSTOM_M_CODE_SET_Z_PROBE_OFFSET
         case CUSTOM_M_CODE_SET_Z_PROBE_OFFSET:
-          gcode_SET_Z_PROBE_OFFSET();
+          gcode_M851();
           break;
       #endif // CUSTOM_M_CODE_SET_Z_PROBE_OFFSET
 
