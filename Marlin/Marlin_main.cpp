@@ -7191,11 +7191,11 @@ void process_next_command() {
           break;
       #endif
 
-      #ifdef CUSTOM_M_CODE_SET_Z_PROBE_OFFSET
-        case CUSTOM_M_CODE_SET_Z_PROBE_OFFSET:
+      #if HAS_BED_PROBE
+        case 851:
           gcode_M851();
           break;
-      #endif // CUSTOM_M_CODE_SET_Z_PROBE_OFFSET
+      #endif // HAS_BED_PROBE
 
       #if ENABLED(FILAMENTCHANGEENABLE)
         case 600: //Pause for filament change X[pos] Y[pos] Z[relative lift] E[initial retract] L[later retract distance for removal]
