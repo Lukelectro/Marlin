@@ -3611,9 +3611,9 @@ inline void gcode_G28() {
     deploy_z_probe();
 
     stepper.synchronize();
-    // TODO: clear the leveling matrix or the planner will be set incorrectly
 
-    run_z_probe();
+    // TODO: clear the leveling matrix or the planner will be set incorrectly
+    run_z_probe(); // clears the ABL non-delta matrix only
 
     SERIAL_PROTOCOLPGM("Bed X: ");
     SERIAL_PROTOCOL(current_position[X_AXIS] + X_PROBE_OFFSET_FROM_EXTRUDER + 0.0001);
