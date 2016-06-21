@@ -828,8 +828,10 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // JFR -was true // set to true to i
 //
 //#define ULTIPANEL
 
+//
 // Cartesio UI
 // http://mauk.cc/webshop/cartesio-shop/electronics/user-interface
+//
 //#define CARTESIO_UI
 
 //
