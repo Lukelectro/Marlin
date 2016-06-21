@@ -407,6 +407,9 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // JFR -was true // set to true to i
   #define DISABLE_MAX_ENDSTOPS
 #endif
 
+// Enable Z Probe Repeatability test to see how accurate your probe is
+//#define Z_MIN_PROBE_REPEATABILITY_TEST
+
 //
 // Probe Raise options provide clearance for the probe to deploy and stow.
 //
