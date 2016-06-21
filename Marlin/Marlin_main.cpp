@@ -1461,20 +1461,23 @@ inline void set_destination_to_current() { memcpy(destination, current_position,
 //
 //  - Save current feedrates
 //  - Reset the rate multiplier
-//  - Enable the endstops
 //  - Reset the command timeout
+//  - Enable the endstops (for endstop moves)
 //
 // clean_up_after_endstop_move() restores
 // feedrates, sets endstops back to global state.
 //
-static void setup_for_endstop_move() {
+static void setup_for_endstop_or_probe_move() {
+  #if ENABLED(DEBUG_LEVELING_FEATURE)
+    if (DEBUGGING(LEVELING)) DEBUG_POS("setup_for_endstop_or_probe_move", current_position);
+  #endif
   saved_feedrate = feedrate;
   saved_feedrate_multiplier = feedrate_multiplier;
   feedrate_multiplier = 100;
   refresh_cmd_timeout();
-  #if ENABLED(DEBUG_LEVELING_FEATURE)
-    if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("setup_for_endstop_move > endstops.enable()");
-  #endif
+}
+static void setup_for_endstop_move() {
+  setup_for_endstop_or_probe_move();
   endstops.enable();
 }
 
@@ -3341,7 +3344,7 @@ inline void gcode_G28() {
 
     stepper.synchronize();
 
-    setup_for_endstop_move();
+    setup_for_endstop_or_probe_move();
 
     feedrate = homing_feedrate[Z_AXIS];
 
@@ -3455,7 +3458,7 @@ inline void gcode_G28() {
         if (DEBUGGING(LEVELING)) DEBUG_POS("> probing complete", current_position);
       #endif
 
-      clean_up_after_endstop_move();
+      clean_up_after_endstop_or_probe_move();
 
       #ifdef DELTA
         extrapolate_unprobed_bed_level();
@@ -3568,7 +3571,7 @@ inline void gcode_G28() {
                                   ABL_PROBE_PT_3_Y + home_offset[Y_AXIS],
                                   current_position[Z_AXIS] + Z_RAISE_BETWEEN_PROBINGS,
                                   p3, verbose_level);
-      clean_up_after_endstop_move();
+      clean_up_after_endstop_or_probe_move();
       if (!dryrun) set_bed_level_equation_3pts(z_at_pt_1, z_at_pt_2, z_at_pt_3);
 
     #endif // !AUTO_BED_LEVELING_GRID
@@ -3609,7 +3612,7 @@ inline void gcode_G28() {
    */
   inline void gcode_G30() {
 
-    setup_for_endstop_move();
+    setup_for_endstop_or_probe_move();
 
     deploy_z_probe();
 
@@ -3628,7 +3631,7 @@ inline void gcode_G28() {
 
     stow_z_probe();
 
-    clean_up_after_endstop_move();
+    clean_up_after_endstop_or_probe_move();
 
     report_current_position();
   }
@@ -4038,7 +4041,7 @@ inline void gcode_M42() {
      * OK, do the initial probe to get us close to the bed.
      * Then retrace the right amount and use that in subsequent probes
      */
-    setup_for_endstop_move();
+    setup_for_endstop_or_probe_move();
 
     // Height before each probe (except the first)
     float z_between = home_offset[Z_AXIS] + (deploy_probe_for_each_reading ? Z_RAISE_BEFORE_PROBING : Z_RAISE_BETWEEN_PROBINGS);
@@ -4192,7 +4195,7 @@ inline void gcode_M42() {
     SERIAL_PROTOCOL_F(sigma, 6);
     SERIAL_EOL; SERIAL_EOL;
 
-    clean_up_after_endstop_move();
+    clean_up_after_endstop_or_probe_move();
 
     report_current_position();
   }
