@@ -2192,7 +2192,11 @@ static void homeaxis(AxisEnum axis) {
 
     // Set the axis position as setup for the move
     current_position[axis] = 0;
-    sync_plan_position();
+    #if ENABLED(DELTA) || ENABLED(SCARA)
+      sync_plan_position_delta();
+    #else
+      sync_plan_position();
+    #endif
 
     #if ENABLED(Z_PROBE_SLED)
       #define _Z_DEPLOY           (dock_sled(false))
@@ -2236,7 +2240,11 @@ static void homeaxis(AxisEnum axis) {
 
     // Set the axis position as setup for the move
     current_position[axis] = 0;
-    sync_plan_position();
+    #if ENABLED(DELTA) || ENABLED(SCARA)
+      sync_plan_position_delta();
+    #else
+      sync_plan_position();
+    #endif
 
     #if ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("> endstops.enable(false)");
@@ -2297,7 +2305,7 @@ static void homeaxis(AxisEnum axis) {
           if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("> endstops.enable(false)");
         #endif
         endstops.enable(false); // Disable endstops while moving away
-        sync_plan_position();
+        sync_plan_position_delta();
         destination[axis] = endstop_adj[axis];
         #if ENABLED(DEBUG_LEVELING_FEATURE)
           if (DEBUGGING(LEVELING)) {
@@ -2324,7 +2332,12 @@ static void homeaxis(AxisEnum axis) {
 
     // Set the axis position to its home position (plus home offsets)
     set_axis_is_at_home(axis);
-    sync_plan_position();
+
+    #if ENABLED(DELTA) || ENABLED(SCARA)
+      sync_plan_position_delta();
+    #else
+      sync_plan_position();
+    #endif
 
     #if ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) DEBUG_POS("> AFTER set_axis_is_at_home", current_position);
@@ -2375,7 +2388,7 @@ static void homeaxis(AxisEnum axis) {
 
       if (retract_zlift > 0.01) {
         current_position[Z_AXIS] -= retract_zlift;
-        #if ENABLED(DELTA)
+        #if ENABLED(DELTA) || ENABLED(SCARA)
           sync_plan_position_delta();
         #else
           sync_plan_position();
@@ -2387,7 +2400,7 @@ static void homeaxis(AxisEnum axis) {
 
       if (retract_zlift > 0.01) {
         current_position[Z_AXIS] += retract_zlift;
-        #if ENABLED(DELTA)
+        #if ENABLED(DELTA) || ENABLED(SCARA)
           sync_plan_position_delta();
         #else
           sync_plan_position();
@@ -2965,9 +2978,7 @@ inline void gcode_G28() {
 
   #endif // else DELTA
 
-  #if ENABLED(SCARA)
-    sync_plan_position_delta();
-  #endif
+  #endif // !DELTA (gcode_G28)
 
   #if ENABLED(ENDSTOPS_ONLY_FOR_HOMING)
     endstops.enable(false);
@@ -3333,7 +3344,11 @@ inline void gcode_G28() {
       current_position[Z_AXIS] = uncorrected_position.z;
       plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
 
-        sync_plan_position();
+        #if ENABLED(SCARA)
+          sync_plan_position_delta();
+        #else
+          sync_plan_position();
+        #endif
 
       #endif // !DELTA
     }
@@ -6429,7 +6444,7 @@ inline void gcode_T(uint8_t tmp_extruder) {
       #endif // !DUAL_X_CARRIAGE
 
       // Tell the planner the new "current position"
-      #if ENABLED(DELTA)
+      #if ENABLED(DELTA) || ENABLED(SCARA)
         sync_plan_position_delta();
       #else
         sync_plan_position();
