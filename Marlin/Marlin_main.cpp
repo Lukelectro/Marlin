@@ -1486,6 +1486,15 @@ static void setup_for_endstop_move() {
   endstops.enable();
 }
 
+static void clean_up_after_endstop_or_probe_move() {
+  #if ENABLED(DEBUG_LEVELING_FEATURE)
+    if (DEBUGGING(LEVELING)) DEBUG_POS("clean_up_after_endstop_or_probe_move", current_position);
+  #endif
+  feedrate = saved_feedrate;
+  feedrate_multiplier = saved_feedrate_multiplier;
+  refresh_cmd_timeout();
+}
+
 #if HAS_BED_PROBE
 
 #ifndef DELTA
@@ -3023,14 +3032,7 @@ inline void gcode_G28() {
 
   #endif // !DELTA (gcode_G28)
 
-  #if ENABLED(ENDSTOPS_ONLY_FOR_HOMING)
-    endstops.enable(false);
-    #if ENABLED(DEBUG_LEVELING_FEATURE)
-      if (DEBUGGING(LEVELING)) {
-        SERIAL_ECHOLNPGM("ENDSTOPS_ONLY_FOR_HOMING endstops.enable(false)");
-      }
-    #endif
-  #endif
+  endstops.not_homing();
 
   // Enable mesh leveling again
   #if ENABLED(MESH_BED_LEVELING)
@@ -3062,9 +3064,8 @@ inline void gcode_G28() {
     }
   #endif
 
-  feedrate = saved_feedrate;
-  feedrate_multiplier = saved_feedrate_multiplier;
-  refresh_cmd_timeout();
+  clean_up_after_endstop_or_probe_move();
+
   endstops.hit_on_purpose(); // clear endstop hit flags
 
   #if ENABLED(DEBUG_LEVELING_FEATURE)
@@ -3635,7 +3636,7 @@ inline void gcode_G28() {
                                   ABL_PROBE_PT_3_Y + home_offset[Y_AXIS],
                                   current_position[Z_AXIS] + Z_RAISE_BETWEEN_PROBINGS,
                                   p3, verbose_level);
-      clean_up_after_endstop_or_probe_move();
+
       if (!dryrun) set_bed_level_equation_3pts(z_at_pt_1, z_at_pt_2, z_at_pt_3);
 
     #endif // !AUTO_BED_LEVELING_GRID
