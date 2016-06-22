@@ -2061,8 +2061,7 @@ static void retract_z_probe() {
       deploy_z_probe();
     }
 
-    run_z_probe();
-    float measured_z = current_position[Z_AXIS];
+    float measured_z = run_z_probe();
 
     if (probe_action & ProbeStow) {
       #if ENABLED(DEBUG_LEVELING_FEATURE)
@@ -3684,14 +3683,14 @@ inline void gcode_G28() {
     stepper.synchronize();
 
     // TODO: clear the leveling matrix or the planner will be set incorrectly
-    run_z_probe(); // clears the ABL non-delta matrix only
+    float measured_z = run_z_probe(); // clears the ABL non-delta matrix only
 
     SERIAL_PROTOCOLPGM("Bed X: ");
     SERIAL_PROTOCOL(current_position[X_AXIS] + X_PROBE_OFFSET_FROM_EXTRUDER + 0.0001);
     SERIAL_PROTOCOLPGM(" Y: ");
     SERIAL_PROTOCOL(current_position[Y_AXIS] + Y_PROBE_OFFSET_FROM_EXTRUDER + 0.0001);
     SERIAL_PROTOCOLPGM(" Z: ");
-    SERIAL_PROTOCOL(current_position[Z_AXIS] + 0.0001);
+    SERIAL_PROTOCOL(measured_z + 0.0001);
     SERIAL_EOL;
 
     stow_z_probe();
