@@ -2875,7 +2875,7 @@ inline void gcode_G28() {
             destination[Y_AXIS] = round(Z_SAFE_HOMING_Y_POINT - (Y_PROBE_OFFSET_FROM_EXTRUDER));
             destination[Z_AXIS] = current_position[Z_AXIS]; //z is already at the right height
 
-            feedrate = XY_TRAVEL_FEEDRATE;
+            feedrate = XY_PROBE_FEEDRATE;
 
             #if ENABLED(DEBUG_LEVELING_FEATURE)
               if (DEBUGGING(LEVELING)) {
@@ -3261,7 +3261,7 @@ inline void gcode_G28() {
         }
       #endif
 
-      xy_travel_speed = code_seen('S') ? (int)code_value_linear_units() : XY_TRAVEL_SPEED;
+      xy_probe_speed = code_seen('S') ? (int)code_value_linear_units() : XY_PROBE_SPEED;
 
       int left_probe_bed_position = code_seen('L') ? (int)code_value_axis_units(X_AXIS) : LEFT_PROBE_BED_POSITION,
           right_probe_bed_position = code_seen('R') ? (int)code_value_axis_units(X_AXIS) : RIGHT_PROBE_BED_POSITION,
@@ -6278,8 +6278,8 @@ inline void gcode_T(uint8_t tmp_extruder) {
     }
     else {
       feedrate =
-        #ifdef XY_TRAVEL_SPEED
-          XY_TRAVEL_SPEED
+        #ifdef XY_PROBE_SPEED
+          XY_PROBE_SPEED
         #else
           min(planner.max_feedrate[X_AXIS], planner.max_feedrate[Y_AXIS]) * 60
         #endif
