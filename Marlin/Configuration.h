@@ -417,6 +417,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // JFR -was true // set to true to i
 // For G29 these apply before and after the full procedure.
 #define Z_RAISE_BEFORE_PROBING 15   // Raise before probe deploy (e.g., the first probe).
 #define Z_RAISE_AFTER_PROBING 15    // Raise before probe stow (e.g., the last probe).
+#define Z_RAISE_BETWEEN_PROBINGS 5  // Raise between probing points.
 
 //
 // For M851 give a range for adjusting the Z probe offset
