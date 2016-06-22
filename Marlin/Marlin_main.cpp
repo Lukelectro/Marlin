@@ -2874,7 +2874,8 @@ inline void gcode_G28() {
             destination[X_AXIS] = round(Z_SAFE_HOMING_X_POINT - (X_PROBE_OFFSET_FROM_EXTRUDER));
             destination[Y_AXIS] = round(Z_SAFE_HOMING_Y_POINT - (Y_PROBE_OFFSET_FROM_EXTRUDER));
             destination[Z_AXIS] = current_position[Z_AXIS]; //z is already at the right height
-            feedrate = XY_TRAVEL_SPEED;
+
+            feedrate = XY_TRAVEL_FEEDRATE;
 
             #if ENABLED(DEBUG_LEVELING_FEATURE)
               if (DEBUGGING(LEVELING)) {
