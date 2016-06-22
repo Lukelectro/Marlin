@@ -1779,7 +1779,7 @@ static void engage_z_probe() {
     #if HAS_Z_SERVO_ENDSTOP
 
       // Make room for Z Servo
-      raise_z_for_servo(Z_RAISE_BEFORE_PROBING);
+      do_probe_raise(Z_RAISE_BEFORE_PROBING);
 
       // Engage Z Servo endstop if enabled
       DEPLOY_Z_SERVO();
