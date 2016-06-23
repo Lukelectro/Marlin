@@ -411,7 +411,7 @@ void Planner::recalculate() {
 #endif //AUTOTEMP
 
 /**
- * Maintain fans, paste extruder pressure, 
+ * Maintain fans, paste extruder pressure,
  */
 void Planner::check_axes_activity() {
   unsigned char axis_active[NUM_AXIS] = { 0 },
@@ -1089,7 +1089,7 @@ void plan_buffer_line(float x, float y, float z, const float &e, float feed_rate
     // This leads to an enormous number of advance steps due to a huge e_acceleration.
     // The math is correct, but you don't want a retract move done with advance!
     // So this situation is filtered out here.
-    if (!bse || (!bsx && !bsy && !bsz) || stepper.get_advance_k() == 0 || bse == allsteps) {
+    if (!bse || (!bsx && !bsy && !bsz) || stepper.get_advance_k() == 0 || (uint32_t) bse == allsteps) {
       block->use_advance_lead = false;
     }
     else {
