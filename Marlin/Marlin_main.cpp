@@ -3490,6 +3490,8 @@ inline void gcode_G28() {
         } //xProbe
       } //yProbe
 
+    #else // !AUTO_BED_LEVELING_GRID
+
       #if ENABLED(DEBUG_LEVELING_FEATURE)
         if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("> 3-point Leveling");
       #endif
