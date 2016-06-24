@@ -3651,12 +3651,10 @@ inline void gcode_G28() {
 
     setup_for_endstop_or_probe_move();
 
-    deploy_z_probe();
-
-    stepper.synchronize();
-
     // TODO: clear the leveling matrix or the planner will be set incorrectly
-    float measured_z = run_z_probe(); // clears the ABL non-delta matrix only
+    float measured_z = probe_pt(current_position[X_AXIS] + X_PROBE_OFFSET_FROM_EXTRUDER,
+                                current_position[Y_AXIS] + Y_PROBE_OFFSET_FROM_EXTRUDER,
+                                true, 1);
 
     SERIAL_PROTOCOLPGM("Bed X: ");
     SERIAL_PROTOCOL(current_position[X_AXIS] + X_PROBE_OFFSET_FROM_EXTRUDER + 0.0001);
@@ -3665,8 +3663,6 @@ inline void gcode_G28() {
     SERIAL_PROTOCOLPGM(" Z: ");
     SERIAL_PROTOCOL(measured_z + 0.0001);
     SERIAL_EOL;
-
-    stow_z_probe();
 
     clean_up_after_endstop_or_probe_move();
 
