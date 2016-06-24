@@ -1778,9 +1778,6 @@ static void engage_z_probe() {
 
     #if HAS_Z_SERVO_ENDSTOP
 
-      // Make room for Z Servo
-      do_probe_raise(Z_RAISE_BEFORE_PROBING);
-
       // Engage Z Servo endstop if enabled
       DEPLOY_Z_SERVO();
 
@@ -1928,6 +1925,11 @@ static void retract_z_probe() {
     #endif
 
     if (!endstops.z_probe_enabled) return;
+
+    // Make more room for the servo
+    #if Z_RAISE_AFTER_PROBING > 0
+      do_probe_raise(Z_RAISE_AFTER_PROBING);
+    #endif
 
     #if ENABLED(Z_PROBE_SLED)
 
