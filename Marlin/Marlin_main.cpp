@@ -3102,7 +3102,9 @@ inline void gcode_G28() {
     feedrate = homing_feedrate[X_AXIS];
 
     current_position[Z_AXIS] = MESH_HOME_SEARCH_Z
-      #if MIN_Z_HEIGHT_FOR_HOMING > 0
+      #if Z_RAISE_BETWEEN_PROBINGS > MIN_Z_HEIGHT_FOR_HOMING
+        + Z_RAISE_BETWEEN_PROBINGS
+      #elif MIN_Z_HEIGHT_FOR_HOMING > 0
         + MIN_Z_HEIGHT_FOR_HOMING
       #endif
     ;
@@ -3112,7 +3114,7 @@ inline void gcode_G28() {
     current_position[Y_AXIS] = y + home_offset[Y_AXIS];
     line_to_current_position();
 
-    #if MIN_Z_HEIGHT_FOR_HOMING > 0
+    #if Z_RAISE_BETWEEN_PROBINGS > 0 || MIN_Z_HEIGHT_FOR_HOMING > 0
       current_position[Z_AXIS] = MESH_HOME_SEARCH_Z;
       line_to_current_position();
     #endif
