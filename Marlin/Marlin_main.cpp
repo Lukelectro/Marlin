@@ -1924,8 +1924,8 @@ static void retract_z_probe() {
     if (!endstops.z_probe_enabled) return;
 
     // Make more room for the servo
-    #if Z_RAISE_AFTER_PROBING > 0
-      do_probe_raise(Z_RAISE_AFTER_PROBING);
+    #if _Z_RAISE_PROBE_DEPLOY_STOW > 0
+      do_probe_raise(_Z_RAISE_PROBE_DEPLOY_STOW);
     #endif
 
     #if ENABLED(Z_PROBE_SLED)
@@ -1953,8 +1953,8 @@ static void retract_z_probe() {
       // Move up for safety
       feedrate = Z_PROBE_ALLEN_KEY_STOW_1_FEEDRATE;
 
-      #if Z_RAISE_AFTER_PROBING > 0
-        destination[Z_AXIS] = current_position[Z_AXIS] + Z_RAISE_AFTER_PROBING;
+      #if _Z_RAISE_PROBE_DEPLOY_STOW > 0
+        destination[Z_AXIS] = current_position[Z_AXIS] + _Z_RAISE_PROBE_DEPLOY_STOW;
         prepare_move_to_destination_raw(); // this will also set_current_to_destination
       #endif
 
