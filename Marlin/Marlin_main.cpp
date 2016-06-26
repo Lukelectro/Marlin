@@ -2033,7 +2033,10 @@ static void retract_z_probe() {
 
     float old_feedrate = feedrate;
 
-    // Raise by z_raise, then move the Z probe to the given XY
+    // Ensure a minimum height before moving the probe
+    do_probe_raise(Z_RAISE_BETWEEN_PROBINGS);
+
+    // Move to the XY where we shall probe
     #if ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) {
         SERIAL_ECHOPAIR("> do_blocking_move_to_xy(", x - (X_PROBE_OFFSET_FROM_EXTRUDER));
@@ -2041,7 +2044,6 @@ static void retract_z_probe() {
         SERIAL_ECHOLNPGM(")");
       }
     #endif
-
     feedrate = XY_PROBE_FEEDRATE;
     do_blocking_move_to_xy(x - (X_PROBE_OFFSET_FROM_EXTRUDER), y - (Y_PROBE_OFFSET_FROM_EXTRUDER));
 
