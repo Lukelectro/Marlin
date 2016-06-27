@@ -352,7 +352,7 @@ void Config_RetrieveSettings() {
   char stored_ver[4];
   char ver[4] = EEPROM_VERSION;
   EEPROM_READ_VAR(i, stored_ver); //read stored version
-  //  SERIAL_ECHOLN("Version: [" << ver << "] Stored version: [" << stored_ver << "]");
+  //  SERIAL_ECHO("Version: [" << ver << "] Stored version: [" << stored_ver << "]\n");
 
   if (strncmp(ver, stored_ver, 3) != 0) {
     Config_ResetDefault();
@@ -721,7 +721,7 @@ void Config_PrintSettings(bool forReplay) {
 
   CONFIG_ECHO_START;
   if (!forReplay) {
-    SERIAL_ECHOLNPGM("Home offset (mm):");
+    SERIAL_ECHOLNPGM("Home offset (mm)");
     CONFIG_ECHO_START;
   }
   SERIAL_ECHOPAIR("  M206 X", home_offset[X_AXIS]);
@@ -887,7 +887,7 @@ void Config_PrintSettings(bool forReplay) {
       SERIAL_ECHOLNPGM("Auto-Retract: S=0 to disable, 1 to interpret extrude-only moves as retracts or recoveries");
       CONFIG_ECHO_START;
     }
-    SERIAL_ECHOPAIR("  M209 S", (autoretract_enabled ? 1 : 0));
+    SERIAL_ECHOPAIR("  M209 S", autoretract_enabled ? 1 : 0);
     SERIAL_EOL;
 
   #endif // FWRETRACT
