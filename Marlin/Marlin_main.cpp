@@ -1683,7 +1683,6 @@ static void clean_up_after_endstop_or_probe_move() {
 
     #endif // !DELTA
 
-    feedrate = old_feedrate;
   }
 
   inline void do_blocking_move_to_xy(float x, float y) {
@@ -3312,7 +3311,7 @@ inline void gcode_G28() {
 
     bool dryrun = code_seen('D');
 
-    #if ENABLED(Z_PROBE_SLED) || ENABLED(Z_PROBE_ALLEN_KEY)
+    #if ENABLED(Z_PROBE_ALLEN_KEY)
       const bool stow_probe_after_each = false;
     #else
       bool stow_probe_after_each = code_seen('E');
@@ -4034,7 +4033,7 @@ inline void gcode_M42() {
     float  X_current = current_position[X_AXIS],
            Y_current = current_position[Y_AXIS];
 
-    #if ENABLED(Z_PROBE_SLED) || ENABLED(Z_PROBE_ALLEN_KEY)
+    #if ENABLED(Z_PROBE_ALLEN_KEY)
       const bool stow_probe_after_each = false;
     #else
       bool stow_probe_after_each = code_seen('E');
