@@ -2053,7 +2053,7 @@ static void retract_z_probe() {
 
     if (stow) {
       #if ENABLED(DEBUG_LEVELING_FEATURE)
-        if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("> stow_z_probe");
+        if (DEBUGGING(LEVELING)) SERIAL_ECHOPGM("> ");
       #endif
       stow_z_probe();
     }
@@ -2410,7 +2410,7 @@ static void homeaxis(AxisEnum axis) {
     #if HAS_BED_PROBE
       if (axis == Z_AXIS && axis_home_dir < 0) {
         #if ENABLED(DEBUG_LEVELING_FEATURE)
-          if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM(" > stow_z_probe()");
+          if (DEBUGGING(LEVELING)) SERIAL_ECHOPGM("> ");
         #endif
         stow_z_probe();
       }
