@@ -1339,8 +1339,8 @@ static void set_home_offset(AxisEnum axis, float v) {
 static void set_axis_is_at_home(AxisEnum axis) {
   #if ENABLED(DEBUG_LEVELING_FEATURE)
     if (DEBUGGING(LEVELING)) {
-      SERIAL_ECHOPAIR("set_axis_is_at_home(", axis);
-      SERIAL_ECHOLNPGM(") >>>");
+      SERIAL_ECHOPAIR(">>> set_axis_is_at_home(", axis);
+      SERIAL_ECHOLNPGM(")");
     }
   #endif
 
@@ -2021,9 +2021,10 @@ static void retract_z_probe() {
   static float probe_pt(float x, float y, bool stow = true, int verbose_level = 1) {
     #if ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) {
-        SERIAL_ECHOLNPGM("probe_pt >>>");
-        SERIAL_ECHOPAIR("> stow:", stow);
-        SERIAL_EOL;
+        SERIAL_ECHOPAIR(">>> probe_pt(", x);
+        SERIAL_ECHOPAIR(", ", y);
+        SERIAL_ECHOPAIR(", ", stow ? "stow" : "no stow");
+        SERIAL_ECHOLNPGM(")");
         DEBUG_POS("", current_position);
       }
     #endif
@@ -2698,7 +2699,7 @@ inline void gcode_G4() {
 inline void gcode_G28() {
 
   #if ENABLED(DEBUG_LEVELING_FEATURE)
-    if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("gcode_G28 >>>");
+    if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM(">>> gcode_G28");
   #endif
 
   // Wait for planner moves to finish!
@@ -3295,7 +3296,7 @@ inline void gcode_G28() {
 
     #if ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) {
-        SERIAL_ECHOLNPGM("gcode_G29 >>>");
+        SERIAL_ECHOLNPGM(">>> gcode_G29");
         DEBUG_POS("", current_position);
       }
     #endif
