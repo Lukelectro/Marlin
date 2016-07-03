@@ -2724,6 +2724,7 @@ inline void gcode_G28() {
                                 current_position[Y_AXIS] - home_offset[Y_AXIS]);
       }
       mbl.set_active(false);
+      current_position[Z_AXIS] = pre_home_z;
     }
   #endif
 
