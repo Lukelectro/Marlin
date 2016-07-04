@@ -2183,6 +2183,8 @@ Fan_2 2
   #include "pins_GEN7_13.h"
 #elif MB(GEN7_14)
   #include "pins_GEN7_14.h"
+#elif MB(CNCONTROLS_11)
+  #include "pins_CNCONTROLS_11.h"
 #elif MB(CNCONTROLS_12)
   #include "pins_CNCONTROLS_12.h"
 #elif MB(CHEAPTRONIC)
@@ -2576,4 +2578,3 @@ Fan_2 2
 #define HAS_DIGIPOTSS (PIN_EXISTS(DIGIPOTSS))
 
 #endif //__PINS_H
-
