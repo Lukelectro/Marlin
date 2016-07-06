@@ -52,13 +52,12 @@ class Temperature {
 
   public:
 
-    static int current_temperature_raw[HOTENDS];
-    static float current_temperature[HOTENDS];
-    static int target_temperature[HOTENDS];
-
-    static int current_temperature_bed_raw;
-    static float current_temperature_bed;
-    static int target_temperature_bed;
+    static float current_temperature[HOTENDS],
+                 current_temperature_bed;
+    static int   current_temperature_raw[HOTENDS],
+                 target_temperature[HOTENDS],
+                 current_temperature_bed_raw,
+                 target_temperature_bed;
 
     #if ENABLED(TEMP_SENSOR_1_AS_REDUNDANT)
       static float redundant_temperature;
