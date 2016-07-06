@@ -1769,10 +1769,13 @@ static void engage_z_probe() {
   static void engage_z_probe() {
 
     #if ENABLED(DEBUG_LEVELING_FEATURE)
-      if (DEBUGGING(LEVELING)) DEBUG_POS("deploy_z_probe", current_position);
+      if (DEBUGGING(LEVELING)) {
+        DEBUG_POS("set_probe_deployed", current_position);
+        SERIAL_ECHOPAIR("deploy: ", deploy);
+      }
     #endif
 
-    if (endstops.z_probe_enabled) return;
+    if (endstops.z_probe_enabled == deploy) return false;
 
     #if HAS_Z_SERVO_ENDSTOP
 
@@ -1882,15 +1885,14 @@ static void retract_z_probe() {
 
     #ifdef _TRIGGERED_WHEN_STOWED_TEST
       // If endstop is already false, the Z probe is deployed
-      if (!_TRIGGERED_WHEN_STOWED_TEST) { // closed after the probe specific actions.
-                                        // Would a goto be less ugly?
+      if (_TRIGGERED_WHEN_STOWED_TEST == deploy) { // closed after the probe specific actions.
+                                                   // Would a goto be less ugly?
       //while (!_TRIGGERED_WHEN_STOWED_TEST) { idle(); // would offer the opportunity
       // for a triggered when stowed manual probe.
+    #endif
 
-      #if ENABLED(Z_PROBE_SLED)
-
-      dock_sled(true);
-
+    #if ENABLED(Z_PROBE_SLED)
+      dock_sled(!deploy);
     #elif HAS_Z_SERVO_ENDSTOP
 
       // Retract Z Servo endstop if enabled
@@ -2010,7 +2012,7 @@ static void retract_z_probe() {
     #if ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) SERIAL_ECHOPGM("> ");
     #endif
-    deploy_z_probe();
+    if (DEPLOY_PROBE()) return NAN;
 
     float measured_z = run_z_probe();
 
@@ -2018,7 +2020,7 @@ static void retract_z_probe() {
       #if ENABLED(DEBUG_LEVELING_FEATURE)
         if (DEBUGGING(LEVELING)) SERIAL_ECHOPGM("> ");
       #endif
-      stow_z_probe();
+      if (STOW_PROBE()) return NAN;
     }
     else {
       #if ENABLED(DEBUG_LEVELING_FEATURE)
@@ -2372,7 +2374,7 @@ static void homeaxis(AxisEnum axis) {
         #if ENABLED(DEBUG_LEVELING_FEATURE)
           if (DEBUGGING(LEVELING)) SERIAL_ECHOPGM("> ");
         #endif
-        stow_z_probe();
+        if (STOW_PROBE()) return;
       }
     #endif
 
@@ -3265,12 +3267,7 @@ inline void gcode_G28() {
     }
 
     bool dryrun = code_seen('D');
-
-    #if ENABLED(Z_PROBE_ALLEN_KEY)
-      const bool stow_probe_after_each = false;
-    #else
-      bool stow_probe_after_each = code_seen('E');
-    #endif
+    bool stow_probe_after_each = code_seen('E');
 
     #if ENABLED(AUTO_BED_LEVELING_GRID)
 
@@ -3368,8 +3365,8 @@ inline void gcode_G28() {
 
     setup_for_endstop_or_probe_move();
 
-    // Deploy the probe. Servo will raise if needed.
-    deploy_z_probe();
+    // Deploy the probe. Probe will raise if needed.
+    if (DEPLOY_PROBE()) return;
 
     bed_leveling_in_progress = true;
 
@@ -3639,12 +3636,12 @@ inline void gcode_G28() {
     /**
      * G31: Deploy the Z probe
      */
-    inline void gcode_G31() { deploy_z_probe(); }
+    inline void gcode_G31() { DEPLOY_PROBE(); }
 
     /**
      * G32: Stow the Z probe
      */
-    inline void gcode_G32() { stow_z_probe(); }
+    inline void gcode_G32() { STOW_PROBE(); }
 
   #endif // Z_PROBE_SLED
 
@@ -3985,11 +3982,7 @@ inline void gcode_M42() {
     float  X_current = current_position[X_AXIS],
            Y_current = current_position[Y_AXIS];
 
-    #if ENABLED(Z_PROBE_ALLEN_KEY)
-      const bool stow_probe_after_each = false;
-    #else
-      bool stow_probe_after_each = code_seen('E');
-    #endif
+    bool stow_probe_after_each = code_seen('E');
 
     float X_probe_location = code_seen('X') ? code_value_axis_units(X_AXIS) : X_current + X_PROBE_OFFSET_FROM_EXTRUDER;
     #if DISABLED(DELTA)
@@ -4156,7 +4149,7 @@ inline void gcode_M42() {
 
     } // End of probe loop
 
-    stow_z_probe();
+    if (STOW_PROBE()) return;
 
     if (verbose_level > 0) {
       SERIAL_PROTOCOLPGM("Mean: ");
@@ -5671,12 +5664,12 @@ inline void gcode_M400() { stepper.synchronize(); }
   /**
    * M401: Engage Z Servo endstop if available
    */
-  inline void gcode_M401() { deploy_z_probe(); }
+  inline void gcode_M401() { DEPLOY_PROBE(); }
 
   /**
    * M402: Retract Z Servo endstop if enabled
    */
-  inline void gcode_M402() { stow_z_probe(); }
+  inline void gcode_M402() { STOW_PROBE(); }
 
 #endif // HAS_BED_PROBE
 
