@@ -1780,21 +1780,6 @@ static void engage_z_probe() {
       DEPLOY_Z_SERVO();
 
     #elif ENABLED(Z_PROBE_ALLEN_KEY)
-      float old_feedrate = feedrate;
-
-      feedrate = Z_PROBE_ALLEN_KEY_DEPLOY_1_FEEDRATE;
-
-      // If endstop is already false, the Z probe is deployed
-      #if ENABLED(Z_MIN_PROBE_ENDSTOP)
-        bool z_probe_endstop = (READ(Z_MIN_PROBE_PIN) != Z_MIN_PROBE_ENDSTOP_INVERTING);
-        if (z_probe_endstop)
-      #else
-        bool z_min_endstop = (READ(Z_MIN_PIN) != Z_MIN_ENDSTOP_INVERTING);
-        if (z_min_endstop)
-      #endif
-        {
-          run_deploy_moves_script();
-        }
 
       // Partially Home X,Y for safety
       destination[X_AXIS] *= 0.75;
@@ -1895,7 +1880,14 @@ static void retract_z_probe() {
     // Make more room for the servo
     do_probe_raise(_Z_RAISE_PROBE_DEPLOY_STOW);
 
-    #if ENABLED(Z_PROBE_SLED)
+    #ifdef _TRIGGERED_WHEN_STOWED_TEST
+      // If endstop is already false, the Z probe is deployed
+      if (!_TRIGGERED_WHEN_STOWED_TEST) { // closed after the probe specific actions.
+                                        // Would a goto be less ugly?
+      //while (!_TRIGGERED_WHEN_STOWED_TEST) { idle(); // would offer the opportunity
+      // for a triggered when stowed manual probe.
+
+      #if ENABLED(Z_PROBE_SLED)
 
       dock_sled(true);
 
