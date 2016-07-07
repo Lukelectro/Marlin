@@ -2776,9 +2776,7 @@ inline void gcode_G28() {
 
   #else // NOT DELTA
 
-    bool  homeX = code_seen(axis_codes[X_AXIS]),
-          homeY = code_seen(axis_codes[Y_AXIS]),
-          homeZ = code_seen(axis_codes[Z_AXIS]);
+    bool homeX = code_seen('X'), homeY = code_seen('Y'), homeZ = code_seen('Z');
 
     home_all_axis = (!homeX && !homeY && !homeZ) || (homeX && homeY && homeZ);
 
@@ -3379,7 +3377,7 @@ inline void gcode_G28() {
         delta_grid_spacing[0] = xGridSpacing;
         delta_grid_spacing[1] = yGridSpacing;
         float zoffset = zprobe_zoffset;
-        if (code_seen(axis_codes[Z_AXIS])) zoffset += code_value_axis_units(Z_AXIS);
+        if (code_seen('Z')) zoffset += code_value_axis_units(Z_AXIS);
       #else // !DELTA
         /**
          * solve the plane equation ax + by + d = z
@@ -3650,7 +3648,7 @@ inline void gcode_G28() {
  * G92: Set current position to given X Y Z E
  */
 inline void gcode_G92() {
-  bool didE = code_seen(axis_codes[E_AXIS]);
+  bool didE = code_seen('E');
 
   if (!didE) stepper.synchronize();
 
@@ -4771,7 +4769,7 @@ inline void gcode_M18_M84() {
     stepper_inactive_time = code_value_millis_from_seconds();
   }
   else {
-    bool all_axis = !((code_seen(axis_codes[X_AXIS])) || (code_seen(axis_codes[Y_AXIS])) || (code_seen(axis_codes[Z_AXIS])) || (code_seen(axis_codes[E_AXIS])));
+    bool all_axis = !((code_seen('X')) || (code_seen('Y')) || (code_seen('Z')) || (code_seen('E')));
     if (all_axis) {
       stepper.finish_and_disable();
     }
@@ -5019,11 +5017,9 @@ inline void gcode_M201() {
  * M203: Set maximum feedrate that your machine can sustain (M203 X200 Y200 Z300 E10000) in units/sec
  */
 inline void gcode_M203() {
-  for (int8_t i = 0; i < NUM_AXIS; i++) {
-    if (code_seen(axis_codes[i])) {
+  for (int8_t i = 0; i < NUM_AXIS; i++)
+    if (code_seen(axis_codes[i]))
       planner.max_feedrate[i] = code_value_axis_units(i);
-    }
-  }
 }
 
 /**
