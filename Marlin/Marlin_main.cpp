@@ -2786,14 +2786,8 @@ inline void gcode_G28() {
           #endif
 
           feedrate = homing_feedrate[Z_AXIS];
-
-          #if HAS_BED_PROBE
-            do_blocking_move_to_z(z_dest);
-          #else
-            line_to_z(z_dest);
-            stepper.synchronize();
-          #endif
-
+          line_to_z(z_dest);
+          stepper.synchronize();
           destination[Z_AXIS] = current_position[Z_AXIS] = z_dest;
         }
       }
