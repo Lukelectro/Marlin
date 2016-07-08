@@ -2771,7 +2771,7 @@ inline void gcode_G28() {
         #endif
       }
 
-    #elif defined(MIN_Z_HEIGHT_FOR_HOMING) && MIN_Z_HEIGHT_FOR_HOMING > 0
+    #else
 
       if (home_all_axis || homeX || homeY) {
         // Raise Z before homing any other axes and z is not already high enough (never lower z)
@@ -2792,7 +2792,7 @@ inline void gcode_G28() {
         }
       }
 
-    #endif // MIN_Z_HEIGHT_FOR_HOMING
+    #endif
 
     #if ENABLED(QUICK_HOME)
 
