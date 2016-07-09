@@ -269,8 +269,8 @@ void Config_StoreSettings()  {
   #endif
 
   #if DISABLED(ULTIPANEL)
-    int plaPreheatHotendTemp = PLA_PREHEAT_HOTEND_TEMP, plaPreheatHPBTemp = PLA_PREHEAT_HPB_TEMP, plaPreheatFanSpeed = PLA_PREHEAT_FAN_SPEED,
-        absPreheatHotendTemp = ABS_PREHEAT_HOTEND_TEMP, absPreheatHPBTemp = ABS_PREHEAT_HPB_TEMP, absPreheatFanSpeed = ABS_PREHEAT_FAN_SPEED;
+    int preheatHotendTemp1 = PREHEAT_1_TEMP_HOTEND, preheatBedTemp1 = PREHEAT_1_TEMP_BED, preheatFanSpeed1 = PREHEAT_1_FAN_SPEED,
+        preheatHotendTemp2 = PREHEAT_2_TEMP_HOTEND, preheatBedTemp2 = PREHEAT_2_TEMP_BED, preheatFanSpeed2 = PREHEAT_2_FAN_SPEED;
   #endif // !ULTIPANEL
 
   EEPROM_WRITE_VAR(i, plaPreheatHotendTemp);
@@ -450,8 +450,8 @@ void Config_RetrieveSettings() {
     #endif
 
     #if DISABLED(ULTIPANEL)
-      int plaPreheatHotendTemp, plaPreheatHPBTemp, plaPreheatFanSpeed,
-          absPreheatHotendTemp, absPreheatHPBTemp, absPreheatFanSpeed;
+      int preheatHotendTemp1, preheatBedTemp1, preheatFanSpeed1,
+          preheatHotendTemp2, preheatBedTemp2, preheatFanSpeed2;
     #endif
 
     EEPROM_READ_VAR(i, plaPreheatHotendTemp);
@@ -608,12 +608,12 @@ void Config_ResetDefault() {
   #endif
 
   #if ENABLED(ULTIPANEL)
-    plaPreheatHotendTemp = PLA_PREHEAT_HOTEND_TEMP;
-    plaPreheatHPBTemp = PLA_PREHEAT_HPB_TEMP;
-    plaPreheatFanSpeed = PLA_PREHEAT_FAN_SPEED;
-    absPreheatHotendTemp = ABS_PREHEAT_HOTEND_TEMP;
-    absPreheatHPBTemp = ABS_PREHEAT_HPB_TEMP;
-    absPreheatFanSpeed = ABS_PREHEAT_FAN_SPEED;
+    preheatHotendTemp1 = PREHEAT_1_TEMP_HOTEND;
+    preheatBedTemp1 = PREHEAT_1_TEMP_BED;
+    preheatFanSpeed1 = PREHEAT_1_FAN_SPEED;
+    preheatHotendTemp2 = PREHEAT_2_TEMP_HOTEND;
+    preheatBedTemp2 = PREHEAT_2_TEMP_BED;
+    preheatFanSpeed2 = PREHEAT_2_FAN_SPEED;
   #endif
 
   #if HAS_LCD_CONTRAST
@@ -818,14 +818,14 @@ void Config_PrintSettings(bool forReplay) {
       SERIAL_ECHOLNPGM("Material heatup parameters:");
       CONFIG_ECHO_START;
     }
-    SERIAL_ECHOPAIR("  M145 S0 H", plaPreheatHotendTemp);
-    SERIAL_ECHOPAIR(" B", plaPreheatHPBTemp);
-    SERIAL_ECHOPAIR(" F", plaPreheatFanSpeed);
+    SERIAL_ECHOPAIR("  M145 S0 H", preheatHotendTemp1);
+    SERIAL_ECHOPAIR(" B", preheatBedTemp1);
+    SERIAL_ECHOPAIR(" F", preheatFanSpeed1);
     SERIAL_EOL;
     CONFIG_ECHO_START;
-    SERIAL_ECHOPAIR("  M145 S1 H", absPreheatHotendTemp);
-    SERIAL_ECHOPAIR(" B", absPreheatHPBTemp);
-    SERIAL_ECHOPAIR(" F", absPreheatFanSpeed);
+    SERIAL_ECHOPAIR("  M145 S1 H", preheatHotendTemp2);
+    SERIAL_ECHOPAIR(" B", preheatBedTemp2);
+    SERIAL_ECHOPAIR(" F", preheatFanSpeed2);
     SERIAL_EOL;
   #endif // ULTIPANEL
 
