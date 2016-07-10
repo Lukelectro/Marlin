@@ -1798,7 +1798,7 @@ static void lcd_control_volumetric_menu()
         printStatistics stats = print_job_counter.getStats();
 
         char printTime[6];
-        sprintf(printTime, "%02d:%02d", int(stats.printTime / 60), int(stats.printTime % 60));
+        sprintf(printTime, "%02d:%02d", int(stats.printTime / 3600), int(stats.printTime / 60) % 60);
 
         if (LCD_CLICKED) lcd_goto_previous_menu(true);
         START_SCREEN();
