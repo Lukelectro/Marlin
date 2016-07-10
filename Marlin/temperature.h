@@ -38,6 +38,16 @@
   #define SOFT_PWM_SCALE 0
 #endif
 
+#if HOTENDS == 1
+  #define HOTEND_ARG 0
+  #define HOTEND_INDEX 0
+  #define EXTRUDER_ARG 0
+#else
+  #define HOTEND_ARG hotend
+  #define HOTEND_INDEX e
+  #define EXTRUDER_ARG active_extruder
+#endif
+
 class Temperature {
 
   public:
@@ -156,12 +166,6 @@ static bool thermal_runaway = false;
     //inline so that there is no performance decrease.
     //deg=degreeCelsius
 
-    #if HOTENDS == 1
-      #define HOTEND_ARG 0
-    #else
-      #define HOTEND_ARG hotend
-    #endif
-
     static float degHotend(uint8_t hotend) {
       #if HOTENDS == 1
         UNUSED(hotend);
@@ -255,8 +259,8 @@ static bool thermal_runaway = false;
       #if ENABLED(AUTOTEMP)
         if (planner.autotemp_enabled) {
           planner.autotemp_enabled = false;
-          if (degTargetHotend(active_extruder) > planner.autotemp_min)
-            setTargetHotend(0, active_extruder);
+          if (degTargetHotend(EXTRUDER_ARG) > planner.autotemp_min)
+            setTargetHotend(0, EXTRUDER_ARG);
         }
       #endif
     }
