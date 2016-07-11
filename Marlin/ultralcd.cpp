@@ -1238,6 +1238,7 @@ void lcd_cooldown() {
   float move_menu_scale;
 
   static void _lcd_move_xyz(const char* name, AxisEnum axis, float min, float max) {
+    if (LCD_CLICKED) { lcd_goto_previous_menu(true); return; }
     ENCODER_DIRECTION_NORMAL();
     if (encoderPosition) {
       refresh_cmd_timeout();
@@ -1249,7 +1250,6 @@ void lcd_cooldown() {
       lcdDrawUpdate = LCDVIEW_REDRAW_NOW;
     }
     if (lcdDrawUpdate) lcd_implementation_drawedit(name, ftostr41sign(current_position[axis]));
-    if (LCD_CLICKED) lcd_goto_previous_menu(true);
   }
   #if ENABLED(DELTA)
     static float delta_clip_radius_2 =  (DELTA_PRINTABLE_RADIUS) * (DELTA_PRINTABLE_RADIUS);
@@ -1266,6 +1266,7 @@ void lcd_cooldown() {
       int8_t eindex = -1
     #endif
   ) {
+    if (LCD_CLICKED) { lcd_goto_previous_menu(true); return; }
     ENCODER_DIRECTION_NORMAL();
     if (encoderPosition) {
       current_position[E_AXIS] += float((int32_t)encoderPosition) * move_menu_scale;
@@ -1295,7 +1296,6 @@ void lcd_cooldown() {
       #endif //EXTRUDERS > 1
       lcd_implementation_drawedit(pos_label, ftostr41sign(current_position[E_AXIS]));
     }
-    if (LCD_CLICKED) lcd_goto_previous_menu(true);
   }
 
   #if EXTRUDERS > 1
@@ -1709,6 +1709,7 @@ static void lcd_control_volumetric_menu()
    */
   #if HAS_LCD_CONTRAST
     static void lcd_set_contrast() {
+      if (LCD_CLICKED) { lcd_goto_previous_menu(true); return; }
       ENCODER_DIRECTION_NORMAL();
       if (encoderPosition) {
         set_lcd_contrast(lcd_contrast + encoderPosition);
@@ -1724,7 +1725,6 @@ static void lcd_control_volumetric_menu()
           #endif
         );
       }
-      if (LCD_CLICKED) lcd_goto_previous_menu(true);
     }
   #endif // HAS_LCD_CONTRAST
 
@@ -1816,10 +1816,12 @@ static void lcd_control_volumetric_menu()
     #if ENABLED(PRINTCOUNTER)
       /**
        *
-       * About Printer > Stastics submenu
+       * About Printer > Statistics submenu
        *
        */
       static void lcd_info_stats_menu() {
+        if (LCD_CLICKED) { lcd_goto_previous_menu(true); return; }
+
         PrintCounter print_job_counter = PrintCounter();
         print_job_counter.loadStats();
         printStatistics stats = print_job_counter.getStats();
@@ -1827,7 +1829,6 @@ static void lcd_control_volumetric_menu()
         char printTime[6];
         sprintf(printTime, "%02d:%02d", int(stats.printTime / 3600), int(stats.printTime / 60) % 60);
 
-        if (LCD_CLICKED) lcd_goto_previous_menu(true);
         START_SCREEN();
         STATIC_ITEM(MSG_INFO_PRINT_COUNT ": ", false, false, itostr3left(stats.totalPrints));        // Print Count : 999
         STATIC_ITEM(MSG_INFO_FINISHED_PRINTS ": ", false, false, itostr3left(stats.finishedPrints)); // Finished    : 666
@@ -1842,7 +1843,7 @@ static void lcd_control_volumetric_menu()
      *
      */
     static void lcd_info_thermistors_menu() {
-      if (LCD_CLICKED) lcd_goto_previous_menu(true);
+      if (LCD_CLICKED) { lcd_goto_previous_menu(true); return; }
       START_SCREEN();
       #define THERMISTOR_ID TEMP_SENSOR_0
       #include "thermistornames.h"
@@ -1894,7 +1895,7 @@ static void lcd_control_volumetric_menu()
      *
      */
     static void lcd_info_board_menu() {
-      if (LCD_CLICKED) lcd_goto_previous_menu(true);
+      if (LCD_CLICKED) { lcd_goto_previous_menu(true); return; }
       START_SCREEN();
       STATIC_ITEM(BOARD_NAME, true, true);                     // MyPrinterController
       STATIC_ITEM(MSG_INFO_BAUDRATE ": " STRINGIFY(BAUDRATE)); // Baud: 250000
@@ -1915,7 +1916,7 @@ static void lcd_control_volumetric_menu()
      *
      */
     static void lcd_info_printer_menu() {
-      if (LCD_CLICKED) lcd_goto_previous_menu(true);
+      if (LCD_CLICKED) { lcd_goto_previous_menu(true); return; }
       START_SCREEN();
       STATIC_ITEM(MSG_MARLIN, true, true);                       // Marlin
       STATIC_ITEM(SHORT_BUILD_VERSION);                          // x.x.x-Branch
