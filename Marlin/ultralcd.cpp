@@ -2179,12 +2179,14 @@ static void lcd_control_volumetric_menu()
     lcdDrawUpdate = LCDVIEW_CLEAR_CALL_REDRAW;
     next_button_update_ms = millis() + 500;
 
+    // Buzz and wait. The delay is needed for buttons to settle!
     #if ENABLED(LCD_USE_I2C_BUZZER)
       lcd.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
+      delay(10);
     #elif PIN_EXISTS(BEEPER)
       buzzer.tone(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
+      for (int8_t i = 5; i--;) { buzzer.tick(); delay(2); }
     #endif
-    delay(10); // needed for buttons to settle
   }
 
   /**
