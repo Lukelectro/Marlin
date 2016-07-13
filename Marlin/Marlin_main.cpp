@@ -467,22 +467,23 @@ void serial_echopair_P(const char* s_P, unsigned long v) { serialprintPGM(s_P); 
 static void report_current_position();
 
 #if ENABLED(DEBUG_LEVELING_FEATURE)
-  void print_xyz(const char* suffix, const float x, const float y, const float z) {
+  void print_xyz(const char* prefix, const char* suffix, const float x, const float y, const float z) {
+    serialprintPGM(prefix);
     SERIAL_ECHOPAIR("(", x);
     SERIAL_ECHOPAIR(", ", y);
     SERIAL_ECHOPAIR(", ", z);
-    SERIAL_ECHOLNPGM(") ");
-    SERIAL_ECHO(suffix);
+    SERIAL_ECHOPGM(")");
+    serialprintPGM(suffix);
   }
-  void print_xyz(const char* suffix, const float xyz[]) {
-    print_xyz(suffix, xyz[X_AXIS], xyz[Y_AXIS], xyz[Z_AXIS]);
+  void print_xyz(const char* prefix,const char* suffix, const float xyz[]) {
+    print_xyz(prefix, suffix, xyz[X_AXIS], xyz[Y_AXIS], xyz[Z_AXIS]);
   }
   #if ENABLED(AUTO_BED_LEVELING_FEATURE)
-    void print_xyz(const char* suffix, const vector_3 &xyz) {
-      print_xyz(suffix, xyz.x, xyz.y, xyz.z);
+    void print_xyz(const char* prefix,const char* suffix, const vector_3 &xyz) {
+      print_xyz(prefix, suffix, xyz.x, xyz.y, xyz.z);
     }
   #endif
-  #define DEBUG_POS(PREFIX,VAR) do{ SERIAL_ECHOPGM(PREFIX); print_xyz(" > " STRINGIFY(VAR), VAR); }while(0)
+  #define DEBUG_POS(SUFFIX,VAR) do{ print_xyz(PSTR(STRINGIFY(VAR) "="), PSTR(" : " SUFFIX "\n"), VAR); }while(0)
 #endif
 
 #if ENABLED(DELTA) || ENABLED(SCARA)
@@ -4159,7 +4160,7 @@ inline void gcode_M104() {
 
     #if ENABLED(PRINTJOB_TIMER_AUTOSTART)
       /**
-       * Stop the timer at the end of print, starting is managed by 
+       * Stop the timer at the end of print, starting is managed by
        * 'heat and wait' M109.
        * We use half EXTRUDE_MINTEMP here to allow nozzles to be put into hot
        * stand by mode, for instance in a dual extruder setup, without affecting
@@ -4410,7 +4411,7 @@ inline void gcode_M109() {
       #if ENABLED(PRINTJOB_TIMER_AUTOSTART)
         if (code_value_temp_abs() > BED_MINTEMP) {
           /**
-          * We start the timer when 'heating and waiting' command arrives, LCD 
+          * We start the timer when 'heating and waiting' command arrives, LCD
           * functions never wait. Cooling down managed by extruders.
           *
           * We do not check if the timer is already running because this check will
