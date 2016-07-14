@@ -244,10 +244,6 @@ char lcd_printPGM(const char* str) {
   return n;
 }
 
-#if ENABLED(SHOW_BOOTSCREEN)
-  static bool show_bootscreen = true;
-#endif
-
 /* Warning: This function is called from interrupt context */
 static void lcd_implementation_init() {
 
@@ -264,11 +260,6 @@ static void lcd_implementation_init() {
   #if DISABLED(MINIPANEL) // setContrast not working for Mini Panel
     u8g.setContrast(lcd_contrast);
   #endif
-
-  // FIXME: remove this workaround
-  // Uncomment this if you have the first generation (V1.10) of STBs board
-  // pinMode(17, OUTPUT); // Enable LCD backlight
-  // digitalWrite(17, HIGH);
 
   #if ENABLED(LCD_SCREEN_ROT_90)
     u8g.setRot90();   // Rotate screen by 90°
