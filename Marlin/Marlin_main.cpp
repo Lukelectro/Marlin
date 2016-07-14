@@ -2619,9 +2619,12 @@ inline void gcode_G4() {
 
 #endif //FWRETRACT
 
-#if ENABLED(NOZZLE_CLEAN_FEATURE) && ENABLED(AUTO_BED_LEVELING_FEATURE)
+#if ENABLED(NOZZLE_CLEAN_FEATURE) && HAS_BED_PROBE
   #include "nozzle.h"
 
+  /**
+   * G12: Clean the nozzle
+   */
   inline void gcode_G12() {
     // Don't allow nozzle cleaning without homing first
     if (axis_unhomed_error(true, true, true)) { return; }
@@ -2677,6 +2680,20 @@ inline void gcode_G4() {
   }
 
 #endif // QUICK_HOME
+
+#if ENABLED(NOZZLE_PARK_FEATURE)
+  #include "nozzle.h"
+
+  /**
+   * G27: Park the nozzle
+   */
+  inline void gcode_G27() {
+    // Don't allow nozzle parking without homing first
+    if (axis_unhomed_error(true, true, true)) { return; }
+    uint8_t const z_action = code_seen('P') ? code_value_ushort() : 0;
+    Nozzle::park(z_action);
+  }
+#endif // NOZZLE_PARK_FEATURE
 
 /**
  * G28: Home all axes according to settings
@@ -6645,7 +6662,7 @@ void process_next_command() {
 
       #if ENABLED(NOZZLE_CLEAN_FEATURE) && HAS_BED_PROBE
         case 12:
-          gcode_G12(); // G12: Clean Nozzle
+          gcode_G12(); // G12: Nozzle Clean
           break;
       #endif // NOZZLE_CLEAN_FEATURE
 
@@ -6658,6 +6675,12 @@ void process_next_command() {
           gcode_G21();
           break;
       #endif // INCH_MODE_SUPPORT
+
+      #if ENABLED(NOZZLE_PARK_FEATURE)
+        case 27: // G27: Nozzle Park
+          gcode_G27();
+          break;
+      #endif // NOZZLE_PARK_FEATURE
 
       case 28: // G28: Home all axes, one at a time
         gcode_G28();
