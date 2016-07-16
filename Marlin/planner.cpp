@@ -105,20 +105,20 @@ block_t Planner::block_buffer[BLOCK_BUFFER_SIZE];
 volatile uint8_t Planner::block_buffer_head = 0;           // Index of the next block to be pushed
 volatile uint8_t Planner::block_buffer_tail = 0;
 
-float Planner::max_feedrate[NUM_AXIS]; // Max speeds in mm per second
+float Planner::max_feedrate_mm_s[NUM_AXIS]; // Max speeds in mm per second
 float Planner::axis_steps_per_mm[NUM_AXIS];
 unsigned long Planner::max_acceleration_steps_per_s2[NUM_AXIS];
 unsigned long Planner::max_acceleration_mm_per_s2[NUM_AXIS]; // Use M201 to override by software
 
 millis_t Planner::min_segment_time;
-float Planner::min_feedrate;
+float Planner::min_feedrate_mm_s;
 float Planner::acceleration;         // Normal acceleration mm/s^2  DEFAULT ACCELERATION for all printing moves. M204 SXXXX
 float Planner::retract_acceleration; // Retract acceleration mm/s^2 filament pull-back and push-forward while standing still in the other axes M204 TXXXX
 float Planner::travel_acceleration;  // Travel acceleration mm/s^2  DEFAULT ACCELERATION for all NON printing moves. M204 MXXXX
 float Planner::max_xy_jerk;          // The largest speed change requiring no acceleration
 float Planner::max_z_jerk;
 float Planner::max_e_jerk;
-float Planner::min_travel_feedrate;
+float Planner::min_travel_feedrate_mm_s;
 
 #if ENABLED(AUTO_BED_LEVELING_FEATURE)
   matrix_3x3 Planner::bed_level_matrix; // Transform to compensate for bed level
@@ -552,7 +552,7 @@ void Planner::check_axes_activity() {
  * Add a new linear movement to the buffer.
  *
  *  x,y,z,e   - target position in mm
- *  feed_rate - (target) speed of the move
+ *  fr_mm_s   - (target) speed of the move
  *  extruder  - target extruder
  */
 
@@ -563,7 +563,7 @@ float junction_deviation = 0.1;
 #if defined(ENABLE_AUTO_BED_LEVELING) || defined(MESH_BED_LEVELING)
 void plan_buffer_line(float x, float y, float z, const float &e, float feed_rate, const uint8_t &extruder)
 #else
-  void Planner::buffer_line(const float& x, const float& y, const float& z, const float& e, float feed_rate, const uint8_t extruder)
+  void Planner::buffer_line(const float& x, const float& y, const float& z, const float& e, float fr_mm_s, const uint8_t extruder)
 #endif  // AUTO_BED_LEVELING_FEATURE
 {
   // Calculate the buffer head after we push this byte
@@ -800,9 +800,9 @@ void plan_buffer_line(float x, float y, float z, const float &e, float feed_rate
   }
 
   if (block->steps[E_AXIS])
-    NOLESS(feed_rate, min_feedrate);
+    NOLESS(fr_mm_s, min_feedrate_mm_s);
   else
-    NOLESS(feed_rate, min_travel_feedrate);
+    NOLESS(fr_mm_s, min_travel_feedrate_mm_s);
 
   /**
    * This part of the code calculates the total length of the movement.
@@ -860,7 +860,7 @@ void plan_buffer_line(float x, float y, float z, const float &e, float feed_rate
   float inverse_millimeters = 1.0 / block->millimeters;  // Inverse millimeters to remove multiple divides
 
   // Calculate moves/second for this move. No divide by zero due to previous checks.
-  float inverse_second = feed_rate * inverse_millimeters;
+  float inverse_second = fr_mm_s * inverse_millimeters;
 
   int moves_queued = movesplanned();
 
@@ -868,7 +868,7 @@ void plan_buffer_line(float x, float y, float z, const float &e, float feed_rate
   #if ENABLED(OLD_SLOWDOWN) || ENABLED(SLOWDOWN)
     bool mq = moves_queued > 1 && moves_queued < (BLOCK_BUFFER_SIZE) / 2;
     #if ENABLED(OLD_SLOWDOWN)
-      if (mq) feed_rate *= 2.0 * moves_queued / (BLOCK_BUFFER_SIZE);
+      if (mq) fr_mm_s *= 2.0 * moves_queued / (BLOCK_BUFFER_SIZE);
     #endif
     #if ENABLED(SLOWDOWN)
       //  segment time im micro seconds
@@ -927,7 +927,7 @@ void plan_buffer_line(float x, float y, float z, const float &e, float feed_rate
   float speed_factor = 1.0; //factor <=1 do decrease speed
   for (int i = 0; i < NUM_AXIS; i++) {
     current_speed[i] = delta_mm[i] * inverse_second;
-    float cs = fabs(current_speed[i]), mf = max_feedrate[i];
+    float cs = fabs(current_speed[i]), mf = max_feedrate_mm_s[i];
     if (cs > mf) speed_factor = min(speed_factor, mf / cs);
   }
 
