@@ -1435,7 +1435,7 @@ static void set_axis_is_at_home(AxisEnum axis) {
 /**
  * Some planner shorthand inline functions
  */
-inline void set_homing_bump_feedrate(AxisEnum axis) {
+inline float set_homing_bump_feedrate(AxisEnum axis) {
   const int homing_bump_divisor[] = HOMING_BUMP_DIVISOR;
   int hbd = homing_bump_divisor[axis];
   if (hbd < 1) {
@@ -1444,6 +1444,7 @@ inline void set_homing_bump_feedrate(AxisEnum axis) {
     SERIAL_ECHOLNPGM("Warning: Homing Bump Divisor < 1");
   }
   feedrate_mm_m = homing_feedrate_mm_m[axis] / hbd;
+  return feedrate_mm_m;
 }
 //
 // line_to_current_position
@@ -2285,27 +2286,19 @@ static void homeaxis(AxisEnum axis) {
     #endif
 
   // Move towards the endstop until an endstop is triggered
-  destination[axis] = 1.5 * max_length(axis) * axis_home_dir;
-  feedrate_mm_m = homing_feedrate_mm_m[axis];
-  line_to_destination();
-  stepper.synchronize();
+  do_blocking_move_to_axis_pos(axis, 1.5 * max_length(axis) * axis_home_dir, homing_feedrate_mm_m[axis]);
 
   // Set the axis position as setup for the move
   current_position[axis] = 0;
   sync_plan_position();
 
   // Move away from the endstop by the axis HOME_BUMP_MM
-  destination[axis] = -home_bump_mm(axis) * axis_home_dir;
-  line_to_destination();
-  stepper.synchronize();
+  do_blocking_move_to_axis_pos(axis, -home_bump_mm(axis) * axis_home_dir, homing_feedrate_mm_m[axis]);
 
   // Slow down the feedrate for the next move
-  set_homing_bump_feedrate(axis);
 
   // Move slowly towards the endstop until triggered
-  destination[axis] = 2 * home_bump_mm(axis) * axis_home_dir;
-  line_to_destination();
-  stepper.synchronize();
+  do_blocking_move_to_axis_pos(axis, 2 * home_bump_mm(axis) * axis_home_dir, set_homing_bump_feedrate(axis));
 
   #if ENABLED(DEBUG_LEVELING_FEATURE)
     if (DEBUGGING(LEVELING)) DEBUG_POS("> TRIGGER ENDSTOP", current_position);
@@ -2326,10 +2319,7 @@ static void homeaxis(AxisEnum axis) {
       sync_plan_position();
 
       // Move to the adjusted endstop height
-      feedrate_mm_m = homing_feedrate_mm_m[axis];
-      destination[Z_AXIS] = adj;
-      line_to_destination();
-      stepper.synchronize();
+      do_blocking_move_to_z(adj, homing_feedrate_mm_m[axis]);
 
       if (lockZ1) stepper.set_z_lock(false); else stepper.set_z2_lock(false);
       stepper.set_homing_flag(false);
@@ -2340,15 +2330,13 @@ static void homeaxis(AxisEnum axis) {
     // retrace by the amount specified in endstop_adj
     if (endstop_adj[axis] * axis_home_dir < 0) {
       sync_plan_position();
-      destination[axis] = endstop_adj[axis];
       #if ENABLED(DEBUG_LEVELING_FEATURE)
         if (DEBUGGING(LEVELING)) {
           SERIAL_ECHOPAIR("> endstop_adj = ", endstop_adj[axis]);
-          DEBUG_POS("", destination);
+          DEBUG_POS("", current_position);
         }
       #endif
-      line_to_destination();
-      stepper.synchronize();
+      do_blocking_move_to_axis_pos(axis, endstop_adj[axis], set_homing_bump_feedrate(axis));
     }
   #endif
 
@@ -2702,8 +2690,6 @@ inline void gcode_G4() {
 
   static void quick_home_xy() {
 
-    current_position[X_AXIS] = current_position[Y_AXIS] = 0;
-
     #if ENABLED(DUAL_X_CARRIAGE)
       int x_axis_home_dir = x_home_dir(active_extruder);
       extruder_duplication_enabled = false;
@@ -2711,17 +2697,15 @@ inline void gcode_G4() {
       int x_axis_home_dir = home_dir(X_AXIS);
     #endif
 
-    float mlx = max_length(X_AXIS), mly = max_length(Y_AXIS),
-          mlratio = mlx > mly ? mly / mlx : mlx / mly;
+    float mlx = max_length(X_AXIS),
+          mly = max_length(Y_AXIS),
+          mlratio = mlx > mly ? mly / mlx : mlx / mly,
+          fr_mm_m = min(homing_feedrate_mm_m[X_AXIS], homing_feedrate_mm_m[Y_AXIS]) * sqrt(sq(mlratio) + 1);
 
-    destination[X_AXIS] = 1.5 * mlx * x_axis_home_dir;
-    destination[Y_AXIS] = 1.5 * mly * home_dir(Y_AXIS);
-    feedrate_mm_m = min(homing_feedrate_mm_m[X_AXIS], homing_feedrate_mm_m[Y_AXIS]) * sqrt(sq(mlratio) + 1);
-    line_to_destination();
-    stepper.synchronize();
+    do_blocking_move_to_xy(1.5 * mlx * x_axis_home_dir, 1.5 * mly * home_dir(Y_AXIS), fr_mm_m);
     endstops.hit_on_purpose(); // clear endstop hit flags
+    current_position[X_AXIS] = current_position[Y_AXIS] = 0;
 
-    destination[X_AXIS] = destination[Y_AXIS] = 0;
   }
 
 #endif // QUICK_HOME
