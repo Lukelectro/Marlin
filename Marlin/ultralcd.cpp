@@ -325,7 +325,8 @@ uint8_t lcdDrawUpdate = LCDVIEW_CLEAR_CALL_REDRAW; // Set when the LCD needs to 
     if (encoderLine >= encoderTopLine + LCD_HEIGHT) { \
       encoderTopLine = encoderLine - (LCD_HEIGHT - 1); \
       lcdDrawUpdate = LCDVIEW_CALL_REDRAW_NEXT; \
-    }
+    } \
+    UNUSED(_skipStatic)
 
   #if ENABLED(ENCODER_RATE_MULTIPLIER)
 
@@ -1281,7 +1282,7 @@ void lcd_cooldown() {
         pos_label = PSTR(MSG_MOVE_E);
       #else
         switch (eindex) {
-          case 0: pos_label = PSTR(MSG_MOVE_E MSG_MOVE_E1); break;
+          default: pos_label = PSTR(MSG_MOVE_E MSG_MOVE_E1); break;
           case 1: pos_label = PSTR(MSG_MOVE_E MSG_MOVE_E2); break;
           #if EXTRUDERS > 2
             case 2: pos_label = PSTR(MSG_MOVE_E MSG_MOVE_E3); break;
