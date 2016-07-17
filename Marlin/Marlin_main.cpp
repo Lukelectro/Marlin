@@ -2781,6 +2781,9 @@ inline void gcode_G28() {
   #if ENABLED(MESH_BED_LEVELING)
     float pre_home_z = MESH_HOME_SEARCH_Z;
     if (mbl.active()) {
+      #if ENABLED(DEBUG_LEVELING_FEATURE)
+        if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("MBL was active");
+      #endif
       // Save known Z position if already homed
       if (axis_homed[X_AXIS] && axis_homed[Y_AXIS] && axis_homed[Z_AXIS]) {
         pre_home_z = current_position[Z_AXIS];
@@ -2788,6 +2791,9 @@ inline void gcode_G28() {
       }
       mbl.set_active(false);
       current_position[Z_AXIS] = pre_home_z;
+      #if ENABLED(DEBUG_LEVELING_FEATURE)
+        if (DEBUGGING(LEVELING)) DEBUG_POS("Set Z to pre_home_z", current_position);
+      #endif
     }
   #endif
 
@@ -3030,7 +3036,13 @@ inline void gcode_G28() {
   // Enable mesh leveling again
   #if ENABLED(MESH_BED_LEVELING)
     if (mbl.has_mesh()) {
+      #if ENABLED(DEBUG_LEVELING_FEATURE)
+        if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("MBL has mesh");
+      #endif
       if (home_all_axis || (axis_homed[X_AXIS] && axis_homed[Y_AXIS] && homeZ)) {
+        #if ENABLED(DEBUG_LEVELING_FEATURE)
+          if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("MBL Z homing");
+        #endif
         current_position[Z_AXIS] = MESH_HOME_SEARCH_Z
           #if Z_HOME_DIR > 0
             + Z_MAX_POS
@@ -3044,6 +3056,9 @@ inline void gcode_G28() {
           feedrate = homing_feedrate[Z_AXIS];
           line_to_destination();
           stepper.synchronize();
+          #if ENABLED(DEBUG_LEVELING_FEATURE)
+            if (DEBUGGING(LEVELING)) DEBUG_POS("MBL Rest Origin", current_position);
+          #endif
         #else
           current_position[Z_AXIS] = MESH_HOME_SEARCH_Z -
             mbl.get_z(RAW_CURRENT_POSITION(X_AXIS), RAW_CURRENT_POSITION(Y_AXIS))
@@ -3051,6 +3066,9 @@ inline void gcode_G28() {
               + Z_MAX_POS
             #endif
           ;
+          #if ENABLED(DEBUG_LEVELING_FEATURE)
+            if (DEBUGGING(LEVELING)) DEBUG_POS("MBL adjusted MESH_HOME_SEARCH_Z", current_position);
+          #endif
         #endif
       }
       else if ((axis_homed[X_AXIS] && axis_homed[Y_AXIS] && axis_homed[Z_AXIS]) && (homeX || homeY)) {
@@ -3059,6 +3077,9 @@ inline void gcode_G28() {
         mbl.set_active(true);
         current_position[Z_AXIS] = pre_home_z -
           mbl.get_z(RAW_CURRENT_POSITION(X_AXIS), RAW_CURRENT_POSITION(Y_AXIS));
+        #if ENABLED(DEBUG_LEVELING_FEATURE)
+          if (DEBUGGING(LEVELING)) DEBUG_POS("MBL Home X or Y", current_position);
+        #endif
       }
     }
   #endif
