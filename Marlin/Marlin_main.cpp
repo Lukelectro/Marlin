@@ -1425,7 +1425,7 @@ static void set_axis_is_at_home(AxisEnum axis) {
 /**
  * Some planner shorthand inline functions
  */
-inline float set_homing_bump_feedrate(AxisEnum axis) {
+inline float get_homing_bump_feedrate(AxisEnum axis) {
   const int homing_bump_divisor[] = HOMING_BUMP_DIVISOR;
   int hbd = homing_bump_divisor[axis];
   if (hbd < 1) {
@@ -1433,8 +1433,7 @@ inline float set_homing_bump_feedrate(AxisEnum axis) {
     SERIAL_ECHO_START;
     SERIAL_ECHOLNPGM("Warning: Homing Bump Divisor < 1");
   }
-  feedrate_mm_m = homing_feedrate_mm_m[axis] / hbd;
-  return feedrate_mm_m;
+  return homing_feedrate_mm_m[axis] / hbd;
 }
 //
 // line_to_current_position
@@ -1454,7 +1453,7 @@ inline void line_to_axis_pos(AxisEnum axis, float where, float fr_mm_m = 0.0) {
   current_position[axis] = where;
   feedrate_mm_m = (fr_mm_m != 0.0) ? fr_mm_m : homing_feedrate_mm_m[axis];
   planner.buffer_line(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS], MMM_TO_MMS(feedrate_mm_m), active_extruder);
-  stepper.synchronize(); // The lost one
+  stepper.synchronize();
   feedrate_mm_m = old_feedrate_mm_m;
 }
 
@@ -2297,7 +2296,7 @@ static void homeaxis(AxisEnum axis) {
   line_to_axis_pos(axis, -home_bump_mm(axis) * axis_home_dir);
 
   // Move slowly towards the endstop until triggered
-  line_to_axis_pos(axis, 2 * home_bump_mm(axis) * axis_home_dir, set_homing_bump_feedrate(axis));
+  line_to_axis_pos(axis, 2 * home_bump_mm(axis) * axis_home_dir, get_homing_bump_feedrate(axis));
 
   #if ENABLED(DEBUG_LEVELING_FEATURE)
     if (DEBUGGING(LEVELING)) DEBUG_POS("> TRIGGER ENDSTOP", current_position);
