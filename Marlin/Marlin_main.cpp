@@ -59,6 +59,7 @@
 #include "language.h"
 #include "pins_arduino.h"
 #include "math.h"
+#include "nozzle.h"
 
 #if ENABLED(USE_WATCHDOG)
   #include "watchdog.h"
@@ -2650,9 +2651,7 @@ inline void gcode_G4() {
 
 #endif //FWRETRACT
 
-#if ENABLED(NOZZLE_CLEAN_FEATURE) && HAS_BED_PROBE
-  #include "nozzle.h"
-
+#if ENABLED(NOZZLE_CLEAN_FEATURE)
   /**
    * G12: Clean the nozzle
    */
@@ -2685,8 +2684,6 @@ inline void gcode_G4() {
 #endif
 
 #if ENABLED(NOZZLE_PARK_FEATURE)
-  #include "nozzle.h"
-
   /**
    * G27: Park the nozzle
    */
@@ -6831,7 +6828,7 @@ void process_next_command() {
           break;
       #endif // FWRETRACT
 
-      #if ENABLED(NOZZLE_CLEAN_FEATURE) && HAS_BED_PROBE
+      #if ENABLED(NOZZLE_CLEAN_FEATURE)
         case 12:
           gcode_G12(); // G12: Nozzle Clean
           break;
