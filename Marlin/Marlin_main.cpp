@@ -409,17 +409,6 @@ bool Stopped = false;
 #endif
 
 #if ENABLED(HOST_KEEPALIVE_FEATURE)
-
-  // States for managing Marlin and host communication
-  // Marlin sends messages if blocked or busy
-  enum MarlinBusyState {
-    NOT_BUSY,           // Not in a handler
-    IN_HANDLER,         // Processing a GCode
-    IN_PROCESS,         // Known to be blocking command input (as in G29)
-    PAUSED_FOR_USER,    // Blocking pending any input
-    PAUSED_FOR_INPUT    // Blocking pending text input (concept)
-  };
-
   static MarlinBusyState busy_state = NOT_BUSY;
   static millis_t next_busy_signal_ms = 0;
   uint8_t host_keepalive_interval = DEFAULT_KEEPALIVE_INTERVAL;

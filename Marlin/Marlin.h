@@ -51,6 +51,8 @@
 
 #include "Arduino.h"
 
+#include "enum.h"
+
 typedef unsigned long millis_t;
 
 #ifdef USBCON
@@ -244,18 +246,6 @@ void quickstop_stepper();
   void handle_filament_runout();
 #endif
 
-/**
- * Debug flags - not yet widely applied
- */
-enum DebugFlags {
-  DEBUG_NONE          = 0,
-  DEBUG_ECHO          = _BV(0), ///< Echo commands in order as they are processed
-  DEBUG_INFO          = _BV(1), ///< Print messages for code that has debug output
-  DEBUG_ERRORS        = _BV(2), ///< Not implemented
-  DEBUG_DRYRUN        = _BV(3), ///< Ignore temperature setting and E movement commands
-  DEBUG_COMMUNICATION = _BV(4), ///< Not implemented
-  DEBUG_LEVELING      = _BV(5)  ///< Print detailed output for homing and leveling
-};
 extern uint8_t marlin_debug_flags;
 #define DEBUGGING(F) (marlin_debug_flags & (DEBUG_## F))
 
@@ -355,11 +345,6 @@ extern int fanSpeed;
 #endif
 
 #if ENABLED(FILAMENT_CHANGE_FEATURE)
-  enum FilamentChangeMenuResponse {
-    FILAMENT_CHANGE_RESPONSE_WAIT_FOR,
-    FILAMENT_CHANGE_RESPONSE_EXTRUDE_MORE,
-    FILAMENT_CHANGE_RESPONSE_RESUME_PRINT
-  };
   extern FilamentChangeMenuResponse filament_change_menu_response;
 #endif
 
