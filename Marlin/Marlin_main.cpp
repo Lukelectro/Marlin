@@ -341,6 +341,7 @@ float zprobe_zoffset = -Z_PROBE_OFFSET_FROM_EXTRUDER;
     int delta_grid_spacing[2] = { 0, 0 };
     float bed_level[AUTO_BED_LEVELING_GRID_POINTS][AUTO_BED_LEVELING_GRID_POINTS];
   #endif
+  float delta_safe_distance_from_top();
 #else
   static bool home_all_axis = true;
 #endif
