@@ -159,7 +159,7 @@ Planner::Planner() { init(); }
 void Planner::init() {
   block_buffer_head = block_buffer_tail = 0;
   memset(position, 0, sizeof(position)); // clear position
-  for (int i = 0; i < NUM_AXIS; i++) previous_speed[i] = 0.0;
+  LOOP_XYZE(i) previous_speed[i] = 0.0;
   previous_nominal_speed = 0.0;
   #if ENABLED(AUTO_BED_LEVELING_FEATURE)
     bed_level_matrix.set_to_identity();
@@ -448,7 +448,7 @@ void Planner::check_axes_activity() {
 
     for (uint8_t b = block_buffer_tail; b != block_buffer_head; b = next_block_index(b)) {
       block = &block_buffer[b];
-      for (int i = 0; i < NUM_AXIS; i++) if (block->steps[i]) axis_active[i]++;
+      LOOP_XYZE(i) if (block->steps[i]) axis_active[i]++;
     }
   }
   #if ENABLED(DISABLE_X)
@@ -925,7 +925,7 @@ void plan_buffer_line(float x, float y, float z, const float &e, float feed_rate
   // Calculate and limit speed in mm/sec for each axis
   float current_speed[NUM_AXIS];
   float speed_factor = 1.0; //factor <=1 do decrease speed
-  for (int i = 0; i < NUM_AXIS; i++) {
+  LOOP_XYZE(i) {
     current_speed[i] = delta_mm[i] * inverse_second;
     float cs = fabs(current_speed[i]), mf = max_feedrate_mm_s[i];
     if (cs > mf) speed_factor = min(speed_factor, mf / cs);
@@ -971,7 +971,7 @@ void plan_buffer_line(float x, float y, float z, const float &e, float feed_rate
 
   // Correct the speed
   if (speed_factor < 1.0) {
-    for (unsigned char i = 0; i < NUM_AXIS; i++) current_speed[i] *= speed_factor;
+    LOOP_XYZE(i) current_speed[i] *= speed_factor;
     block->nominal_speed *= speed_factor;
     block->nominal_rate *= speed_factor;
   }
@@ -1083,7 +1083,7 @@ void plan_buffer_line(float x, float y, float z, const float &e, float feed_rate
   block->recalculate_flag = true; // Always calculate trapezoid for new block
 
   // Update previous path unit_vector and nominal speed
-  for (int i = 0; i < NUM_AXIS; i++) previous_speed[i] = current_speed[i];
+  LOOP_XYZE(i) previous_speed[i] = current_speed[i];
   previous_nominal_speed = block->nominal_speed;
 
   #if ENABLED(LIN_ADVANCE)
@@ -1130,7 +1130,7 @@ void plan_buffer_line(float x, float y, float z, const float &e, float feed_rate
   block_buffer_head = next_buffer_head;
 
   // Update position
-  for (int i = 0; i < NUM_AXIS; i++) position[i] = target[i];
+  LOOP_XYZE(i) position[i] = target[i];
 
   recalculate();
 
@@ -1165,7 +1165,7 @@ void plan_set_position(const float &x, const float &y, const float &z, const flo
     stepper.set_position(nx, ny, nz, ne);
     previous_nominal_speed = 0.0; // Resets planner junction speeds. Assumes start from rest.
 
-    for (int i = 0; i < NUM_AXIS; i++) previous_speed[i] = 0.0;
+    LOOP_XYZE(i) previous_speed[i] = 0.0;
   }
 
 /**
@@ -1178,7 +1178,7 @@ void Planner::set_e_position_mm(const float& e) {
 
 // Recalculate the steps/s^2 acceleration rates, based on the mm/s^2
 void Planner::reset_acceleration_rates() {
-  for (int i = 0; i < NUM_AXIS; i++)
+  LOOP_XYZE(i)
     max_acceleration_steps_per_s2[i] = max_acceleration_mm_per_s2[i] * axis_steps_per_mm[i];
 }
 

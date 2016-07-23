@@ -1382,8 +1382,7 @@ static void set_axis_is_at_home(AxisEnum axis) {
     if (axis == X_AXIS || axis == Y_AXIS) {
 
       float homeposition[3];
-      for (uint8_t i = X_AXIS; i <= Z_AXIS; i++)
-        homeposition[i] = LOGICAL_POSITION(base_home_pos(i), i);
+      LOOP_XYZ(i) homeposition[i] = LOGICAL_POSITION(base_home_pos(i), i);
 
       // SERIAL_ECHOPGM("homeposition[x]= "); SERIAL_ECHO(homeposition[0]);
       // SERIAL_ECHOPGM("homeposition[y]= "); SERIAL_ECHOLN(homeposition[1]);
@@ -2459,7 +2458,7 @@ static void homeaxis(AxisEnum axis) {
  *  - Set the feedrate, if included
  */
 void gcode_get_destination() {
-  for (int i = 0; i < NUM_AXIS; i++) {
+  LOOP_XYZE(i) {
     if (code_seen(axis_codes[i]))
       destination[i] = code_value_axis_units(i) + (axis_relative_modes[i] || relative_mode ? current_position[i] : 0);
     else
@@ -3704,7 +3703,7 @@ inline void gcode_G92() {
   if (!didE) stepper.synchronize();
 
   bool didXYZ = false;
-  for (int i = 0; i < NUM_AXIS; i++) {
+  LOOP_XYZE(i) {
     if (code_seen(axis_codes[i])) {
       float p = current_position[i],
             v = code_value_axis_units(i);
@@ -4890,7 +4889,7 @@ inline void gcode_M85() {
  *      (Follows the same syntax as G92)
  */
 inline void gcode_M92() {
-  for (int8_t i = 0; i < NUM_AXIS; i++) {
+  LOOP_XYZE(i) {
     if (code_seen(axis_codes[i])) {
       if (i == E_AXIS) {
         float value = code_value_per_axis_unit(i);
@@ -5082,7 +5081,7 @@ inline void gcode_M200() {
  * M201: Set max acceleration in units/s^2 for print moves (M201 X1000 Y1000)
  */
 inline void gcode_M201() {
-  for (int8_t i = 0; i < NUM_AXIS; i++) {
+  LOOP_XYZE(i) {
     if (code_seen(axis_codes[i])) {
       planner.max_acceleration_mm_per_s2[i] = code_value_axis_units(i);
     }
@@ -5093,7 +5092,7 @@ inline void gcode_M201() {
 
 #if 0 // Not used for Sprinter/grbl gen6
   inline void gcode_M202() {
-    for (int8_t i = 0; i < NUM_AXIS; i++) {
+    LOOP_XYZE(i) {
       if (code_seen(axis_codes[i])) axis_travel_steps_per_sqr_second[i] = code_value_axis_units(i) * planner.axis_steps_per_mm[i];
     }
   }
@@ -5104,7 +5103,7 @@ inline void gcode_M201() {
  * M203: Set maximum feedrate that your machine can sustain (M203 X200 Y200 Z300 E10000) in units/sec
  */
 inline void gcode_M203() {
-  for (int8_t i = 0; i < NUM_AXIS; i++)
+  LOOP_XYZE(i)
     if (code_seen(axis_codes[i]))
       planner.max_feedrate_mm_s[i] = code_value_axis_units(i);
 }
@@ -5164,7 +5163,7 @@ inline void gcode_M205() {
  * M206: Set Additional Homing Offset (X Y Z). SCARA aliases T=X, P=Y
  */
 inline void gcode_M206() {
-  for (int8_t i = X_AXIS; i <= Z_AXIS; i++)
+  LOOP_XYZ(i)
     if (code_seen(axis_codes[i]))
       set_home_offset((AxisEnum)i, code_value_axis_units(i));
 
@@ -5206,7 +5205,7 @@ inline void gcode_M206() {
         SERIAL_ECHOLNPGM(">>> gcode_M666");
       }
     #endif
-    for (int8_t i = X_AXIS; i <= Z_AXIS; i++) {
+    LOOP_XYZ(i) {
       if (code_seen(axis_codes[i])) {
         endstop_adj[i] = code_value_axis_units(i);
         #if ENABLED(DEBUG_LEVELING_FEATURE)
@@ -5698,7 +5697,7 @@ inline void gcode_M303() {
    * M365: SCARA calibration: Scaling factor, X, Y, Z axis
    */
   inline void gcode_M365() {
-    for (int8_t i = X_AXIS; i <= Z_AXIS; i++)
+    LOOP_XYZ(i)
       if (code_seen(axis_codes[i]))
         axis_scaling[i] = code_value_float();
   }
@@ -5898,7 +5897,7 @@ void quickstop_stepper() {
  */
 inline void gcode_M428() {
   bool err = false;
-  for (int8_t i = X_AXIS; i <= Z_AXIS; i++) {
+  LOOP_XYZ(i) {
     if (axis_homed[i]) {
       float base = (current_position[i] > (sw_endstop_min[i] + sw_endstop_max[i]) / 2) ? base_home_pos(i) : 0,
             diff = current_position[i] - LOGICAL_POSITION(base, i);
@@ -6028,7 +6027,7 @@ inline void gcode_M503() {
     float lastpos[NUM_AXIS];
 
     // Save current position of all axes
-    for (uint8_t i = 0; i < NUM_AXIS; i++)
+    LOOP_XYZE(i)
       lastpos[i] = destination[i] = current_position[i];
 
     // Define runplan for move axes
@@ -6249,7 +6248,7 @@ inline void gcode_M503() {
  */
 inline void gcode_M907() {
   #if HAS_DIGIPOTSS
-    for (int i = 0; i < NUM_AXIS; i++)
+    LOOP_XYZE(i)
       if (code_seen(axis_codes[i])) stepper.digipot_current(i, code_value_int());
     if (code_seen('B')) stepper.digipot_current(4, code_value_int());
     if (code_seen('S')) for (int i = 0; i <= 4; i++) stepper.digipot_current(i, code_value_int());
@@ -6265,7 +6264,7 @@ inline void gcode_M907() {
   #endif
   #if ENABLED(DIGIPOT_I2C)
     // this one uses actual amps in floating point
-    for (int i = 0; i < NUM_AXIS; i++) if (code_seen(axis_codes[i])) digipot_i2c_set_current(i, code_value_float());
+    LOOP_XYZE(i) if (code_seen(axis_codes[i])) digipot_i2c_set_current(i, code_value_float());
     // for each additional extruder (named B,C,D,E..., channels 4,5,6,7...)
     for (int i = NUM_AXIS; i < DIGIPOT_I2C_NUM_CHANNELS; i++) if (code_seen('B' + i - (NUM_AXIS))) digipot_i2c_set_current(i, code_value_float());
   #endif
@@ -6274,7 +6273,7 @@ inline void gcode_M907() {
       float dac_percent = code_value_float();
       for (uint8_t i = 0; i <= 4; i++) dac_current_percent(i, dac_percent);
     }
-    for (uint8_t i = 0; i < NUM_AXIS; i++) if (code_seen(axis_codes[i])) dac_current_percent(i, code_value_float());
+    LOOP_XYZE(i) if (code_seen(axis_codes[i])) dac_current_percent(i, code_value_float());
   #endif
 }
 
@@ -6313,7 +6312,7 @@ inline void gcode_M907() {
   // M350 Set microstepping mode. Warning: Steps per unit remains unchanged. S code sets stepping mode for all drivers.
   inline void gcode_M350() {
     if (code_seen('S')) for (int i = 0; i <= 4; i++) stepper.microstep_mode(i, code_value_byte());
-    for (int i = 0; i < NUM_AXIS; i++) if (code_seen(axis_codes[i])) stepper.microstep_mode(i, code_value_byte());
+    LOOP_XYZE(i) if (code_seen(axis_codes[i])) stepper.microstep_mode(i, code_value_byte());
     if (code_seen('B')) stepper.microstep_mode(4, code_value_byte());
     stepper.microstep_readings();
   }
@@ -6325,11 +6324,11 @@ inline void gcode_M907() {
   inline void gcode_M351() {
     if (code_seen('S')) switch (code_value_byte()) {
       case 1:
-        for (int i = 0; i < NUM_AXIS; i++) if (code_seen(axis_codes[i])) stepper.microstep_ms(i, code_value_byte(), -1);
+        LOOP_XYZE(i) if (code_seen(axis_codes[i])) stepper.microstep_ms(i, code_value_byte(), -1);
         if (code_seen('B')) stepper.microstep_ms(4, code_value_byte(), -1);
         break;
       case 2:
-        for (int i = 0; i < NUM_AXIS; i++) if (code_seen(axis_codes[i])) stepper.microstep_ms(i, -1, code_value_byte());
+        LOOP_XYZE(i) if (code_seen(axis_codes[i])) stepper.microstep_ms(i, -1, code_value_byte());
         if (code_seen('B')) stepper.microstep_ms(4, -1, code_value_byte());
         break;
     }
@@ -7789,7 +7788,7 @@ void mesh_line_to_destination(float fr_mm_m, uint8_t x_splits = 0xff, uint8_t y_
 
   inline bool prepare_kinematic_move_to(float target[NUM_AXIS]) {
     float difference[NUM_AXIS];
-    for (int8_t i = 0; i < NUM_AXIS; i++) difference[i] = target[i] - current_position[i];
+    LOOP_XYZE(i) difference[i] = target[i] - current_position[i];
 
     float cartesian_mm = sqrt(sq(difference[X_AXIS]) + sq(difference[Y_AXIS]) + sq(difference[Z_AXIS]));
     if (cartesian_mm < 0.000001) cartesian_mm = abs(difference[E_AXIS]);
@@ -7807,7 +7806,7 @@ void mesh_line_to_destination(float fr_mm_m, uint8_t x_splits = 0xff, uint8_t y_
 
       float fraction = float(s) * inv_steps;
 
-      for (int8_t i = 0; i < NUM_AXIS; i++)
+      LOOP_XYZE(i)
         target[i] = current_position[i] + difference[i] * fraction;
 
       inverse_kinematics(target);
