@@ -433,7 +433,7 @@ void stop();
 void get_available_commands();
 void process_next_command();
 void prepare_move_to_destination();
-void set_current_from_steppers();
+void set_current_from_steppers_for_axis(AxisEnum axis);
 
 #if ENABLED(ARC_SUPPORT)
   void plan_arc(float target[NUM_AXIS], float* offset, uint8_t clockwise);
@@ -5833,8 +5833,8 @@ void quickstop_stepper() {
   stepper.quick_stop();
   #if DISABLED(SCARA)
     stepper.synchronize();
-    set_current_from_steppers();
-    sync_plan_position();                       // ...re-apply to planner position
+    LOOP_XYZ(i) set_current_from_steppers_for_axis((AxisEnum)i);
+    SYNC_PLAN_POSITION_KINEMATIC();
   #endif
 }
 
@@ -7704,25 +7704,16 @@ void clamp_to_software_endstops(float target[3]) {
 
 #endif // DELTA
 
-void set_current_from_steppers() {
+void set_current_from_steppers_for_axis(AxisEnum axis) {
   #if ENABLED(DELTA)
     set_cartesian_from_steppers();
-    current_position[X_AXIS] = cartesian_position[X_AXIS];
-    current_position[Y_AXIS] = cartesian_position[Y_AXIS];
-    current_position[Z_AXIS] = cartesian_position[Z_AXIS];
+    current_position[axis] = LOGICAL_POSITION(cartesian_position[axis], axis);
   #elif ENABLED(AUTO_BED_LEVELING_FEATURE)
-    vector_3 pos = planner.adjusted_position(); // values directly from steppers...
-    current_position[X_AXIS] = pos.x;
-    current_position[Y_AXIS] = pos.y;
-    current_position[Z_AXIS] = pos.z;
+    vector_3 pos = planner.adjusted_position();
+    current_position[axis] = LOGICAL_POSITION(axis == X_AXIS ? pos.x : axis == Y_AXIS ? pos.y : pos.z, axis);
   #else
-    current_position[X_AXIS] = stepper.get_axis_position_mm(X_AXIS); // CORE handled transparently
-    current_position[Y_AXIS] = stepper.get_axis_position_mm(Y_AXIS);
-    current_position[Z_AXIS] = stepper.get_axis_position_mm(Z_AXIS);
+    current_position[axis] = LOGICAL_POSITION(stepper.get_axis_position_mm(axis), axis); // CORE handled transparently
   #endif
-
-  for (uint8_t i = X_AXIS; i <= Z_AXIS; i++)
-    current_position[i] += LOGICAL_POSITION(0, i);
 }
 
 #if ENABLED(MESH_BED_LEVELING)
