@@ -827,8 +827,8 @@ void plan_buffer_line(float x, float y, float z, const float &e, float feed_rate
       delta_mm[A_AXIS] = (dx + dz) / axis_steps_per_mm[A_AXIS];
       delta_mm[C_AXIS] = (dx - dz) / axis_steps_per_mm[C_AXIS];
     #elif ENABLED(COREYZ)
-      delta_mm[X_AXIS] = dx / axis_steps_per_mm[A_AXIS];
-      delta_mm[Y_HEAD] = dy / axis_steps_per_mm[Y_AXIS];
+      delta_mm[X_AXIS] = dx / axis_steps_per_mm[X_AXIS];
+      delta_mm[Y_HEAD] = dy / axis_steps_per_mm[B_AXIS];
       delta_mm[Z_HEAD] = dz / axis_steps_per_mm[C_AXIS];
       delta_mm[B_AXIS] = (dy + dz) / axis_steps_per_mm[B_AXIS];
       delta_mm[C_AXIS] = (dy - dz) / axis_steps_per_mm[C_AXIS];
