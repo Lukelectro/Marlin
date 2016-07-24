@@ -846,7 +846,7 @@ void plan_buffer_line(float x, float y, float z, const float &e, float feed_rate
       delta_mm[Z_AXIS] = dz * steps_to_mm[Z_AXIS];
     #endif
   #endif
-  delta_mm[E_AXIS] = (de * steps_to_mm[E_AXIS]) * volumetric_multiplier[extruder] * extruder_multiplier[extruder] / 100.0;
+  delta_mm[E_AXIS] = 0.01 * (de * steps_to_mm[E_AXIS]) * volumetric_multiplier[extruder] * extruder_multiplier[extruder];
 
   if (block->steps[X_AXIS] <= dropsegments && block->steps[Y_AXIS] <= dropsegments && block->steps[Z_AXIS] <= dropsegments) {
     block->millimeters = fabs(delta_mm[E_AXIS]);
@@ -920,7 +920,7 @@ void plan_buffer_line(float x, float y, float z, const float &e, float feed_rate
         while (filwidth_delay_dist >= MMD_MM) filwidth_delay_dist -= MMD_MM;
 
         // Convert into an index into the measurement array
-        filwidth_delay_index1 = (int)(filwidth_delay_dist / 10.0 + 0.0001);
+        filwidth_delay_index1 = (int)(filwidth_delay_dist * 0.1 + 0.0001);
 
         // If the index has changed (must have gone forward)...
         if (filwidth_delay_index1 != filwidth_delay_index2) {
@@ -1007,7 +1007,7 @@ void plan_buffer_line(float x, float y, float z, const float &e, float feed_rate
       block->acceleration_steps_per_s2 = (max_acceleration_steps_per_s2[E_AXIS] * block->step_event_count) / block->steps[E_AXIS];
   }
   block->acceleration = block->acceleration_steps_per_s2 / steps_per_mm;
-  block->acceleration_rate = (long)(block->acceleration_steps_per_s2 * 16777216.0 / ((F_CPU) / 8.0));
+  block->acceleration_rate = (long)(block->acceleration_steps_per_s2 * 16777216.0 / ((F_CPU) * 0.125));
 
   #if 0  // Use old jerk for now
 
@@ -1053,10 +1053,12 @@ void plan_buffer_line(float x, float y, float z, const float &e, float feed_rate
   #endif
 
   // Start with a safe speed
-  float vmax_junction = max_xy_jerk / 2;
-  float vmax_junction_factor = 1.0;
-  float mz2 = max_z_jerk / 2, me2 = max_e_jerk / 2;
-  float csz = current_speed[Z_AXIS], cse = current_speed[E_AXIS];
+  float vmax_junction = max_xy_jerk * 0.5,
+        vmax_junction_factor = 1.0,
+        mz2 = max_z_jerk * 0.5,
+        me2 = max_e_jerk * 0.5,
+        csz = current_speed[Z_AXIS],
+        cse = current_speed[E_AXIS];
   if (fabs(csz) > mz2) vmax_junction = min(vmax_junction, mz2);
   if (fabs(cse) > me2) vmax_junction = min(vmax_junction, me2);
   vmax_junction = min(vmax_junction, block->nominal_speed);
