@@ -410,10 +410,10 @@ static void lcd_implementation_status_screen() {
     u8g.setPrintPos(80,48);
 
     char buffer[10];
-    timestamp_t time(print_job_timer.duration());
-    time.toString(buffer, true);
-    if (time.timestamp != 0) lcd_print(buffer);
-    else lcd_printPGM(PSTR("--:--"));
+    duration_t elapsed = print_job_timer.duration();
+    elapsed.toDigital(buffer);
+    lcd_print(buffer);
+
   #endif
 
   // Extruders
