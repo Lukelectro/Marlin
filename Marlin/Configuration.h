@@ -966,7 +966,6 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // JFR -was true // set to true to i
 //
 //#define REPRAPWORLD_GRAPHICAL_LCD
 
-
 //
 // Activate one of these if you have a Panucatt Devices
 // Viki 2.0 or mini Viki with Graphic LCD
