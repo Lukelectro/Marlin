@@ -36,6 +36,8 @@
 #ifndef ULTRALCD_IMPL_DOGM_H
 #define ULTRALCD_IMPL_DOGM_H
 
+#include "MarlinConfig.h"
+
 /**
  * Implementation of the LCD display routines for a DOGM128 graphic display.
  * These are common LCD 128x64 pixel graphic displays.
@@ -70,7 +72,6 @@
 #if defined(MAPPER_C2C3) || defined(MAPPER_NON)
   //#define USE_BIG_EDIT_FONT
 #endif
-
 
 #if ENABLED(USE_SMALL_INFOFONT)
   #include "dogm_font_data_6x9_marlin.h"
