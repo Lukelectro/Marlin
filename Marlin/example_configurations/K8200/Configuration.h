@@ -1302,6 +1302,5 @@
 #endif
 
 #include "Configuration_adv.h"
-#include "thermistortables.h"
 
 #endif //CONFIGURATION_H
