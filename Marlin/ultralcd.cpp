@@ -1254,7 +1254,7 @@ void lcd_cooldown() {
   static void lcd_move_z() { _lcd_move_xyz(PSTR(MSG_MOVE_Z), Z_AXIS, sw_endstop_min[Z_AXIS], sw_endstop_max[Z_AXIS]); }
   static void _lcd_move_e(
     #if E_MANUAL > 1
-      int8_t eindex
+      int8_t eindex=-1
     #endif
   ) {
     if (LCD_CLICKED) { lcd_goto_previous_menu(true); return; }
@@ -1332,9 +1332,8 @@ void lcd_cooldown() {
           MENU_ITEM(gcode, MSG_SELECT MSG_E2, PSTR("T1"));
       #endif
 
-      #if E_MANUAL == 1
-        MENU_ITEM(submenu, MSG_MOVE_E, lcd_move_e);
-      #else
+      MENU_ITEM(submenu, MSG_MOVE_E, lcd_move_e);
+      #if E_MANUAL > 1
         MENU_ITEM(submenu, MSG_MOVE_E MSG_MOVE_E1, lcd_move_e0);
         MENU_ITEM(submenu, MSG_MOVE_E MSG_MOVE_E2, lcd_move_e1);
         #if E_MANUAL > 2
