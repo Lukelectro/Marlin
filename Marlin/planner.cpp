@@ -814,7 +814,7 @@ void plan_buffer_line(float x, float y, float z, const float &e, float feed_rate
    * Having the real displacement of the head, we can calculate the total movement length and apply the desired speed.
    */
   #if ENABLED(COREXY) || ENABLED(COREXZ) || ENABLED(COREYZ)
-    float delta_mm[6];
+    float delta_mm[7];
     #if ENABLED(COREXY)
       delta_mm[X_HEAD] = dx * steps_to_mm[A_AXIS];
       delta_mm[Y_HEAD] = dy * steps_to_mm[B_AXIS];
