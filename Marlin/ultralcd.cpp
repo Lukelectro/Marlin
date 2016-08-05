@@ -2177,6 +2177,8 @@ static void lcd_control_volumetric_menu()
       lcd.buzz(duration, freq);
     #elif PIN_EXISTS(BEEPER)
       buzzer.tone(duration, freq);
+    #else
+      UNUSED(duration); UNUSED(freq);
     #endif
   }
 
