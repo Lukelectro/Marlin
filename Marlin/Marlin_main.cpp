@@ -1899,14 +1899,12 @@ static void retract_z_probe() {
     do_probe_raise(_Z_RAISE_PROBE_DEPLOY_STOW);
 
     #ifdef _TRIGGERED_WHEN_STOWED_TEST
+
       // If endstop is already false, the Z probe is deployed
-      if (_TRIGGERED_WHEN_STOWED_TEST == deploy) { // closed after the probe specific actions.
-                                                   // Would a goto be less ugly?
-      //while (!_TRIGGERED_WHEN_STOWED_TEST) { idle(); // would offer the opportunity
-      // for a triggered when stowed manual probe.
-      if(!deploy) endstops.enable_z_probe( deploy ); // Switch off triggered when stowed probes early
-                                                     // Else a Allen-Key probe can't be stowed.
-    #endif
+      if (_TRIGGERED_WHEN_STOWED_TEST == deploy) {     // closed after the probe specific actions.
+                                                       // Would a goto be less ugly?
+        //while (!_TRIGGERED_WHEN_STOWED_TEST) idle(); // would offer the opportunity
+                                                       // for a triggered when stowed manual probe.
 
     #if ENABLED(Z_PROBE_SLED)
       dock_sled(!deploy);
