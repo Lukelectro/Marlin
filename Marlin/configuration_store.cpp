@@ -183,6 +183,9 @@ void Config_Postprocess() {
   #endif
 
   calculate_volumetric_multipliers();
+
+  // Software endstops depend on home_offset
+  LOOP_XYZ(i) update_software_endstops((AxisEnum)i);
 }
 
 
