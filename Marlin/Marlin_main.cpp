@@ -1391,7 +1391,7 @@ static void set_home_offset(AxisEnum axis, float v) {
 static void set_axis_is_at_home(AxisEnum axis) {
   #if ENABLED(DEBUG_LEVELING_FEATURE)
     if (DEBUGGING(LEVELING)) {
-      SERIAL_ECHOPAIR(">>> set_axis_is_at_home(", axis);
+      SERIAL_ECHOPAIR(">>> set_axis_is_at_home(", axis_codes[axis]);
       SERIAL_ECHOLNPGM(")");
     }
   #endif
@@ -2244,7 +2244,7 @@ static void homeaxis(AxisEnum axis) {
 
   #if ENABLED(DEBUG_LEVELING_FEATURE)
     if (DEBUGGING(LEVELING)) {
-      SERIAL_ECHOPAIR(">>> homeaxis(", axis);
+      SERIAL_ECHOPAIR(">>> homeaxis(", axis_codes[axis]);
       SERIAL_ECHOLNPGM(")");
     }
   #endif
@@ -2382,7 +2382,7 @@ static void homeaxis(AxisEnum axis) {
 
   #if ENABLED(DEBUG_LEVELING_FEATURE)
     if (DEBUGGING(LEVELING)) {
-      SERIAL_ECHOPAIR("<<< homeaxis(", axis);
+      SERIAL_ECHOPAIR("<<< homeaxis(", axis_codes[axis]);
       SERIAL_ECHOLNPGM(")");
     }
   #endif
