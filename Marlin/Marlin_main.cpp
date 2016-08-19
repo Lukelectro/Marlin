@@ -248,7 +248,7 @@ int xy_travel_speed = XY_TRAVEL_SPEED;
 #endif
 int homing_bump_divisor[] = HOMING_BUMP_DIVISOR;
 bool axis_relative_modes[] = AXIS_RELATIVE_MODES;
-int extruder_multiplier[EXTRUDERS] = ARRAY_BY_EXTRUDERS1(100);
+int flow_percentage[EXTRUDERS] = ARRAY_BY_EXTRUDERS1(100);
 bool volumetric_enabled = false;
 float filament_size[EXTRUDERS] = ARRAY_BY_EXTRUDERS1(DEFAULT_NOMINAL_FILAMENT_DIA);
 float volumetric_multiplier[EXTRUDERS] = ARRAY_BY_EXTRUDERS1(1.0);
@@ -5365,7 +5365,7 @@ inline void gcode_M220() {
 inline void gcode_M221() {
   if (get_target_extruder_from_command(221)) return;
   if (code_seen('S'))
-    extruder_multiplier[target_extruder] = code_value_int();
+    flow_percentage[target_extruder] = code_value_int();
 }
 
 /**
@@ -5830,7 +5830,7 @@ inline void gcode_M400() { stepper.synchronize(); }
     //SERIAL_PROTOCOLPGM("Filament dia (measured mm):");
     //SERIAL_PROTOCOL(filament_width_meas);
     //SERIAL_PROTOCOLPGM("Extrusion ratio(%):");
-    //SERIAL_PROTOCOL(extruder_multiplier[active_extruder]);
+    //SERIAL_PROTOCOL(flow_percentage[active_extruder]);
   }
 
   /**
@@ -8239,15 +8239,18 @@ void controllerFan()
   static millis_t next_status_led_update_ms = 0;
 
   void handle_status_leds(void) {
-    float max_temp = 0.0;
     if (ELAPSED(millis(), next_status_led_update_ms)) {
       next_status_led_update_ms += 500; // Update every 0.5s
+      float max_temp =
+        #if HAS_TEMP_BED
+          MAX3(max_temp, thermalManager.degTargetBed(), thermalManager.degBed())
+        #else
+          0.0
+        #endif
+      ;
       HOTEND_LOOP() {
-        max_temp = max(max(max_temp, thermalManager.degHotend(e)), thermalManager.degTargetHotend(e));
+        max_temp = MAX3(max_temp, thermalManager.degHotend(e), thermalManager.degTargetHotend(e));
       }
-      #if HAS_TEMP_BED
-        max_temp = max(max(max_temp, thermalManager.degTargetBed()), thermalManager.degBed());
-      #endif
       bool new_led = (max_temp > 55.0) ? true : (max_temp < 54.0) ? false : red_led;
       if (new_led != red_led) {
         red_led = new_led;
