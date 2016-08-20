@@ -28,6 +28,7 @@
 #include "temperature.h"
 #include "stepper.h"
 #include "configuration_store.h"
+#include "utility.h"
 
 #if ENABLED(PRINTCOUNTER)
   #include "printcounter.h"
@@ -1728,6 +1729,7 @@ static void lcd_control_volumetric_menu()
    *
    */
   #if ENABLED(FWRETRACT)
+
     static void lcd_control_retract_menu() {
       START_MENU();
       MENU_ITEM(back, MSG_CONTROL);
@@ -1745,6 +1747,7 @@ static void lcd_control_volumetric_menu()
       MENU_ITEM_EDIT(float3, MSG_CONTROL_RETRACT_RECOVERF, &retract_recover_feedrate_mm_s, 1, 999);
       END_MENU();
     }
+
   #endif // FWRETRACT
 
   #if ENABLED(SDSUPPORT)
