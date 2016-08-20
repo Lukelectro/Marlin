@@ -1012,23 +1012,4 @@ static void lcd_implementation_drawmenu_sddirectory(uint8_t row, const char* pst
 
 #endif // LCD_HAS_STATUS_INDICATORS
 
-#if ENABLED(LCD_HAS_SLOW_BUTTONS)
-
-  extern millis_t next_button_update_ms;
-
-  static uint8_t lcd_implementation_read_slow_buttons() {
-    #if ENABLED(LCD_I2C_TYPE_MCP23017)
-      // Reading these buttons this is likely to be too slow to call inside interrupt context
-      // so they are called during normal lcd_update
-      uint8_t slow_bits = lcd.readButtons() << B_I2C_BTN_OFFSET;
-      #if ENABLED(LCD_I2C_VIKI)
-        if ((slow_bits & (B_MI | B_RI)) && PENDING(millis(), next_button_update_ms)) // LCD clicked
-          slow_bits &= ~(B_MI | B_RI); // Disable LCD clicked buttons if screen is updated
-      #endif // LCD_I2C_VIKI
-      return slow_bits;
-    #endif // LCD_I2C_TYPE_MCP23017
-  }
-
-#endif // LCD_HAS_SLOW_BUTTONS
-
 #endif // ULTRALCD_IMPL_HD44780_H
