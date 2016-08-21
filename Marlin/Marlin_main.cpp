@@ -3293,6 +3293,8 @@ inline void gcode_G28() {
 
     bed_leveling_in_progress = true;
 
+    float xProbe, yProbe, measured_z = 0;
+
     #if ENABLED(AUTO_BED_LEVELING_GRID)
 
       // probe at the points of a lattice grid
@@ -3330,8 +3332,8 @@ inline void gcode_G28() {
       bool zig = auto_bed_leveling_grid_points & 1; //always end at [RIGHT_PROBE_BED_POSITION, BACK_PROBE_BED_POSITION]
 
       for (uint8_t yCount = 0; yCount < auto_bed_leveling_grid_points; yCount++) {
-        float yBase = front_probe_bed_position + yGridSpacing * yCount,
-              yProbe = floor(yBase + (yBase < 0 ? 0 : 0.5));
+        float yBase = front_probe_bed_position + yGridSpacing * yCount;
+        yProbe = floor(yBase + (yBase < 0 ? 0 : 0.5));
         int8_t xStart, xStop, xInc;
 
         if (zig) {
@@ -3348,8 +3350,8 @@ inline void gcode_G28() {
         zig = !zig;
 
         for (int8_t xCount = xStart; xCount != xStop; xCount += xInc) {
-          float xBase = left_probe_bed_position + xGridSpacing * xCount,
-                xProbe = floor(xBase + (xBase < 0 ? 0 : 0.5));
+          float xBase = left_probe_bed_position + xGridSpacing * xCount;
+          xProbe = floor(xBase + (xBase < 0 ? 0 : 0.5));
 
           #if ENABLED(DELTA)
             // Avoid probing outside the round or hexagonal area of a delta printer
@@ -7815,8 +7817,8 @@ void set_current_from_steppers_for_axis(AxisEnum axis) {
     LOOP_XYZE(i) difference[i] = target[i] - current_position[i];
 
     float cartesian_mm = sqrt(sq(difference[X_AXIS]) + sq(difference[Y_AXIS]) + sq(difference[Z_AXIS]));
-    if (cartesian_mm < 0.000001) cartesian_mm = abs(difference[E_AXIS]);
-    if (cartesian_mm < 0.000001) return false;
+    if (UNEAR_ZERO(cartesian_mm)) cartesian_mm = abs(difference[E_AXIS]);
+    if (UNEAR_ZERO(cartesian_mm)) return false;
     float _feedrate_mm_s = MMS_SCALED(feedrate_mm_s);
     float seconds = cartesian_mm / _feedrate_mm_s;
     int steps = max(1, int(delta_segments_per_second * seconds));
