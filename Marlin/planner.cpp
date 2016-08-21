@@ -605,7 +605,7 @@ void plan_buffer_line(float x, float y, float z, const float &e, float feed_rate
 
   long de = target[E_AXIS] - position[E_AXIS];
 
-  #if ENABLED(PREVENT_DANGEROUS_EXTRUDE)
+  #if ENABLED(PREVENT_COLD_EXTRUSION)
     if (de) {
       if (thermalManager.tooColdToExtrude(extruder)) {
         position[E_AXIS] = target[E_AXIS]; // Behave as if the move really took place, but ignore E part
