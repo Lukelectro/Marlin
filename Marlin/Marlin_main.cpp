@@ -1252,8 +1252,7 @@ bool get_target_extruder_from_command(int code) {
       SERIAL_ECHO_START;
       SERIAL_CHAR('M');
       SERIAL_ECHO(code);
-      SERIAL_ECHOPAIR(" " MSG_INVALID_EXTRUDER " ", code_value_byte());
-      SERIAL_EOL;
+      SERIAL_ECHOLNPAIR(" " MSG_INVALID_EXTRUDER " ", code_value_byte());
       return true;
     }
     target_extruder = code_value_byte();
@@ -1361,8 +1360,7 @@ void update_software_endstops(AxisEnum axis) {
       SERIAL_ECHOPAIR(" axis:\n home_offset = ", home_offset[axis]);
       SERIAL_ECHOPAIR("\n position_shift = ", position_shift[axis]);
       SERIAL_ECHOPAIR("\n soft_endstop_min = ", soft_endstop_min[axis]);
-      SERIAL_ECHOPAIR("\n soft_endstop_max = ", soft_endstop_max[axis]);
-      SERIAL_EOL;
+      SERIAL_ECHOLNPAIR("\n soft_endstop_max = ", soft_endstop_max[axis]);
     }
   #endif
 
@@ -2866,10 +2864,8 @@ inline void gcode_G28() {
         if (destination[Z_AXIS] > current_position[Z_AXIS]) {
 
           #if ENABLED(DEBUG_LEVELING_FEATURE)
-            if (DEBUGGING(LEVELING)) {
-              SERIAL_ECHOPAIR("Raise Z (before homing) to ", destination[Z_AXIS]);
-              SERIAL_EOL;
-            }
+            if (DEBUGGING(LEVELING))
+              SERIAL_ECHOLNPAIR("Raise Z (before homing) to ", destination[Z_AXIS]);
           #endif
 
           do_blocking_move_to_z(destination[Z_AXIS]);
@@ -4160,8 +4156,7 @@ inline void gcode_M42() {
               Y_current /= 1.25;
               if (verbose_level > 3) {
                 SERIAL_ECHOPAIR("Pulling point towards center:", X_current);
-                SERIAL_ECHOPAIR(", ", Y_current);
-                SERIAL_EOL;
+                SERIAL_ECHOLNPAIR(", ", Y_current);
               }
             }
           #endif
@@ -4169,8 +4164,7 @@ inline void gcode_M42() {
             SERIAL_PROTOCOLPGM("Going to:");
             SERIAL_ECHOPAIR(" X", X_current);
             SERIAL_ECHOPAIR(" Y", Y_current);
-            SERIAL_ECHOPAIR(" Z", current_position[Z_AXIS]);
-            SERIAL_EOL;
+            SERIAL_ECHOLNPAIR(" Z", current_position[Z_AXIS]);
           }
           do_blocking_move_to_xy(X_current, Y_current);
         } // n_legs loop
@@ -4688,8 +4682,7 @@ inline void gcode_M111() {
     }
     else {
       SERIAL_ECHO_START;
-      SERIAL_ECHOPAIR("M113 S", (unsigned long)host_keepalive_interval);
-      SERIAL_EOL;
+      SERIAL_ECHOLNPAIR("M113 S", (unsigned long)host_keepalive_interval);
     }
   }
 
@@ -5139,23 +5132,19 @@ inline void gcode_M203() {
 inline void gcode_M204() {
   if (code_seen('S')) {  // Kept for legacy compatibility. Should NOT BE USED for new developments.
     planner.travel_acceleration = planner.acceleration = code_value_linear_units();
-    SERIAL_ECHOPAIR("Setting Print and Travel Acceleration: ", planner.acceleration);
-    SERIAL_EOL;
+    SERIAL_ECHOLNPAIR("Setting Print and Travel Acceleration: ", planner.acceleration);
   }
   if (code_seen('P')) {
     planner.acceleration = code_value_linear_units();
-    SERIAL_ECHOPAIR("Setting Print Acceleration: ", planner.acceleration);
-    SERIAL_EOL;
+    SERIAL_ECHOLNPAIR("Setting Print Acceleration: ", planner.acceleration);
   }
   if (code_seen('R')) {
     planner.retract_acceleration = code_value_linear_units();
-    SERIAL_ECHOPAIR("Setting Retract Acceleration: ", planner.retract_acceleration);
-    SERIAL_EOL;
+    SERIAL_ECHOLNPAIR("Setting Retract Acceleration: ", planner.retract_acceleration);
   }
   if (code_seen('T')) {
     planner.travel_acceleration = code_value_linear_units();
-    SERIAL_ECHOPAIR("Setting Travel Acceleration: ", planner.travel_acceleration);
-    SERIAL_EOL;
+    SERIAL_ECHOLNPAIR("Setting Travel Acceleration: ", planner.travel_acceleration);
   }
 }
 
@@ -5231,8 +5220,7 @@ inline void gcode_M206() {
           if (DEBUGGING(LEVELING)) {
             SERIAL_ECHOPGM("endstop_adj[");
             SERIAL_ECHO(axis_codes[i]);
-            SERIAL_ECHOPAIR("] = ", endstop_adj[i]);
-            SERIAL_EOL;
+            SERIAL_ECHOLNPAIR("] = ", endstop_adj[i]);
           }
         #endif
       }
@@ -5251,8 +5239,7 @@ inline void gcode_M206() {
    */
   inline void gcode_M666() {
     if (code_seen('Z')) z_endstop_adj = code_value_axis_units(Z_AXIS);
-    SERIAL_ECHOPAIR("Z Endstop Adjustment set to (mm):", z_endstop_adj);
-    SERIAL_EOL;
+    SERIAL_ECHOLNPAIR("Z Endstop Adjustment set to (mm):", z_endstop_adj);
   }
 
 #endif // !DELTA && Z_DUAL_ENDSTOPS
@@ -5327,8 +5314,7 @@ inline void gcode_M211() {
   SERIAL_ECHOPGM("  " MSG_SOFT_MAX ": ");
   SERIAL_ECHOPAIR(    MSG_X, soft_endstop_max[X_AXIS]);
   SERIAL_ECHOPAIR(" " MSG_Y, soft_endstop_max[Y_AXIS]);
-  SERIAL_ECHOPAIR(" " MSG_Z, soft_endstop_max[Z_AXIS]);
-  SERIAL_EOL;
+  SERIAL_ECHOLNPAIR(" " MSG_Z, soft_endstop_max[Z_AXIS]);
 }
 
 #if HOTENDS > 1
@@ -6562,8 +6548,7 @@ void tool_change(const uint8_t tmp_extruder, const float fr_mm_s/*=0.0*/, bool n
 
           #if ENABLED(DEBUG_LEVELING_FEATURE)
             if (DEBUGGING(LEVELING)) {
-              SERIAL_ECHOPAIR("Active extruder parked: ", active_extruder_parked ? "yes" : "no");
-              SERIAL_EOL;
+              SERIAL_ECHOLNPAIR("Active extruder parked: ", active_extruder_parked ? "yes" : "no");
               DEBUG_POS("New extruder (parked)", current_position);
             }
           #endif
@@ -6672,10 +6657,8 @@ void tool_change(const uint8_t tmp_extruder, const float fr_mm_s/*=0.0*/, bool n
                       ypos = RAW_CURRENT_POSITION(Y_AXIS);
                 current_position[Z_AXIS] += mbl.get_z(xpos + xydiff[X_AXIS], ypos + xydiff[Y_AXIS]) - mbl.get_z(xpos, ypos);
                 #if ENABLED(DEBUG_LEVELING_FEATURE)
-                  if (DEBUGGING(LEVELING)) {
-                    SERIAL_ECHOPAIR(" after: ", current_position[Z_AXIS]);
-                    SERIAL_EOL;
-                  }
+                  if (DEBUGGING(LEVELING))
+                    SERIAL_ECHOLNPAIR(" after: ", current_position[Z_AXIS]);
                 #endif
               }
 
