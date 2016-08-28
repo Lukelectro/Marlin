@@ -599,6 +599,17 @@ void plan_buffer_line(float x, float y, float z, const float &e, float feed_rate
        dy = target[Y_AXIS] - position[Y_AXIS],
        dz = target[Z_AXIS] - position[Z_AXIS];
 
+  /*
+  SERIAL_ECHO_START;
+  SERIAL_ECHOPAIR("Planner X:", x);
+  SERIAL_ECHOPAIR(" (", dx);
+  SERIAL_ECHOPAIR(") Y:", y);
+  SERIAL_ECHOPAIR(" (", dy);
+  SERIAL_ECHOPAIR(") Z:", z);
+  SERIAL_ECHOPAIR(" (", dz);
+  SERIAL_ECHOLNPGM(")");
+  //*/
+
   // DRYRUN ignores all temperature constraints and assures that the extruder is instantly satisfied
   if (DEBUGGING(DRYRUN))
     position[E_AXIS] = target[E_AXIS];
