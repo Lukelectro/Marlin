@@ -388,9 +388,15 @@ void Stepper::set_directions() {
       count_direction[AXIS ##_AXIS] = 1; \
     }
 
-  SET_STEP_DIR(X); // A
-  SET_STEP_DIR(Y); // B
-  SET_STEP_DIR(Z); // C
+  #if HAS_X_DIR
+    SET_STEP_DIR(X); // A
+  #endif
+  #if HAS_Y_DIR
+    SET_STEP_DIR(Y); // B
+  #endif
+  #if HAS_Z_DIR
+    SET_STEP_DIR(Z); // C
+  #endif
 
   #if DISABLED(ADVANCE)
     if (motor_direction(E_AXIS)) {
