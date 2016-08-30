@@ -471,6 +471,7 @@ void Stepper::isr() {
     ) endstops.update();
 
     // Take multiple steps per interrupt (For high speed moves)
+    bool all_steps_done = false;
     for (int8_t i = 0; i < step_loops; i++) {
       #ifndef USBCON
         customizedSerial.checkRx(); // Check for serial chars.
@@ -654,8 +655,10 @@ void Stepper::isr() {
           Z2_STEP_WRITE(INVERT_Z_STEP_PIN);
         #endif
 
-      step_events_completed++;
-      if (step_events_completed >= current_block->step_event_count) break;
+      if (++step_events_completed >= current_block->step_event_count) {
+        all_steps_done = true;
+        break;
+      }
     }
 
     #if ENABLED(ADVANCE) || ENABLED(LIN_ADVANCE)
@@ -787,7 +790,7 @@ void Stepper::isr() {
     OCR1A = (OCR1A < (TCNT1 + 16)) ? (TCNT1 + 16) : OCR1A;
 
     // If current block is finished, reset pointer
-    if (step_events_completed >= current_block->step_event_count) {
+    if (all_steps_done) {
       current_block = NULL;
       planner.discard_current_block();
     }
