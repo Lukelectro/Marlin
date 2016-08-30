@@ -662,7 +662,7 @@ void Stepper::isr() {
     }
 
     #if ENABLED(ADVANCE) || ENABLED(LIN_ADVANCE)
-      // If we have esteps to execute, fire the next ISR "now"
+      // If we have esteps to execute, fire the next advance_isr "now"
       if (e_steps[TOOL_E_INDEX]) OCR0A = TCNT0 + 2;
     #endif
 
