@@ -186,7 +186,7 @@ long  Stepper::counter_X = 0,
       Stepper::counter_Z = 0,
       Stepper::counter_E = 0;
 
-volatile unsigned long Stepper::step_events_completed = 0; // The number of step events executed in the current block
+volatile uint32_t Stepper::step_events_completed = 0; // The number of step events executed in the current block
 
 #if ENABLED(ADVANCE) || ENABLED(LIN_ADVANCE)
 
@@ -664,8 +664,8 @@ void Stepper::isr() {
     #endif
 
     // Calculate new timer value
-    unsigned short timer, step_rate;
-    if (step_events_completed <= (unsigned long)current_block->accelerate_until) {
+    uint16_t timer, step_rate;
+    if (step_events_completed <= (uint32_t)current_block->accelerate_until) {
 
       MultiU24X32toH16(acc_step_rate, acceleration_time, current_block->acceleration_rate);
       acc_step_rate += current_block->initial_rate;
@@ -681,14 +681,14 @@ void Stepper::isr() {
       #if ENABLED(LIN_ADVANCE)
 
         if (current_block->use_advance_lead)
-          current_estep_rate[TOOL_E_INDEX] = ((unsigned long)acc_step_rate * current_block->e_speed_multiplier8) >> 8;
+          current_estep_rate[TOOL_E_INDEX] = ((uint32_t)acc_step_rate * current_block->e_speed_multiplier8) >> 8;
 
         if (current_block->use_advance_lead) {
           #if ENABLED(MIXING_EXTRUDER)
             MIXING_STEPPERS_LOOP(j)
-              current_estep_rate[j] = ((unsigned long)acc_step_rate * current_block->e_speed_multiplier8 * current_block->step_event_count / current_block->mix_event_count[j]) >> 8;
+              current_estep_rate[j] = ((uint32_t)acc_step_rate * current_block->e_speed_multiplier8 * current_block->step_event_count / current_block->mix_event_count[j]) >> 8;
           #else
-            current_estep_rate[TOOL_E_INDEX] = ((unsigned long)acc_step_rate * current_block->e_speed_multiplier8) >> 8;
+            current_estep_rate[TOOL_E_INDEX] = ((uint32_t)acc_step_rate * current_block->e_speed_multiplier8) >> 8;
           #endif
         }
 
@@ -718,7 +718,7 @@ void Stepper::isr() {
         eISR_Rate = (timer >> 2) * step_loops / abs(e_steps[TOOL_E_INDEX]);
       #endif
     }
-    else if (step_events_completed > (unsigned long)current_block->decelerate_after) {
+    else if (step_events_completed > (uint32_t)current_block->decelerate_after) {
       MultiU24X32toH16(step_rate, deceleration_time, current_block->acceleration_rate);
 
       if (step_rate <= acc_step_rate) { // Still decelerating?
@@ -738,9 +738,9 @@ void Stepper::isr() {
         if (current_block->use_advance_lead) {
           #if ENABLED(MIXING_EXTRUDER)
             MIXING_STEPPERS_LOOP(j)
-              current_estep_rate[j] = ((unsigned long)step_rate * current_block->e_speed_multiplier8 * current_block->step_event_count / current_block->mix_event_count[j]) >> 8;
+              current_estep_rate[j] = ((uint32_t)step_rate * current_block->e_speed_multiplier8 * current_block->step_event_count / current_block->mix_event_count[j]) >> 8;
           #else
-            current_estep_rate[TOOL_E_INDEX] = ((unsigned long)step_rate * current_block->e_speed_multiplier8) >> 8;
+            current_estep_rate[TOOL_E_INDEX] = ((uint32_t)step_rate * current_block->e_speed_multiplier8) >> 8;
           #endif
         }
 
