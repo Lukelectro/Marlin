@@ -214,7 +214,7 @@ volatile long Stepper::count_position[NUM_AXIS] = { 0 };
 volatile signed char Stepper::count_direction[NUM_AXIS] = { 1, 1, 1, 1 };
 
 #if ENABLED(MIXING_EXTRUDER)
-  long Stepper::counter_M[MIXING_STEPPERS];
+  long Stepper::counter_m[MIXING_STEPPERS];
 #endif
 
 unsigned short Stepper::acc_step_rate; // needed for deceleration start point
@@ -439,7 +439,7 @@ void Stepper::isr() {
 
       #if ENABLED(MIXING_EXTRUDER)
         MIXING_STEPPERS_LOOP(i)
-          counter_M[i] = -(current_block->mix_event_count[i] >> 1);
+          counter_m[i] = -(current_block->mix_event_count[i] >> 1);
       #endif
 
       step_events_completed = 0;
