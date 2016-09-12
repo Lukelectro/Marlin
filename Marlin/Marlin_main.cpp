@@ -345,7 +345,7 @@ float zprobe_zoffset = -Z_PROBE_OFFSET_FROM_EXTRUDER;
 
 #if ENABLED(AUTO_BED_LEVELING_NONLINEAR)
   int nonlinear_grid_spacing[2] = { 0 };
-  float bed_level[AUTO_BED_LEVELING_GRID_POINTS][AUTO_BED_LEVELING_GRID_POINTS];
+  float bed_level_grid[AUTO_BED_LEVELING_GRID_POINTS][AUTO_BED_LEVELING_GRID_POINTS];
 #endif
 
 #if IS_SCARA
@@ -1906,12 +1906,12 @@ static void retract_z_probe() {
      * All DELTA leveling in the Marlin uses NONLINEAR_BED_LEVELING
      */
     static void extrapolate_one_point(int x, int y, int xdir, int ydir) {
-      if (bed_level[x][y] != 0.0) {
+      if (bed_level_grid[x][y] != 0.0) {
         return;  // Don't overwrite good values.
       }
-      float a = 2 * bed_level[x + xdir][y] - bed_level[x + xdir * 2][y]; // Left to right.
-      float b = 2 * bed_level[x][y + ydir] - bed_level[x][y + ydir * 2]; // Front to back.
-      float c = 2 * bed_level[x + xdir][y + ydir] - bed_level[x + xdir * 2][y + ydir * 2]; // Diagonal.
+      float a = 2 * bed_level_grid[x + xdir][y] - bed_level_grid[x + xdir * 2][y]; // Left to right.
+      float b = 2 * bed_level_grid[x][y + ydir] - bed_level_grid[x][y + ydir * 2]; // Front to back.
+      float c = 2 * bed_level_grid[x + xdir][y + ydir] - bed_level_grid[x + xdir * 2][y + ydir * 2]; // Diagonal.
       float median = c;  // Median is robust (ignores outliers).
       if (a < b) {
         if (b < c) median = b;
@@ -1921,7 +1921,7 @@ static void retract_z_probe() {
         if (c < b) median = b;
         if (a < c) median = a;
       }
-      bed_level[x][y] = median;
+      bed_level_grid[x][y] = median;
     }
 
     /**
@@ -1947,7 +1947,7 @@ static void retract_z_probe() {
     static void print_bed_level() {
       for (int y = 0; y < AUTO_BED_LEVELING_GRID_POINTS; y++) {
         for (int x = 0; x < AUTO_BED_LEVELING_GRID_POINTS; x++) {
-          SERIAL_PROTOCOL_F(bed_level[x][y], 2);
+          SERIAL_PROTOCOL_F(bed_level_grid[x][y], 2);
           SERIAL_PROTOCOLCHAR(' ');
         }
         SERIAL_EOL;
@@ -1963,7 +1963,7 @@ static void retract_z_probe() {
       #endif
       for (int y = 0; y < AUTO_BED_LEVELING_GRID_POINTS; y++) {
         for (int x = 0; x < AUTO_BED_LEVELING_GRID_POINTS; x++) {
-          bed_level[x][y] = 0.0;
+          bed_level_grid[x][y] = 0.0;
         }
       }
     }
@@ -3396,7 +3396,7 @@ inline void gcode_G28() {
 
           #elif ENABLED(AUTO_BED_LEVELING_NONLINEAR)
 
-            bed_level[xCount][yCount] = measured_z + zoffset;
+            bed_level_grid[xCount][yCount] = measured_z + zoffset;
 
           #endif
 
@@ -7614,10 +7614,10 @@ void clamp_to_software_endstops(float target[3]) {
             grid_y = max(h1, min(h2, RAW_Y_POSITION(cartesian[Y_AXIS]) / nonlinear_grid_spacing[Y_AXIS]));
       int floor_x = floor(grid_x), floor_y = floor(grid_y);
       float ratio_x = grid_x - floor_x, ratio_y = grid_y - floor_y,
-            z1 = bed_level[floor_x + half][floor_y + half],
-            z2 = bed_level[floor_x + half][floor_y + half + 1],
-            z3 = bed_level[floor_x + half + 1][floor_y + half],
-            z4 = bed_level[floor_x + half + 1][floor_y + half + 1],
+            z1 = bed_level_grid[floor_x + half][floor_y + half],
+            z2 = bed_level_grid[floor_x + half][floor_y + half + 1],
+            z3 = bed_level_grid[floor_x + half + 1][floor_y + half],
+            z4 = bed_level_grid[floor_x + half + 1][floor_y + half + 1],
             left = (1 - ratio_y) * z1 + ratio_y * z2,
             right = (1 - ratio_y) * z3 + ratio_y * z4,
             offset = (1 - ratio_x) * left + ratio_x * right;
