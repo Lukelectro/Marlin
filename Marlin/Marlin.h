@@ -221,7 +221,6 @@ enum AxisEnum {X_AXIS=0, Y_AXIS=1, A_AXIS=0, B_AXIS=1, Z_AXIS=2, E_AXIS=3, X_HEA
 void FlushSerialRequestResend();
 void ok_to_send();
 
-void reset_bed_level();
 void kill(const char*);
 
 void quickstop_stepper();
