@@ -1313,7 +1313,7 @@ void lcd_cooldown() {
    *
    */
 
-  #if ENABLED(DELTA) || ENABLED(SCARA)
+  #if IS_KINEMATIC
     #define _MOVE_XYZ_ALLOWED (axis_homed[X_AXIS] && axis_homed[Y_AXIS] && axis_homed[Z_AXIS])
   #else
     #define _MOVE_XYZ_ALLOWED true
@@ -1673,7 +1673,7 @@ static void lcd_control_volumetric_menu()
     #if ENABLED(ABORT_ON_ENDSTOP_HIT_FEATURE_ENABLED)
       MENU_ITEM_EDIT(bool, MSG_ENDSTOP_ABORT, &stepper.abort_on_endstop_hit);
     #endif
-    #if ENABLED(SCARA)
+    #if IS_SCARA
       MENU_ITEM_EDIT(float74, MSG_XSCALE, &axis_scaling[X_AXIS], 0.5, 2);
       MENU_ITEM_EDIT(float74, MSG_YSCALE, &axis_scaling[Y_AXIS], 0.5, 2);
     #endif

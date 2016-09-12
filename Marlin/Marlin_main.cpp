@@ -36,12 +36,11 @@
 
 #if ENABLED(AUTO_BED_LEVELING_FEATURE)
   #include "vector_3.h"
-  #if ENABLED(AUTO_BED_LEVELING_GRID)
-    #include "qr_solve.h"
-  #endif
-#endif // AUTO_BED_LEVELING_FEATURE
+#endif
 
-#if ENABLED(MESH_BED_LEVELING)
+#if ENABLED(AUTO_BED_LEVELING_LINEAR)
+  #include "qr_solve.h"
+#elif ENABLED(MESH_BED_LEVELING)
   #include "mesh_bed_leveling.h"
 #endif
 
@@ -351,7 +350,12 @@ float zprobe_zoffset = -Z_PROBE_OFFSET_FROM_EXTRUDER;
 
 #endif
 
-#if ENABLED(SCARA)
+#if IS_SCARA
+  // Float constants for SCARA calculations
+  const float L1 = SCARA_LINKAGE_1, L2 = SCARA_LINKAGE_2,
+              L1_2 = sq(float(L1)), L1_2_2 = 2.0 * L1_2,
+              L2_2 = sq(float(L2));
+
   float delta_segments_per_second = SCARA_SEGMENTS_PER_SECOND,
         delta[ABC],
         axis_scaling[ABC] = { 1, 1, 1 },    // Build size scaling, default to 1
@@ -519,7 +523,7 @@ inline void sync_plan_position() {
 }
 inline void sync_plan_position_e() { planner.set_e_position_mm(current_position[E_AXIS]); }
 
-#if ENABLED(DELTA) || ENABLED(SCARA)
+#if IS_KINEMATIC
   inline void sync_plan_position_delta() {
     #if ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) DEBUG_POS("sync_plan_position_delta", current_position);
@@ -2078,7 +2082,7 @@ static void retract_z_probe() {
 
 #if ENABLED(AUTO_BED_LEVELING_FEATURE)
 
-  #if DISABLED(DELTA)
+  #if ENABLED(AUTO_BED_LEVELING_LINEAR)
 
     /**
      * Get the stepper positions, apply the rotation matrix
@@ -2108,9 +2112,7 @@ static void retract_z_probe() {
       return pos;
     }
 
-  #endif // !DELTA
-
-  #if ENABLED(DELTA)
+  #elif ENABLED(AUTO_BED_LEVELING_NONLINEAR)
 
     /**
      * All DELTA leveling in the Marlin uses NONLINEAR_BED_LEVELING
@@ -2707,7 +2709,7 @@ inline void gcode_G4() {
     SERIAL_ECHOPGM("Machine Type: ");
     #if ENABLED(DELTA)
       SERIAL_ECHOLNPGM("Delta");
-    #elif ENABLED(SCARA)
+    #elif IS_SCARA
       SERIAL_ECHOLNPGM("SCARA");
     #elif ENABLED(COREXY) || ENABLED(COREXZ) || ENABLED(COREYZ)
       SERIAL_ECHOLNPGM("Core");
@@ -2784,11 +2786,12 @@ inline void gcode_G28() {
   stepper.synchronize();
 
   // For auto bed leveling, clear the level matrix
-  #if ENABLED(AUTO_BED_LEVELING_FEATURE)
+  #if ENABLED(AUTO_BED_LEVELING_LINEAR)
     planner.bed_level_matrix.set_to_identity();
-    #if ENABLED(DELTA)
-      reset_bed_level();
-    #endif
+  #endif
+
+  #if ENABLED(AUTO_BED_LEVELING_NONLINEAR)
+    reset_bed_level();
   #endif
 
   // Always home with tool 0 active
@@ -3355,7 +3358,7 @@ inline void gcode_G28() {
 
     #if ENABLED(AUTO_BED_LEVELING_GRID)
 
-      #if DISABLED(DELTA)
+      #if ENABLED(AUTO_BED_LEVELING_LINEAR)
         bool do_topography_map = verbose_level > 2 || code_seen('T');
       #endif
 
@@ -3415,9 +3418,11 @@ inline void gcode_G28() {
 
     if (!dryrun) {
 
-      // Reset the bed_level_matrix because leveling
-      // needs to be done without leveling enabled.
-      planner.bed_level_matrix.set_to_identity();
+      #if ENABLED(AUTO_BED_LEVELING_LINEAR)
+        // Reset the bed_level_matrix because leveling
+        // needs to be done without leveling enabled.
+        planner.bed_level_matrix.set_to_identity();
+      #endif
 
       #if ENABLED(DELTA)
         reset_bed_level();
@@ -3466,12 +3471,14 @@ inline void gcode_G28() {
       const float xGridSpacing = (right_probe_bed_position - left_probe_bed_position) / (auto_bed_leveling_grid_points - 1),
                   yGridSpacing = (back_probe_bed_position - front_probe_bed_position) / (auto_bed_leveling_grid_points - 1);
 
-      #if ENABLED(DELTA)
+      #if ENABLED(AUTO_BED_LEVELING_NONLINEAR)
         delta_grid_spacing[X_AXIS] = xGridSpacing;
         delta_grid_spacing[Y_AXIS] = yGridSpacing;
         float zoffset = zprobe_zoffset;
         if (code_seen('Z')) zoffset += code_value_axis_units(Z_AXIS);
-      #else // !DELTA
+
+      #elif ENABLED(AUTO_BED_LEVELING_LINEAR)
+
         /**
          * solve the plane equation ax + by + d = z
          * A is the matrix with rows [x y 1] for all the probed points
@@ -3487,7 +3494,8 @@ inline void gcode_G28() {
                eqnBVector[abl2],     // "B" vector of Z points
                mean = 0.0;
         int8_t indexIntoAB[auto_bed_leveling_grid_points][auto_bed_leveling_grid_points];
-      #endif // !DELTA
+
+      #endif // AUTO_BED_LEVELING_LINEAR
 
       int probePointCounter = 0;
       bool zig = auto_bed_leveling_grid_points & 1; //always end at [RIGHT_PROBE_BED_POSITION, BACK_PROBE_BED_POSITION]
@@ -3521,16 +3529,19 @@ inline void gcode_G28() {
 
           float measured_z = probe_pt(xProbe, yProbe, stow_probe_after_each, verbose_level);
 
-          #if DISABLED(DELTA)
-            mean += measured_z;
+          #if ENABLED(AUTO_BED_LEVELING_LINEAR)
 
+            mean += measured_z;
             eqnBVector[probePointCounter] = measured_z;
             eqnAMatrix[probePointCounter + 0 * abl2] = xProbe;
             eqnAMatrix[probePointCounter + 1 * abl2] = yProbe;
             eqnAMatrix[probePointCounter + 2 * abl2] = 1;
             indexIntoAB[xCount][yCount] = probePointCounter;
-          #else
+
+          #elif ENABLED(AUTO_BED_LEVELING_NONLINEAR)
+
             bed_level[xCount][yCount] = measured_z + zoffset;
+
           #endif
 
           probePointCounter++;
@@ -3540,7 +3551,7 @@ inline void gcode_G28() {
         } //xProbe
       } //yProbe
 
-    #else // !AUTO_BED_LEVELING_GRID
+    #elif ENABLED(AUTO_BED_LEVELING_3POINT)
 
       #if ENABLED(DEBUG_LEVELING_FEATURE)
         if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("> 3-point Leveling");
@@ -4119,10 +4130,10 @@ inline void gcode_M42() {
     if (verbose_level > 2)
       SERIAL_PROTOCOLLNPGM("Positioning the probe...");
 
-    #if ENABLED(DELTA)
+    #if ENABLED(AUTO_BED_LEVELING_NONLINEAR)
       // we don't do bed level correction in M48 because we want the raw data when we probe
       reset_bed_level();
-    #elif ENABLED(AUTO_BED_LEVELING_FEATURE)
+    #elif ENABLED(AUTO_BED_LEVELING_LINEAR)
       // we don't do bed level correction in M48 because we want the raw data when we probe
       planner.bed_level_matrix.set_to_identity();
     #endif
@@ -6082,7 +6093,7 @@ inline void gcode_M503() {
       lastpos[i] = destination[i] = current_position[i];
 
     // Define runplan for move axes
-    #if ENABLED(DELTA)
+    #if IS_KINEMATIC
       #define RUNPLAN(RATE_MM_S) inverse_kinematics(destination); \
                                  planner.buffer_line(delta[X_AXIS], delta[Y_AXIS], delta[Z_AXIS], destination[E_AXIS], RATE_MM_S, active_extruder);
     #else
@@ -6203,7 +6214,7 @@ inline void gcode_M503() {
     destination[E_AXIS] = lastpos[E_AXIS];
     planner.set_e_position_mm(current_position[E_AXIS]);
 
-    #if ENABLED(DELTA)
+    #if IS_KINEMATIC
       // Move XYZ to starting position, then E
       inverse_kinematics(lastpos);
       planner.buffer_line(delta[X_AXIS], delta[Y_AXIS], delta[Z_AXIS], destination[E_AXIS], FILAMENT_CHANGE_XY_FEEDRATE, active_extruder);
@@ -6646,7 +6657,7 @@ void tool_change(const uint8_t tmp_extruder, const float fr_mm_s/*=0.0*/, bool n
            * Z software endstop. But this is technically correct (and
            * there is no viable alternative).
            */
-          #if ENABLED(AUTO_BED_LEVELING_FEATURE)
+          #if ENABLED(AUTO_BED_LEVELING_LINEAR)
             // Offset extruder, make sure to apply the bed level rotation matrix
             vector_3 tmp_offset_vec = vector_3(hotend_offset[X_AXIS][tmp_extruder],
                                                hotend_offset[Y_AXIS][tmp_extruder],
@@ -7712,7 +7723,7 @@ void clamp_to_software_endstops(float target[3]) {
                              stepper.get_axis_position_mm(C_AXIS));
   }
 
-  #if ENABLED(AUTO_BED_LEVELING_FEATURE)
+  #if ENABLED(AUTO_BED_LEVELING_NONLINEAR)
 
     // Adjust print surface height by linear interpolation over the bed_level array.
     void adjust_delta(float cartesian[XYZ]) {
@@ -7752,7 +7763,7 @@ void clamp_to_software_endstops(float target[3]) {
       SERIAL_ECHOPGM(" offset="); SERIAL_ECHOLN(offset);
       */
     }
-  #endif // AUTO_BED_LEVELING_FEATURE
+  #endif // AUTO_BED_LEVELING_NONLINEAR
 
 #endif // DELTA
 
@@ -7827,7 +7838,7 @@ void mesh_line_to_destination(float fr_mm_s, uint8_t x_splits = 0xff, uint8_t y_
 }
 #endif  // MESH_BED_LEVELING
 
-#if ENABLED(DELTA) || ENABLED(SCARA)
+#if IS_KINEMATIC
 
   inline bool prepare_kinematic_move_to(float target[NUM_AXIS]) {
     float difference[NUM_AXIS];
@@ -7854,7 +7865,7 @@ void mesh_line_to_destination(float fr_mm_s, uint8_t x_splits = 0xff, uint8_t y_
 
       inverse_kinematics(target);
 
-      #if ENABLED(DELTA) && ENABLED(AUTO_BED_LEVELING_FEATURE)
+      #if ENABLED(DELTA) && ENABLED(AUTO_BED_LEVELING_NONLINEAR)
         if (!bed_leveling_in_progress) adjust_delta(target);
       #endif
 
@@ -7866,7 +7877,7 @@ void mesh_line_to_destination(float fr_mm_s, uint8_t x_splits = 0xff, uint8_t y_
     return true;
   }
 
-#endif // DELTA || SCARA
+#endif // IS_KINEMATIC
 
 #if ENABLED(DUAL_X_CARRIAGE)
 
@@ -7912,7 +7923,7 @@ void mesh_line_to_destination(float fr_mm_s, uint8_t x_splits = 0xff, uint8_t y_
 
 #endif // DUAL_X_CARRIAGE
 
-#if DISABLED(DELTA) && DISABLED(SCARA)
+#if !IS_KINEMATIC
 
   inline bool prepare_move_to_destination_cartesian() {
     // Do not use feedrate_percentage for E or Z only moves
@@ -7932,7 +7943,7 @@ void mesh_line_to_destination(float fr_mm_s, uint8_t x_splits = 0xff, uint8_t y_
     return true;
   }
 
-#endif // !DELTA && !SCARA
+#endif // !IS_KINEMATIC
 
 #if ENABLED(PREVENT_COLD_EXTRUSION)
 
@@ -7971,7 +7982,7 @@ void prepare_move_to_destination() {
     prevent_dangerous_extrude(current_position[E_AXIS], destination[E_AXIS]);
   #endif
 
-  #if ENABLED(DELTA) || ENABLED(SCARA)
+  #if IS_KINEMATIC
     if (!prepare_kinematic_move_to(destination)) return;
   #else
     #if ENABLED(DUAL_X_CARRIAGE)
@@ -8107,9 +8118,9 @@ void prepare_move_to_destination() {
 
       clamp_to_software_endstops(arc_target);
 
-      #if ENABLED(DELTA) || ENABLED(SCARA)
+      #if IS_KINEMATIC
         inverse_kinematics(arc_target);
-        #if ENABLED(DELTA) && ENABLED(AUTO_BED_LEVELING_FEATURE)
+        #if ENABLED(DELTA) && ENABLED(AUTO_BED_LEVELING_NONLINEAR)
           adjust_delta(arc_target);
         #endif
         planner.buffer_line(delta[X_AXIS], delta[Y_AXIS], delta[Z_AXIS], arc_target[E_AXIS], fr_mm_s, active_extruder);
@@ -8119,9 +8130,9 @@ void prepare_move_to_destination() {
     }
 
     // Ensure last segment arrives at target location.
-    #if ENABLED(DELTA) || ENABLED(SCARA)
+    #if IS_KINEMATIC
       inverse_kinematics(target);
-      #if ENABLED(DELTA) && ENABLED(AUTO_BED_LEVELING_FEATURE)
+      #if ENABLED(DELTA) && ENABLED(AUTO_BED_LEVELING_NONLINEAR)
         adjust_delta(target);
       #endif
       planner.buffer_line(delta[X_AXIS], delta[Y_AXIS], delta[Z_AXIS], target[E_AXIS], fr_mm_s, active_extruder);

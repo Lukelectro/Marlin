@@ -123,7 +123,7 @@ float Planner::min_feedrate_mm_s,
       Planner::max_e_jerk,
       Planner::min_travel_feedrate_mm_s;
 
-#if ENABLED(AUTO_BED_LEVELING_FEATURE)
+#if ENABLED(AUTO_BED_LEVELING_LINEAR)
   matrix_3x3 Planner::bed_level_matrix; // Transform to compensate for bed level
 #endif
 
@@ -163,7 +163,7 @@ void Planner::init() {
   memset(position, 0, sizeof(position)); // clear position
   LOOP_XYZE(i) previous_speed[i] = 0.0;
   previous_nominal_speed = 0.0;
-  #if ENABLED(AUTO_BED_LEVELING_FEATURE)
+  #if ENABLED(AUTO_BED_LEVELING_LINEAR)
     bed_level_matrix.set_to_identity();
   #endif
 }
@@ -546,7 +546,7 @@ void Planner::check_axes_activity() {
   #endif
 }
 
-#if ENABLED(AUTO_BED_LEVELING_FEATURE) || ENABLED(MESH_BED_LEVELING)
+#if PLANNER_LEVELING
 
   void Planner::apply_leveling(
     #if ENABLED(MESH_BED_LEVELING)
@@ -576,7 +576,7 @@ void Planner::check_axes_activity() {
     #endif
   }
 
-#endif
+#endif // PLANNER_LEVELING
 
 /**
  * Planner::buffer_line
@@ -1228,7 +1228,7 @@ void Planner::reset_acceleration_rates() {
 // Recalculate position, steps_to_mm if axis_steps_per_mm changes!
 void Planner::refresh_positioning() {
   LOOP_XYZE(i) steps_to_mm[i] = 1.0 / axis_steps_per_mm[i];
-  #if ENABLED(DELTA) || ENABLED(SCARA)
+  #if IS_KINEMATIC
     inverse_kinematics(current_position);
     set_position_mm(delta[X_AXIS], delta[Y_AXIS], delta[Z_AXIS], current_position[E_AXIS]);
   #else
