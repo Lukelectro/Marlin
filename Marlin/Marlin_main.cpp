@@ -2586,6 +2586,57 @@ inline void gcode_G4() {
 
 #endif // DELTA
 
+#if ENABLED(Z_SAFE_HOMING)
+
+  inline void home_z_safely() {
+
+    // Disallow Z homing if X or Y are unknown
+    if (!axis_known_position[X_AXIS] || !axis_known_position[Y_AXIS]) {
+      LCD_MESSAGEPGM(MSG_ERR_Z_HOMING);
+      SERIAL_ECHO_START;
+      SERIAL_ECHOLNPGM(MSG_ERR_Z_HOMING);
+      return;
+    }
+
+    #if ENABLED(DEBUG_LEVELING_FEATURE)
+      if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("Z_SAFE_HOMING >>>");
+    #endif
+
+    SYNC_PLAN_POSITION_KINEMATIC();
+
+    /**
+     * Move the Z probe (or just the nozzle) to the safe homing point
+     */
+    float cpx = Z_SAFE_HOMING_X_POINT, cpy = Z_SAFE_HOMING_Y_POINT;
+    #if HAS_BED_PROBE
+      cpx -= X_PROBE_OFFSET_FROM_EXTRUDER;
+      cpy -= Y_PROBE_OFFSET_FROM_EXTRUDER;
+    #endif
+
+    #if ENABLED(DEBUG_LEVELING_FEATURE)
+      if (DEBUGGING(LEVELING)) {
+        SERIAL_ECHOPAIR("Z_SAFE_HOMING X:", cpx);
+        SERIAL_ECHOLNPAIR(" Y:", cpy);
+      }
+    #endif
+
+    if (cpx >= X_MIN_POS && cpx <= X_MAX_POS && cpy >= Y_MIN_POS && cpy <= Y_MAX_POS) {
+      do_blocking_move_to_xy(LOGICAL_X_POSITION(destination[X_AXIS]), LOGICAL_Y_POSITION(destination[Y_AXIS]));
+      HOMEAXIS(Z);
+    }
+    else {
+      LCD_MESSAGEPGM(MSG_ZPROBE_OUT);
+      SERIAL_ECHO_START;
+      SERIAL_ECHOLNPGM(MSG_ZPROBE_OUT);
+    }
+
+    #if ENABLED(DEBUG_LEVELING_FEATURE)
+      if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("<<< Z_SAFE_HOMING");
+    #endif
+  }
+
+#endif // Z_SAFE_HOMING
+
 /**
  * G28: Home all axes according to settings
  *
@@ -2660,7 +2711,6 @@ inline void gcode_G28() {
     if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("> endstops.enable(true)");
   #endif
   endstops.enable(true); // Enable endstops for next homing move
-
 
   #if ENABLED(DELTA)
 
@@ -2752,7 +2802,6 @@ inline void gcode_G28() {
 
     // Home Z last if homing towards the bed
     #if Z_HOME_DIR < 0
-
       if (home_all_axis || homeZ) {
 
         if (home_all_axis || homeZ) {
@@ -2827,15 +2876,11 @@ inline void gcode_G28() {
         #else // !Z_SAFE_HOMING
 
           HOMEAXIS(Z);
-
-        #endif // !Z_SAFE_HOMING
-
+        #endif
         #if ENABLED(DEBUG_LEVELING_FEATURE)
           if (DEBUGGING(LEVELING)) DEBUG_POS("> (home_all_axis || homeZ) > final", current_position);
         #endif
-
       } // home_all_axis || homeZ
-
     #endif // Z_HOME_DIR < 0
 
     // Set the Z position, if included
