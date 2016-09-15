@@ -1205,7 +1205,10 @@ static void set_axis_is_at_home(AxisEnum axis) {
     }
   #endif
 
+  axis_known_position[axis] = axis_homed[axis] = true;
+
   position_shift[axis] = 0;
+  update_software_endstops(axis);
 
   #if ENABLED(DUAL_X_CARRIAGE)
     if (axis == X_AXIS && (active_extruder != 0 || dual_x_carriage_mode == DXC_DUPLICATION_MODE)) {
@@ -1258,8 +1261,6 @@ static void set_axis_is_at_home(AxisEnum axis) {
   #if defined(ENABLE_AUTO_BED_LEVELING) && Z_HOME_DIR < 0
     if (axis == Z_AXIS) current_position[Z_AXIS] += zprobe_zoffset;
   #endif
-
-  axis_known_position[axis] = axis_homed[axis] = true;
 }
 
 /**
