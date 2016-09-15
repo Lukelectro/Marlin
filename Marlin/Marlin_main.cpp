@@ -2330,7 +2330,11 @@ bool position_is_reachable(float target[XYZ]) {
 /**
  * G0, G1: Coordinated movement of X Y Z E axes
  */
-inline void gcode_G0_G1() {
+inline void gcode_G0_G1(
+  #if IS_SCARA
+    bool fast_move=false
+  #endif
+) {
   if (IsRunning()) {
     gcode_get_destination(); // For X Y Z E F
 
@@ -2349,7 +2353,11 @@ inline void gcode_G0_G1() {
 
     #endif //FWRETRACT
 
-    prepare_move_to_destination();
+    #if IS_SCARA
+      fast_move ? prepare_uninterpolated_move_to_destination() : prepare_move_to_destination();
+    #else
+      prepare_move_to_destination();
+    #endif
   }
 }
 
@@ -6805,7 +6813,11 @@ void process_next_command() {
       // G0, G1
       case 0:
       case 1:
-        gcode_G0_G1();
+        #if IS_SCARA
+          gcode_G0_G1(codenum == 0);
+        #else
+          gcode_G0_G1();
+        #endif
         break;
 
       // G2, G3
