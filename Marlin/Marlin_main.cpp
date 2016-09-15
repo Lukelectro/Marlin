@@ -7776,11 +7776,16 @@ void get_cartesian_from_steppers() {
       stepper.get_axis_position_mm(B_AXIS),
       stepper.get_axis_position_mm(C_AXIS)
     );
+    cartes[X_AXIS] += LOGICAL_X_POSITION(0);
+    cartes[Y_AXIS] += LOGICAL_Y_POSITION(0);
+    cartes[Z_AXIS] += LOGICAL_Z_POSITION(0);
   #elif IS_SCARA
     forward_kinematics_SCARA(
       stepper.get_axis_position_degrees(A_AXIS),
       stepper.get_axis_position_degrees(B_AXIS)
     );
+    cartes[X_AXIS] += LOGICAL_X_POSITION(0);
+    cartes[Y_AXIS] += LOGICAL_Y_POSITION(0);
     cartes[Z_AXIS] = stepper.get_axis_position_mm(Z_AXIS);
   #else
     cartes[X_AXIS] = stepper.get_axis_position_mm(X_AXIS);
