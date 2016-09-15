@@ -6818,7 +6818,7 @@ void process_next_command() {
     break;
 
     case 'M': switch (codenum) {
-      #if ENABLED(ULTIPANEL)
+      #if ENABLED(ULTIPANEL) || ENABLED(EMERGENCY_PARSER)
         case 0: // M0 - Unconditional stop - Wait for user button press on LCD
         case 1: // M1 - Conditional stop - Wait for user button press on LCD
           gcode_M0_M1();
