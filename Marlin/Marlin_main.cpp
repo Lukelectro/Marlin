@@ -355,8 +355,7 @@ float zprobe_zoffset = -Z_PROBE_OFFSET_FROM_EXTRUDER;
               L2_2 = sq(float(L2));
 
   float delta_segments_per_second = SCARA_SEGMENTS_PER_SECOND,
-        delta[ABC],
-        axis_scaling[ABC] = { 1, 1, 1 };    // Build size scaling, default to 1
+        delta[ABC];
 #endif
 
 float cartes[XYZ] = { 0 };
@@ -5568,8 +5567,8 @@ inline void gcode_M303() {
     if (IsRunning()) {
       //gcode_get_destination(); // For X Y Z E F
       forward_kinematics_SCARA(delta_a, delta_b);
-      destination[X_AXIS] = cartes[X_AXIS] / axis_scaling[X_AXIS];
-      destination[Y_AXIS] = cartes[Y_AXIS] / axis_scaling[Y_AXIS];
+      destination[X_AXIS] = cartes[X_AXIS];
+      destination[Y_AXIS] = cartes[Y_AXIS];
       destination[Z_AXIS] = current_position[Z_AXIS];
       prepare_move_to_destination();
       //ok_to_send();
@@ -5616,15 +5615,6 @@ inline void gcode_M303() {
   inline bool gcode_M364() {
     SERIAL_ECHOLNPGM(" Cal: Theta-Psi 90");
     return SCARA_move_to_cal(45, 135);
-  }
-
-  /**
-   * M365: SCARA calibration: Scaling factor, X, Y, Z axis
-   */
-  inline void gcode_M365() {
-    LOOP_XYZ(i)
-      if (code_seen(axis_codes[i]))
-        axis_scaling[i] = code_value_float();
   }
 
 #endif // SCARA
@@ -7225,9 +7215,6 @@ void process_next_command() {
         case 364:  // M364 SCARA Psi pos3 (90 deg to Theta)
           if (gcode_M364()) return;
           break;
-        case 365: // M365 Set SCARA scaling for X Y Z
-          gcode_M365();
-          break;
       #endif // SCARA
 
       case 400: // M400 finish all moves
@@ -8208,8 +8195,8 @@ void controllerFan()
 
     static float C2, S2, SK1, SK2, THETA, PSI;
 
-    float sx = RAW_X_POSITION(cartesian[X_AXIS]) * axis_scaling[X_AXIS] - SCARA_OFFSET_X,  //Translate SCARA to standard X Y
-          sy = RAW_Y_POSITION(cartesian[Y_AXIS]) * axis_scaling[Y_AXIS] - SCARA_OFFSET_Y;  // With scaling factor.
+    float sx = RAW_X_POSITION(cartesian[X_AXIS]) - SCARA_OFFSET_X,  //Translate SCARA to standard X Y
+          sy = RAW_Y_POSITION(cartesian[Y_AXIS]) - SCARA_OFFSET_Y;  // With scaling factor.
 
     #if (L1 == L2)
       C2 = HYPOT2(sx, sy) / (2 * L1_2) - 1;
