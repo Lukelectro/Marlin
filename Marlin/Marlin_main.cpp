@@ -1830,7 +1830,7 @@ static void retract_z_probe() {
     float old_feedrate_mm_s = feedrate_mm_s;
 
     // Ensure a minimum height before moving the probe
-    do_probe_raise(Z_RAISE_BETWEEN_PROBES);
+    do_probe_raise(Z_CLEARANCE_BETWEEN_PROBES);
 
     // Move to the XY where we shall probe
     #if ENABLED(DEBUG_LEVELING_FEATURE)
@@ -1851,7 +1851,7 @@ static void retract_z_probe() {
     float measured_z = run_z_probe();
 
     if (!stow)
-      do_probe_raise(Z_RAISE_BETWEEN_PROBES);
+      do_probe_raise(Z_CLEARANCE_BETWEEN_PROBES);
     else
       if (STOW_PROBE()) return NAN;
 
@@ -3063,8 +3063,8 @@ inline void gcode_G28() {
     feedrate_mm_s = homing_feedrate_mm_s[X_AXIS];
 
     current_position[Z_AXIS] = MESH_HOME_SEARCH_Z
-      #if Z_RAISE_BETWEEN_PROBES > Z_HOMING_HEIGHT
-        + Z_RAISE_BETWEEN_PROBES
+      #if Z_CLEARANCE_BETWEEN_PROBES > Z_HOMING_HEIGHT
+        + Z_CLEARANCE_BETWEEN_PROBES
       #elif Z_HOMING_HEIGHT > 0
         + Z_HOMING_HEIGHT
       #endif
@@ -3075,7 +3075,7 @@ inline void gcode_G28() {
     current_position[Y_AXIS] = LOGICAL_Y_POSITION(y);
     line_to_current_position();
 
-    #if Z_RAISE_BETWEEN_PROBES > 0 || Z_HOMING_HEIGHT > 0
+    #if Z_CLEARANCE_BETWEEN_PROBES > 0 || Z_HOMING_HEIGHT > 0
       current_position[Z_AXIS] = LOGICAL_Z_POSITION(MESH_HOME_SEARCH_Z);
       line_to_current_position();
     #endif
