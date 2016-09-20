@@ -1985,11 +1985,21 @@ static void retract_z_probe() {
  */
 
 static void do_homing_move(AxisEnum axis, float where, float fr_mm_s = 0.0) {
+
+  #if HOMING_Z_WITH_PROBE && ENABLED(BLTOUCH)
+    set_bltouch_deployed(true);
+  #endif
+
   current_position[axis] = 0;
   sync_plan_position();
   current_position[axis] = where;
   planner.buffer_line(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS], (fr_mm_s != 0.0) ? fr_mm_s : homing_feedrate_mm_s[axis], active_extruder);
   stepper.synchronize();
+
+  #if HOMING_Z_WITH_PROBE && ENABLED(BLTOUCH)
+    set_bltouch_deployed(false);
+  #endif
+
   endstops.hit_on_purpose();
 }
 
