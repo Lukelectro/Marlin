@@ -691,8 +691,7 @@ void plan_buffer_line(float x, float y, float z, const float &e, float feed_rate
   //*/
 
   // DRYRUN ignores all temperature constraints and assures that the extruder is instantly satisfied
-  if (DEBUGGING(DRYRUN))
-    position[E_AXIS] = target[E_AXIS];
+  if (DEBUGGING(DRYRUN)) position[E_AXIS] = target[E_AXIS];
 
   long de = target[E_AXIS] - position[E_AXIS];
 
