@@ -1947,8 +1947,7 @@ static void retract_z_probe() {
 /**
  * Home an individual linear axis
  */
-
-static void do_homing_move(AxisEnum axis, float where, float fr_mm_s=0.0) {
+static void do_homing_move(const AxisEnum axis, float distance, float fr_mm_s=0.0) {
 
   #if HOMING_Z_WITH_PROBE && ENABLED(BLTOUCH)
     bool deploy_bltouch = (axis == Z_AXIS && where < 0);
@@ -1957,7 +1956,7 @@ static void do_homing_move(AxisEnum axis, float where, float fr_mm_s=0.0) {
 
   current_position[axis] = 0;
   sync_plan_position();
-  current_position[axis] = where;
+  current_position[axis] = distance;
   planner.buffer_line(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS], fr_mm_s ? fr_mm_s : homing_feedrate_mm_s[axis], active_extruder);
   stepper.synchronize();
 
