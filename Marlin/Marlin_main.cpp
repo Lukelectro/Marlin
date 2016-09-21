@@ -3741,6 +3741,8 @@ inline void gcode_G92() {
     SYNC_PLAN_POSITION_KINEMATIC();
   else if (didE)
     sync_plan_position_e();
+
+  report_current_position();
 }
 
 #if ENABLED(ULTIPANEL) || ENABLED(EMERGENCY_PARSER)
