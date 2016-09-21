@@ -8397,7 +8397,7 @@ void controllerFan()
     cartes[Y_AXIS] = a_sin + b_sin + SCARA_OFFSET_Y;  //theta+phi
 
     /*
-      SERIAL_ECHOPAIR("Angle a=", a);
+      SERIAL_ECHOPAIR("SCARA FK Angle a=", a);
       SERIAL_ECHOPAIR(" b=", b);
       SERIAL_ECHOPAIR(" a_sin=", a_sin);
       SERIAL_ECHOPAIR(" a_cos=", a_cos);
