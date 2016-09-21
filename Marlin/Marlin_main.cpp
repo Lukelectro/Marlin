@@ -1223,6 +1223,9 @@ static void set_axis_is_at_home(AxisEnum axis) {
 
   #if ENABLED(MORGAN_SCARA)
 
+    /**
+     * Morgan SCARA homes XY at the same time
+     */
     if (axis == X_AXIS || axis == Y_AXIS) {
 
       float homeposition[XYZ];
@@ -1267,7 +1270,7 @@ static void set_axis_is_at_home(AxisEnum axis) {
  * Some planner shorthand inline functions
  */
 inline float get_homing_bump_feedrate(AxisEnum axis) {
-  const int homing_bump_divisor[] = HOMING_BUMP_DIVISOR;
+  int constexpr homing_bump_divisor[] = HOMING_BUMP_DIVISOR;
   int hbd = homing_bump_divisor[axis];
   if (hbd < 1) {
     hbd = 10;
@@ -1980,7 +1983,7 @@ static void retract_z_probe() {
  * Home an individual linear axis
  */
 
-static void do_homing_move(AxisEnum axis, float where, float fr_mm_s = 0.0) {
+static void do_homing_move(AxisEnum axis, float where, float fr_mm_s=0.0) {
 
   #if HOMING_Z_WITH_PROBE && ENABLED(BLTOUCH)
     if (axis == Z_AXIS) set_bltouch_deployed(true);
@@ -1989,7 +1992,7 @@ static void do_homing_move(AxisEnum axis, float where, float fr_mm_s = 0.0) {
   current_position[axis] = 0;
   sync_plan_position();
   current_position[axis] = where;
-  planner.buffer_line(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS], (fr_mm_s != 0.0) ? fr_mm_s : homing_feedrate_mm_s[axis], active_extruder);
+  planner.buffer_line(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS], fr_mm_s ? fr_mm_s : homing_feedrate_mm_s[axis], active_extruder);
   stepper.synchronize();
 
   #if HOMING_Z_WITH_PROBE && ENABLED(BLTOUCH)
@@ -2082,22 +2085,12 @@ static void homeaxis(AxisEnum axis) {
       if (axis == Z_AXIS) In_Homing_Process(true);
     #endif
 
-  // Move towards the endstop until an endstop is triggered
+  // 1. Fast move towards endstop until triggered
+  // 2. Move away from the endstop by the axis HOME_BUMP_MM
+  // 3. Slow move towards endstop until triggered
   do_homing_move(axis, 1.5 * max_length(axis) * axis_home_dir);
-
-  #if ENABLED(DEBUG_LEVELING_FEATURE)
-    if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPAIR("> 1st Home ", current_position[axis]);
-  #endif
-
-  // Move away from the endstop by the axis HOME_BUMP_MM
   do_homing_move(axis, -home_bump_mm(axis) * axis_home_dir);
-
-  // Move slowly towards the endstop until triggered
   do_homing_move(axis, 2 * home_bump_mm(axis) * axis_home_dir, get_homing_bump_feedrate(axis));
-
-  #if ENABLED(DEBUG_LEVELING_FEATURE)
-    if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPAIR("> 2nd Home ", current_position[axis]);
-  #endif
 
   #if ENABLED(Z_DUAL_ENDSTOPS)
     if (axis == Z_AXIS) {
@@ -2144,7 +2137,8 @@ static void homeaxis(AxisEnum axis) {
 
   #else
 
-    // Set the axis position to its home position (plus home offsets)
+    // For cartesian/core machines,
+    // set the axis to its home position
     set_axis_is_at_home(axis);
     sync_plan_position();
 
