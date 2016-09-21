@@ -160,8 +160,8 @@ Planner::Planner() { init(); }
 
 void Planner::init() {
   block_buffer_head = block_buffer_tail = 0;
-  memset(position, 0, sizeof(position)); // clear position
-  LOOP_XYZE(i) previous_speed[i] = 0.0;
+  memset(position, 0, sizeof(position));
+  memset(previous_speed, 0, sizeof(previous_speed));
   previous_nominal_speed = 0.0;
   #if ENABLED(AUTO_BED_LEVELING_LINEAR)
     bed_level_matrix.set_to_identity();
@@ -1175,7 +1175,7 @@ void plan_buffer_line(float x, float y, float z, const float &e, float feed_rate
   block->recalculate_flag = true; // Always calculate trapezoid for new block
 
   // Update previous path unit_vector and nominal speed
-  LOOP_XYZE(i) previous_speed[i] = current_speed[i];
+  memcpy(previous_speed, current_speed, sizeof(previous_speed));
   previous_nominal_speed = block->nominal_speed;
 
   #if ENABLED(LIN_ADVANCE)
@@ -1221,8 +1221,8 @@ void plan_buffer_line(float x, float y, float z, const float &e, float feed_rate
   // Move buffer head
   block_buffer_head = next_buffer_head;
 
-  // Update position
-  LOOP_XYZE(i) position[i] = target[i];
+  // Update the position (only when a move was queued)
+  memcpy(position, target, sizeof(position));
 
   recalculate();
 
@@ -1257,7 +1257,7 @@ void plan_set_position(const float &x, const float &y, const float &z, const flo
   stepper.set_position(nx, ny, nz, ne);
   previous_nominal_speed = 0.0; // Resets planner junction speeds. Assumes start from rest.
 
-  LOOP_XYZE(i) previous_speed[i] = 0.0;
+  memset(previous_speed, 0, sizeof(previous_speed));
 }
 
 /**
