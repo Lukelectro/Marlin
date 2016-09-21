@@ -7649,15 +7649,19 @@ void clamp_to_software_endstops(float target[3]) {
       )                                      \
     )
 
+  #define DELTA_RAW_IK() do {   \
+    delta[A_AXIS] = DELTA_Z(1); \
+    delta[B_AXIS] = DELTA_Z(2); \
+    delta[C_AXIS] = DELTA_Z(3); \
+  } while(0)
+
   #define DELTA_LOGICAL_IK() do {      \
     const float raw[XYZ] = {           \
       RAW_X_POSITION(logical[X_AXIS]), \
       RAW_Y_POSITION(logical[Y_AXIS]), \
       RAW_Z_POSITION(logical[Z_AXIS])  \
     };                                 \
-    delta[A_AXIS] = DELTA_Z(1);        \
-    delta[B_AXIS] = DELTA_Z(2);        \
-    delta[C_AXIS] = DELTA_Z(3);        \
+    DELTA_RAW_IK();                    \
   } while(0)
 
   #define DELTA_DEBUG() do { \
@@ -7944,15 +7948,7 @@ void set_current_from_steppers_for_axis(const AxisEnum axis) {
 
     // Send all the segments to the planner
 
-    #if ENABLED(DELTA) && ENABLED(USE_RAW_KINEMATICS)
-
-      #define DELTA_E raw[E_AXIS]
-      #define DELTA_NEXT(ADDEND) LOOP_XYZE(i) raw[i] += ADDEND;
-      #define DELTA_IK() do {       \
-        delta[A_AXIS] = DELTA_Z(1); \
-        delta[B_AXIS] = DELTA_Z(2); \
-        delta[C_AXIS] = DELTA_Z(3); \
-      } while(0)
+    #if ENABLED(USE_RAW_KINEMATICS)
 
       // Get the raw current position as starting point
       float raw[ABC] = {
@@ -7961,7 +7957,19 @@ void set_current_from_steppers_for_axis(const AxisEnum axis) {
         RAW_CURRENT_POSITION(Z_AXIS)
       };
 
+      #define DELTA_E raw[E_AXIS]
+      #define DELTA_NEXT(ADDEND) LOOP_XYZE(i) raw[i] += ADDEND;
+
+      #if ENABLED(DELTA)
+        #define DELTA_IK() DELTA_RAW_IK()
+      #else
+        #define DELTA_IK() inverse_kinematics(raw)
+      #endif
+
     #else
+
+      // Get the logical current position as starting point
+      LOOP_XYZE(i) logical[i] = current_position[i];
 
       #define DELTA_E logical[E_AXIS]
       #define DELTA_NEXT(ADDEND) LOOP_XYZE(i) logical[i] += ADDEND;
@@ -7971,9 +7979,6 @@ void set_current_from_steppers_for_axis(const AxisEnum axis) {
       #else
         #define DELTA_IK() inverse_kinematics(logical)
       #endif
-
-      // Get the logical current position as starting point
-      LOOP_XYZE(i) logical[i] = current_position[i];
 
     #endif
 
