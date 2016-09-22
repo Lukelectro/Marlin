@@ -2064,6 +2064,9 @@ static void homeaxis(AxisEnum axis) {
       if (axis == Z_AXIS) In_Homing_Process(true);
     #endif
 
+  // Fast move towards endstop until triggered
+  do_homing_move(axis, 1.5 * max_length(axis) * axis_home_dir);
+
   // When homing Z with probe respect probe clearance
   const float bump = axis_home_dir * (
     #if HOMING_Z_WITH_PROBE
@@ -2072,12 +2075,13 @@ static void homeaxis(AxisEnum axis) {
     home_bump_mm(axis)
   );
 
-  // 1. Fast move towards endstop until triggered
-  // 2. Move away from the endstop by the axis HOME_BUMP_MM
-  // 3. Slow move towards endstop until triggered
-  do_homing_move(axis, 1.5 * max_length(axis) * axis_home_dir);
-  do_homing_move(axis, -bump);
-  do_homing_move(axis, 2 * bump, get_homing_bump_feedrate(axis));
+  // If a second homing move is configured...
+  if (bump) {
+    // Move away from the endstop by the axis HOME_BUMP_MM
+    do_homing_move(axis, -bump);
+    // Slow move towards endstop until triggered
+    do_homing_move(axis, 2 * bump, get_homing_bump_feedrate(axis));
+  }
 
   #if ENABLED(Z_DUAL_ENDSTOPS)
     if (axis == Z_AXIS) {
