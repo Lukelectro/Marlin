@@ -1881,8 +1881,13 @@ static void retract_z_probe() {
 
   /**
    * Reset calibration results to zero.
+   *
+   * TODO: Proper functions to disable / enable
+   *       bed leveling via a flag, correcting the
+   *       current position in each case.
    */
   void reset_bed_level() {
+    planner.abl_enabled = false;
     #if ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("reset_bed_level");
     #endif
@@ -1890,7 +1895,6 @@ static void retract_z_probe() {
       planner.bed_level_matrix.set_to_identity();
     #elif ENABLED(AUTO_BED_LEVELING_NONLINEAR)
       memset(bed_level_grid, 0, sizeof(bed_level_grid));
-      nonlinear_grid_spacing[X_AXIS] = nonlinear_grid_spacing[Y_AXIS] = 0;
     #endif
   }
 
@@ -3346,11 +3350,11 @@ inline void gcode_G28() {
 
     stepper.synchronize();
 
-    if (!dryrun) {
+    // Disable auto bed leveling during G29
+    bool auto_bed_leveling_was_enabled = planner.abl_enabled,
+         abl_should_reenable = auto_bed_leveling_was_enabled;
 
-      // Reset the bed_level_matrix because leveling
-      // needs to be done without leveling enabled.
-      reset_bed_level();
+    planner.abl_enabled = false;
 
       #if ENABLED(DELTA)
         reset_bed_level();
@@ -3388,7 +3392,10 @@ inline void gcode_G28() {
     setup_for_endstop_or_probe_move();
 
     // Deploy the probe. Probe will raise if needed.
-    if (DEPLOY_PROBE()) return;
+    if (DEPLOY_PROBE()) {
+      planner.abl_enabled = abl_should_reenable;
+      return;
+    }
 
     float xProbe = 0, yProbe = 0, measured_z = 0;
 
@@ -3400,10 +3407,15 @@ inline void gcode_G28() {
 
       #if ENABLED(AUTO_BED_LEVELING_NONLINEAR)
 
-        nonlinear_grid_spacing[X_AXIS] = xGridSpacing;
-        nonlinear_grid_spacing[Y_AXIS] = yGridSpacing;
         float zoffset = zprobe_zoffset;
         if (code_seen('Z')) zoffset += code_value_axis_units(Z_AXIS);
+
+        if (xGridSpacing != nonlinear_grid_spacing[X_AXIS] || yGridSpacing != nonlinear_grid_spacing[Y_AXIS]) {
+          nonlinear_grid_spacing[X_AXIS] = xGridSpacing;
+          nonlinear_grid_spacing[Y_AXIS] = yGridSpacing;
+          // Can't re-enable (on error) until the new grid is written
+          abl_should_reenable = false;
+        }
 
       #elif ENABLED(AUTO_BED_LEVELING_LINEAR_GRID)
 
@@ -3462,6 +3474,11 @@ inline void gcode_G28() {
           #endif
 
           measured_z = probe_pt(xProbe, yProbe, stow_probe_after_each, verbose_level);
+
+          if (measured_z == NAN) {
+            planner.abl_enabled = abl_should_reenable;
+            return;
+          }
 
           #if ENABLED(AUTO_BED_LEVELING_LINEAR_GRID)
 
@@ -7544,7 +7561,7 @@ void clamp_to_software_endstops(float target[3]) {
 
   // Get the Z adjustment for non-linear bed leveling
   float nonlinear_z_offset(float cartesian[XYZ]) {
-    if (nonlinear_grid_spacing[X_AXIS] == 0 || nonlinear_grid_spacing[Y_AXIS] == 0) return 0; // G29 not done!
+    if (planner.abl_enabled) return;
 
     int half_x = (ABL_GRID_POINTS_X - 1) / 2,
         half_y = (ABL_GRID_POINTS_Y - 1) / 2;

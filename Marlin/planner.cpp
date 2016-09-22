@@ -123,6 +123,10 @@ float Planner::min_feedrate_mm_s,
       Planner::max_e_jerk,
       Planner::min_travel_feedrate_mm_s;
 
+#if ENABLED(AUTO_BED_LEVELING_FEATURE)
+  bool Planner::abl_enabled = false; // Flag that auto bed leveling is enabled
+#endif
+
 #if ENABLED(AUTO_BED_LEVELING_LINEAR)
   matrix_3x3 Planner::bed_level_matrix; // Transform to compensate for bed level
 #endif
@@ -549,6 +553,11 @@ void Planner::check_axes_activity() {
 #if PLANNER_LEVELING
 
   void Planner::apply_leveling(float &lx, float &ly, float &lz) {
+
+    #if ENABLED(AUTO_BED_LEVELING_FEATURE)
+      if (!abl_enabled) return;
+    #endif
+
     #if ENABLED(MESH_BED_LEVELING)
 
       if (mbl.active())
@@ -587,6 +596,11 @@ void Planner::check_axes_activity() {
   }
 
   void Planner::unapply_leveling(float &lx, float &ly, float &lz) {
+
+    #if ENABLED(AUTO_BED_LEVELING_FEATURE)
+      if (!abl_enabled) return;
+    #endif
+
     #if ENABLED(MESH_BED_LEVELING)
 
       if (mbl.active())
@@ -668,8 +682,7 @@ void plan_buffer_line(float x, float y, float z, const float &e, float feed_rate
        dz = target[Z_AXIS] - position[Z_AXIS];
 
   /*
-  SERIAL_ECHOPGM("  Planner ");
-  SERIAL_ECHOPAIR("FR:", fr_mm_s);
+  SERIAL_ECHOPAIR("  Planner FR:", fr_mm_s);
   SERIAL_CHAR(' ');
   #if IS_KINEMATIC
     SERIAL_ECHOPAIR("A:", lx);
