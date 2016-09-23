@@ -3353,8 +3353,7 @@ inline void gcode_G28() {
     stepper.synchronize();
 
     // Disable auto bed leveling during G29
-    bool auto_bed_leveling_was_enabled = planner.abl_enabled,
-         abl_should_reenable = auto_bed_leveling_was_enabled;
+    bool abl_should_reenable = planner.abl_enabled;
 
     planner.abl_enabled = false;
 
