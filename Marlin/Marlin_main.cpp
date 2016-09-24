@@ -2311,8 +2311,7 @@ bool position_is_reachable(float target[XYZ]
   #endif
 ) {
   float dx = RAW_X_POSITION(target[X_AXIS]),
-        dy = RAW_Y_POSITION(target[Y_AXIS]),
-        dz = RAW_Z_POSITION(target[Z_AXIS]);
+        dy = RAW_Y_POSITION(target[Y_AXIS]);
 
   #if HAS_BED_PROBE
     if (by_probe) {
@@ -2331,6 +2330,7 @@ bool position_is_reachable(float target[XYZ]
   #elif ENABLED(DELTA)
     return HYPOT2(dx, dy) <= sq(DELTA_PRINTABLE_RADIUS);
   #else
+    const float dz = RAW_Z_POSITION(target[Z_AXIS]);
     return dx >= X_MIN_POS - 0.0001 && dx <= X_MAX_POS + 0.0001
         && dy >= Y_MIN_POS - 0.0001 && dy <= Y_MAX_POS + 0.0001
         && dz >= Z_MIN_POS - 0.0001 && dz <= Z_MAX_POS + 0.0001;
@@ -7566,7 +7566,6 @@ void clamp_to_software_endstops(float target[3]) {
 
   // Get the Z adjustment for non-linear bed leveling
   float nonlinear_z_offset(float cartesian[XYZ]) {
-    if (planner.abl_enabled) return;
 
     int half_x = (ABL_GRID_POINTS_X - 1) / 2,
         half_y = (ABL_GRID_POINTS_Y - 1) / 2;
