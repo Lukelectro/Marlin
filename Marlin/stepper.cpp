@@ -838,10 +838,12 @@ void Stepper::isr() {
         E## INDEX ##_STEP_WRITE(INVERT_E_STEP_PIN); \
       }
 
+    #define CYCLES_EATEN_BY_E 60
+
     // Step all E steppers that have steps
     for (uint8_t i = 0; i < step_loops; i++) {
 
-      #if MINIMUM_STEPPER_PULSE > 0
+      #if STEP_PULSE_CYCLES > CYCLES_EATEN_BY_E
         static uint32_t pulse_start;
         pulse_start = TCNT0;
       #endif
@@ -858,9 +860,8 @@ void Stepper::isr() {
       #endif
 
       // For a minimum pulse time wait before stopping pulses
-      #if MINIMUM_STEPPER_PULSE > 0
-        #define CYCLES_EATEN_BY_E 10
-        while ((uint32_t)(TCNT0 - pulse_start) < (MINIMUM_STEPPER_PULSE * (F_CPU / 1000000UL)) - CYCLES_EATEN_BY_E) { /* nada */ }
+      #if STEP_PULSE_CYCLES > CYCLES_EATEN_BY_E
+        while ((uint32_t)(TCNT0 - pulse_start) < STEP_PULSE_CYCLES - CYCLES_EATEN_BY_E) { /* nada */ }
       #endif
 
       STOP_E_PULSE(0);
