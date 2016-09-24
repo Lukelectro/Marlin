@@ -8504,8 +8504,8 @@ void controllerFan()
       bool new_led = (max_temp > 55.0) ? true : (max_temp < 54.0) ? false : red_led;
       if (new_led != red_led) {
         red_led = new_led;
-        digitalWrite(STAT_LED_RED, new_led ? HIGH : LOW);
-        digitalWrite(STAT_LED_BLUE, new_led ? LOW : HIGH);
+        WRITE(STAT_LED_RED_PIN, new_led ? HIGH : LOW);
+        WRITE(STAT_LED_BLUE_PIN, new_led ? LOW : HIGH);
       }
     }
   }
@@ -8985,14 +8985,12 @@ void setup() {
 
   setup_homepin();
 
-  #ifdef STAT_LED_RED
-    pinMode(STAT_LED_RED, OUTPUT);
-    digitalWrite(STAT_LED_RED, LOW); // turn it off
+  #if PIN_EXISTS(STAT_LED_RED)
+    OUT_WRITE(STAT_LED_RED_PIN, LOW); // turn it off
   #endif
 
-  #ifdef STAT_LED_BLUE
-    pinMode(STAT_LED_BLUE, OUTPUT);
-    digitalWrite(STAT_LED_BLUE, LOW); // turn it off
+  #if PIN_EXISTS(STAT_LED_BLUE)
+    OUT_WRITE(STAT_LED_BLUE_PIN, LOW); // turn it off
   #endif
 
   lcd_init();
