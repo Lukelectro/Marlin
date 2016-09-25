@@ -1954,7 +1954,7 @@ static void retract_z_probe() {
 static void do_homing_move(const AxisEnum axis, float distance, float fr_mm_s=0.0) {
 
   #if HOMING_Z_WITH_PROBE && ENABLED(BLTOUCH)
-    bool deploy_bltouch = (axis == Z_AXIS && where < 0);
+    bool deploy_bltouch = (axis == Z_AXIS && distance < 0);
     if (deploy_bltouch) set_bltouch_deployed(true);
   #endif
 
