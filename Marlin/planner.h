@@ -35,7 +35,7 @@
 #include "types.h"
 #include "MarlinConfig.h"
 
-#if ENABLED(AUTO_BED_LEVELING_FEATURE)
+#if HAS_ABL
   #include "vector_3.h"
 #endif
 
