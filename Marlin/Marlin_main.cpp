@@ -3351,7 +3351,7 @@ inline void gcode_G28() {
     stepper.synchronize();
 
     // Disable auto bed leveling during G29
-    bool abl_should_reenable = planner.abl_enabled;
+    bool abl_should_enable = planner.abl_enabled;
 
     planner.abl_enabled = false;
 
@@ -3392,7 +3392,7 @@ inline void gcode_G28() {
 
     // Deploy the probe. Probe will raise if needed.
     if (DEPLOY_PROBE()) {
-      planner.abl_enabled = abl_should_reenable;
+      planner.abl_enabled = abl_should_enable;
       return;
     }
 
@@ -3413,7 +3413,7 @@ inline void gcode_G28() {
           bilinear_grid_spacing[X_AXIS] = xGridSpacing;
           bilinear_grid_spacing[Y_AXIS] = yGridSpacing;
           // Can't re-enable (on error) until the new grid is written
-          abl_should_reenable = false;
+          abl_should_enable = false;
         }
 
       #elif ENABLED(AUTO_BED_LEVELING_LINEAR)
@@ -3475,7 +3475,7 @@ inline void gcode_G28() {
           measured_z = probe_pt(xProbe, yProbe, stow_probe_after_each, verbose_level);
 
           if (measured_z == NAN) {
-            planner.abl_enabled = abl_should_reenable;
+            planner.abl_enabled = abl_should_enable;
             return;
           }
 
