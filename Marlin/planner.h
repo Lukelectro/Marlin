@@ -33,6 +33,7 @@
 #define PLANNER_H
 
 #include "types.h"
+#include "enum.h"
 #include "MarlinConfig.h"
 
 #if HAS_ABL
