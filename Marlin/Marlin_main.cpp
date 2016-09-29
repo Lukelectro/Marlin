@@ -1955,7 +1955,7 @@ static void retract_z_probe() {
         if (y < 10) SERIAL_CHAR(' ');
         SERIAL_ECHO((int)y);
         SERIAL_CHAR(ydir ? (ydir > 0 ? '+' : '-') : ' ');
-        SERIAL_CHAR(']');
+        SERIAL_ECHOLN(']');
       }
     #endif
     if (bed_level_grid[x][y] < 999.0) {
@@ -2042,7 +2042,7 @@ static void retract_z_probe() {
    */
   static void print_bed_level() {
     SERIAL_ECHOPGM("Bilinear Leveling Grid:\n ");
-    for (uint8_t x = 1; x < ABL_GRID_POINTS_X + 1; x++) {
+    for (uint8_t x = 0; x < ABL_GRID_POINTS_X; x++) {
       SERIAL_PROTOCOLPGM("    ");
       if (x < 10) SERIAL_PROTOCOLCHAR(' ');
       SERIAL_PROTOCOL((int)x);
@@ -2050,7 +2050,7 @@ static void retract_z_probe() {
     SERIAL_EOL;
     for (uint8_t y = 0; y < ABL_GRID_POINTS_Y; y++) {
       if (y < 9) SERIAL_PROTOCOLCHAR(' ');
-      SERIAL_PROTOCOL(y + 1);
+      SERIAL_PROTOCOL(y);
       for (uint8_t x = 0; x < ABL_GRID_POINTS_X; x++) {
         SERIAL_PROTOCOLCHAR(' ');
         float offset = bed_level_grid[x][y];
