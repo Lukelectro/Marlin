@@ -3551,8 +3551,8 @@ inline void gcode_G28() {
 
       #endif // !DELTA
 
-      // Inform the planner about the new coordinates
-      SYNC_PLAN_POSITION_KINEMATIC();
+      // Sync the planner to where the steppers stopped
+      planner.sync_from_steppers();
     }
 
     setup_for_endstop_or_probe_move();
