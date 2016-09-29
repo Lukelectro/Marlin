@@ -3459,10 +3459,6 @@ inline void gcode_G28() {
 
     #if ABL_GRID
 
-      #if ABL_PLANAR
-        bool do_topography_map = verbose_level > 2 || code_seen('T');
-      #endif
-
       if (verbose_level > 0) {
         SERIAL_PROTOCOLLNPGM("G29 Auto Bed Leveling");
         if (dryrun) SERIAL_PROTOCOLLNPGM("Running in DRY-RUN mode");
@@ -3475,6 +3471,11 @@ inline void gcode_G28() {
           SERIAL_PROTOCOLPGM("?Number of probed (P)oints is implausible (2 minimum).\n");
           return;
         }
+
+      #else
+
+         const int abl_grid_points_x = ABL_GRID_POINTS_X, abl_grid_points_y = ABL_GRID_POINTS_Y;
+
       #endif
 
       xy_probe_feedrate_mm_s = MMM_TO_MMS(code_seen('S') ? code_value_linear_units() : XY_PROBE_SPEED);
