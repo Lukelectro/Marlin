@@ -223,7 +223,7 @@
   TWIBus i2c;
 #endif
 
-#if ENABLED(G38_2_3)
+#if ENABLED(G38_PROBE_TARGET)
   bool G38_move = false,
        G38_endstop_hit = false;
 #endif
@@ -2072,6 +2072,7 @@ static void retract_z_probe() {
   }
 
 #endif // AUTO_BED_LEVELING_BILINEAR
+
 
 /**
  * Home an individual linear axis
@@ -3925,7 +3926,7 @@ inline void gcode_G28() {
 
 #endif // HAS_BED_PROBE
 
-#if ENABLED(G38_2_3)
+#if ENABLED(G38_PROBE_TARGET)
 
   static bool G38_run_probe() {
 
@@ -4011,7 +4012,7 @@ inline void gcode_G28() {
     clean_up_after_endstop_or_probe_move();
   }
 
-#endif // G38_2_3
+#endif // G38_PROBE_TARGET
 
 /**
  * G92: Set current position to given X Y Z E
@@ -7095,7 +7096,7 @@ void process_next_command() {
   while (*cmd_ptr == ' ') cmd_ptr++;
 
   // Allow for decimal point in command
-  #if ENABLED(G38_2_3)
+  #if ENABLED(G38_PROBE_TARGET)
     uint8_t subcode = 0;
   #endif
 
@@ -7112,7 +7113,7 @@ void process_next_command() {
   } while (NUMERIC(*cmd_ptr));
 
   // Allow for decimal point in command
-  #if ENABLED(G38_2_3)
+  #if ENABLED(G38_PROBE_TARGET)
     if (*cmd_ptr == '.') {
       cmd_ptr++;
       while (NUMERIC(*cmd_ptr))
@@ -7220,7 +7221,7 @@ void process_next_command() {
         #endif // Z_PROBE_SLED
       #endif // HAS_BED_PROBE
 
-      #if ENABLED(G38_2_3)
+      #if ENABLED(G38_PROBE_TARGET)
         case 38: // G38.2 & G38.3
           if (subcode == 2 || subcode == 3)
             gcode_G38(subcode == 2);
