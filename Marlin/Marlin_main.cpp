@@ -1826,9 +1826,8 @@ static void retract_z_probe() {
       if (DEBUGGING(LEVELING)) {
         SERIAL_ECHOPAIR(">>> probe_pt(", x);
         SERIAL_ECHOPAIR(", ", y);
-        SERIAL_ECHOPAIR(", ", stow ? "stow" : "no stow");
-        SERIAL_CHAR(')');
-        SERIAL_EOL;
+        SERIAL_ECHOPAIR(", ", stow ? "" : "no ");
+        SERIAL_ECHOLNPGM("stow)");
         DEBUG_POS("", current_position);
       }
     #endif
