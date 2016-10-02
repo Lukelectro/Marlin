@@ -509,7 +509,7 @@ static void report_current_position();
   #endif
 
   #define DEBUG_POS(SUFFIX,VAR) do { \
-    print_xyz(PSTR(STRINGIFY(VAR) "="), PSTR(" : " SUFFIX "\n"), VAR); } while(0)
+    print_xyz(PSTR("  " STRINGIFY(VAR) "="), PSTR(" : " SUFFIX "\n"), VAR); } while(0)
 #endif
 
 /**
@@ -1204,7 +1204,8 @@ static void set_axis_is_at_home(AxisEnum axis) {
   #if ENABLED(DEBUG_LEVELING_FEATURE)
     if (DEBUGGING(LEVELING)) {
       SERIAL_ECHOPAIR(">>> set_axis_is_at_home(", axis_codes[axis]);
-      SERIAL_ECHOLNPGM(")");
+      SERIAL_CHAR(')');
+      SERIAL_EOL;
     }
   #endif
 
@@ -1826,7 +1827,8 @@ static void retract_z_probe() {
         SERIAL_ECHOPAIR(">>> probe_pt(", x);
         SERIAL_ECHOPAIR(", ", y);
         SERIAL_ECHOPAIR(", ", stow ? "stow" : "no stow");
-        SERIAL_ECHOLNPGM(")");
+        SERIAL_CHAR(')');
+        SERIAL_EOL;
         DEBUG_POS("", current_position);
       }
     #endif
@@ -1835,15 +1837,6 @@ static void retract_z_probe() {
 
     // Ensure a minimum height before moving the probe
     do_probe_raise(Z_CLEARANCE_BETWEEN_PROBES);
-
-    // Move to the XY where we shall probe
-    #if ENABLED(DEBUG_LEVELING_FEATURE)
-      if (DEBUGGING(LEVELING)) {
-        SERIAL_ECHOPAIR("> do_blocking_move_to_xy(", x - (X_PROBE_OFFSET_FROM_EXTRUDER));
-        SERIAL_ECHOPAIR(", ", y - (Y_PROBE_OFFSET_FROM_EXTRUDER));
-        SERIAL_ECHOLNPGM(")");
-      }
-    #endif
 
     feedrate_mm_s = XY_PROBE_FEEDRATE_MM_S;
 
@@ -2079,6 +2072,16 @@ static void retract_z_probe() {
  */
 static void do_homing_move(const AxisEnum axis, float distance, float fr_mm_s=0.0) {
 
+  #if ENABLED(DEBUG_LEVELING_FEATURE)
+    if (DEBUGGING(LEVELING)) {
+      SERIAL_ECHOPAIR(">>> do_homing_move(", axis_codes[axis]);
+      SERIAL_ECHOPAIR(", ", distance);
+      SERIAL_ECHOPAIR(", ", fr_mm_s);
+      SERIAL_CHAR(')');
+      SERIAL_EOL;
+    }
+  #endif
+
   #if HOMING_Z_WITH_PROBE && ENABLED(BLTOUCH)
     bool deploy_bltouch = (axis == Z_AXIS && distance < 0);
     if (deploy_bltouch) set_bltouch_deployed(true);
@@ -2105,6 +2108,14 @@ static void do_homing_move(const AxisEnum axis, float distance, float fr_mm_s=0.
   #endif
 
   endstops.hit_on_purpose();
+
+  #if ENABLED(DEBUG_LEVELING_FEATURE)
+    if (DEBUGGING(LEVELING)) {
+      SERIAL_ECHOPAIR("<<< do_homing_move(", axis_codes[axis]);
+      SERIAL_CHAR(')');
+      SERIAL_EOL;
+    }
+  #endif
 }
 
 /**
@@ -2134,7 +2145,8 @@ static void homeaxis(AxisEnum axis) {
   #if ENABLED(DEBUG_LEVELING_FEATURE)
     if (DEBUGGING(LEVELING)) {
       SERIAL_ECHOPAIR(">>> homeaxis(", axis_codes[axis]);
-      SERIAL_ECHOLNPGM(")");
+      SERIAL_CHAR(')');
+      SERIAL_EOL;
     }
   #endif
 
@@ -2191,6 +2203,9 @@ static void homeaxis(AxisEnum axis) {
     #endif
 
   // Fast move towards endstop until triggered
+  #if ENABLED(DEBUG_LEVELING_FEATURE)
+    if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("Home 1 Fast:");
+  #endif
   do_homing_move(axis, 1.5 * max_length(axis) * axis_home_dir);
 
   // When homing Z with probe respect probe clearance
@@ -2204,8 +2219,15 @@ static void homeaxis(AxisEnum axis) {
   // If a second homing move is configured...
   if (bump) {
     // Move away from the endstop by the axis HOME_BUMP_MM
+    #if ENABLED(DEBUG_LEVELING_FEATURE)
+      if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("Move Away:");
+    #endif
     do_homing_move(axis, -bump);
+
     // Slow move towards endstop until triggered
+    #if ENABLED(DEBUG_LEVELING_FEATURE)
+      if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("Home 2 Slow:");
+    #endif
     do_homing_move(axis, 2 * bump, get_homing_bump_feedrate(axis));
   }
 
@@ -2244,10 +2266,7 @@ static void homeaxis(AxisEnum axis) {
     // retrace by the amount specified in endstop_adj
     if (endstop_adj[axis] * Z_HOME_DIR < 0) {
       #if ENABLED(DEBUG_LEVELING_FEATURE)
-        if (DEBUGGING(LEVELING)) {
-          SERIAL_ECHOPAIR("> endstop_adj = ", endstop_adj[axis] * Z_HOME_DIR);
-          DEBUG_POS("", current_position);
-        }
+        if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("endstop_adj:");
       #endif
       do_homing_move(axis, endstop_adj[axis]);
     }
@@ -2275,7 +2294,8 @@ static void homeaxis(AxisEnum axis) {
   #if ENABLED(DEBUG_LEVELING_FEATURE)
     if (DEBUGGING(LEVELING)) {
       SERIAL_ECHOPAIR("<<< homeaxis(", axis_codes[axis]);
-      SERIAL_ECHOLNPGM(")");
+      SERIAL_CHAR(')');
+      SERIAL_EOL;
     }
   #endif
 } // homeaxis()
@@ -2822,6 +2842,9 @@ inline void gcode_G4() {
    * This is like quick_home_xy() but for 3 towers.
    */
   inline void home_delta() {
+    #if ENABLED(DEBUG_LEVELING_FEATURE)
+      if (DEBUGGING(LEVELING)) DEBUG_POS(">>> home_delta", current_position);
+    #endif
     // Init the current position of all carriages to 0,0,0
     memset(current_position, 0, sizeof(current_position));
     sync_plan_position();
@@ -2833,11 +2856,8 @@ inline void gcode_G4() {
     stepper.synchronize();
     endstops.hit_on_purpose(); // clear endstop hit flags
 
-    // Probably not needed. Double-check this line:
-    memset(current_position, 0, sizeof(current_position));
-
     // At least one carriage has reached the top.
-    // Now back off and re-home each carriage separately.
+    // Now re-home each carriage separately.
     HOMEAXIS(A);
     HOMEAXIS(B);
     HOMEAXIS(C);
@@ -2851,7 +2871,7 @@ inline void gcode_G4() {
     SYNC_PLAN_POSITION_KINEMATIC();
 
     #if ENABLED(DEBUG_LEVELING_FEATURE)
-      if (DEBUGGING(LEVELING)) DEBUG_POS("(DELTA)", current_position);
+      if (DEBUGGING(LEVELING)) DEBUG_POS("<<< home_delta", current_position);
     #endif
   }
 
@@ -3168,6 +3188,11 @@ inline void gcode_G28() {
 
   endstops.not_homing();
 
+  #if ENABLED(DELTA)
+    // move to a height where we can use the full xy-area
+    do_blocking_move_to_z(delta_clip_start_height);
+  #endif
+
   // Enable mesh leveling again
   #if ENABLED(MESH_BED_LEVELING)
     if (mbl.has_mesh()) {
@@ -3210,11 +3235,6 @@ inline void gcode_G28() {
         #endif
       }
     }
-  #endif
-
-  #if ENABLED(DELTA)
-    // move to a height where we can use the full xy-area
-    do_blocking_move_to_z(delta_clip_start_height);
   #endif
 
   clean_up_after_endstop_or_probe_move();
@@ -7033,7 +7053,8 @@ inline void gcode_T(uint8_t tmp_extruder) {
   #if ENABLED(DEBUG_LEVELING_FEATURE)
     if (DEBUGGING(LEVELING)) {
       SERIAL_ECHOPAIR(">>> gcode_T(", tmp_extruder);
-      SERIAL_ECHOLNPGM(")");
+      SERIAL_CHAR(')');
+      SERIAL_EOL;
       DEBUG_POS("BEFORE", current_position);
     }
   #endif
