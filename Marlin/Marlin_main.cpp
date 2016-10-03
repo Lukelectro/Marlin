@@ -5489,7 +5489,8 @@ inline void gcode_M204() {
  *    S = Min Feed Rate (units/s)
  *    T = Min Travel Feed Rate (units/s)
  *    B = Min Segment Time (µs)
- *    X = Max XY Jerk (units/sec^2)
+ *    X = Max X Jerk (units/sec^2)
+ *    Y = Max Y Jerk (units/sec^2)
  *    Z = Max Z Jerk (units/sec^2)
  *    E = Max E Jerk (units/sec^2)
  */
