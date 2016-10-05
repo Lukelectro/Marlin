@@ -2384,6 +2384,9 @@ Fan_2 2
 #ifndef HEATER_3_PIN
   #define HEATER_3_PIN -1
 #endif
+#ifndef HEATER_4_PIN
+  #define HEATER_4_PIN -1
+#endif
 #ifndef HEATER_BED_PIN
   #define HEATER_BED_PIN -1
 #endif
@@ -2434,6 +2437,7 @@ Fan_2 2
 #define _E1_PINS
 #define _E2_PINS
 #define _E3_PINS
+#define _E4_PINS
 
 #if EXTRUDERS > 1
   #undef _E1_PINS
@@ -2444,6 +2448,10 @@ Fan_2 2
     #if EXTRUDERS > 3
       #undef _E3_PINS
       #define _E3_PINS E3_STEP_PIN, E3_DIR_PIN, E3_ENABLE_PIN,
+      #if EXTRUDERS > 4
+        #undef _E4_PINS
+        #define _E4_PINS E4_STEP_PIN, E4_DIR_PIN, E4_ENABLE_PIN,
+      #endif
     #endif
   #endif
 #endif
@@ -2452,6 +2460,7 @@ Fan_2 2
 #define _H1_PINS
 #define _H2_PINS
 #define _H3_PINS
+#define _H4_PINS
 
 #if HOTENDS > 1
   #undef _H1_PINS
@@ -2462,6 +2471,10 @@ Fan_2 2
     #if HOTENDS > 3
       #undef _H3_PINS
       #define _H3_PINS HEATER_3_PIN, EXTRUDER_3_AUTO_FAN_PIN, marlinAnalogInputToDigitalPin(TEMP_3_PIN),
+      #if HOTENDS > 4
+        #undef _H4_PINS
+        #define _H4_PINS HEATER_4_PIN, marlinAnalogInputToDigitalPin(TEMP_4_PIN),
+      #endif
     #endif
   #endif
 #elif ENABLED(MIXING_EXTRUDER)
@@ -2473,6 +2486,10 @@ Fan_2 2
     #if MIXING_STEPPERS > 3
       #undef _E3_PINS
       #define _E3_PINS E3_STEP_PIN, E3_DIR_PIN, E3_ENABLE_PIN,
+      #if MIXING_STEPPERS > 4
+        #undef _E4_PINS
+        #define _E4_PINS E4_STEP_PIN, E4_DIR_PIN, E4_ENABLE_PIN,
+      #endif
     #endif
   #endif
 #endif
@@ -2605,8 +2622,8 @@ Fan_2 2
     Y_STEP_PIN, Y_DIR_PIN, Y_ENABLE_PIN, Y_MIN_PIN, Y_MAX_PIN, \
     Z_STEP_PIN, Z_DIR_PIN, Z_ENABLE_PIN, Z_MIN_PIN, Z_MAX_PIN, Z_MIN_PROBE_PIN, \
     PS_ON_PIN, HEATER_BED_PIN, FAN_PIN, FAN1_PIN, FAN2_PIN, CONTROLLERFAN_PIN, \
-    _E0_PINS _E1_PINS _E2_PINS _E3_PINS BED_PINS \
-    _H0_PINS _H1_PINS _H2_PINS _H3_PINS \
+    _E0_PINS _E1_PINS _E2_PINS _E3_PINS _E4_PINS BED_PINS \
+    _H0_PINS _H1_PINS _H2_PINS _H3_PINS _H4_PINS \
     _X2_PINS _Y2_PINS _Z2_PINS \
     X_MS1_PIN, X_MS2_PIN, Y_MS1_PIN, Y_MS2_PIN, Z_MS1_PIN, Z_MS2_PIN \
   }
