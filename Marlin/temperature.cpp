@@ -1425,6 +1425,8 @@ void thermal_runaway_protection(int *state, unsigned long *timer, float temperat
           *timer = millis() + period_seconds * 1000UL;
           break;
         }
+        else if (PENDING(millis(), *timer)) break;
+        *state = TRRunaway;
       case TRRunaway:
         _temp_error(heater_id, PSTR(MSG_T_THERMAL_RUNAWAY), PSTR(MSG_THERMAL_RUNAWAY));
     }
