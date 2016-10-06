@@ -2003,7 +2003,7 @@ static void retract_z_probe() {
         if (y < 10) SERIAL_CHAR(' ');
         SERIAL_ECHO((int)y);
         SERIAL_CHAR(ydir ? (ydir > 0 ? '+' : '-') : ' ');
-        SERIAL_ECHOLN(']');
+        SERIAL_CHAR(']');
       }
     #endif
     if (bed_level_grid[x][y] < 999.0) {
@@ -2012,6 +2012,7 @@ static void retract_z_probe() {
       #endif
       return;  // Don't overwrite good values.
     }
+    SERIAL_EOL;
 
     // Get X neighbors, Y neighbors, and XY neighbors
     float a1 = bed_level_grid[x + xdir][y], a2 = bed_level_grid[x + xdir * 2][y],
