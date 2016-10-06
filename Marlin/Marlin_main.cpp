@@ -2098,7 +2098,7 @@ static void retract_z_probe() {
     SERIAL_EOL;
     for (uint8_t y = 0; y < ABL_GRID_POINTS_Y; y++) {
       if (y < 9) SERIAL_PROTOCOLCHAR(' ');
-      SERIAL_PROTOCOL(y);
+      SERIAL_PROTOCOL((int)y);
       for (uint8_t x = 0; x < ABL_GRID_POINTS_X; x++) {
         SERIAL_PROTOCOLCHAR(' ');
         float offset = bed_level_grid[x][y];
