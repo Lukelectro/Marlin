@@ -547,7 +547,9 @@ void Planner::check_axes_activity() {
 }
 
 #if PLANNER_LEVELING
-
+  /**
+   * lx, ly, lz - logical (cartesian, not delta) positions in mm
+   */
   void Planner::apply_leveling(float &lx, float &ly, float &lz) {
 
     #if HAS_ABL
@@ -574,19 +576,7 @@ void Planner::check_axes_activity() {
     #elif ENABLED(AUTO_BED_LEVELING_BILINEAR)
 
       float tmp[XYZ] = { lx, ly, 0 };
-
-      #if ENABLED(DELTA)
-
-        float offset = bilinear_z_offset(tmp);
-        lx += offset;
-        ly += offset;
-        lz += offset;
-
-      #else
-
-        lz += bilinear_z_offset(tmp);
-
-      #endif
+      lz += bilinear_z_offset(tmp);
 
     #endif
   }
@@ -626,9 +616,10 @@ void Planner::check_axes_activity() {
 #endif // PLANNER_LEVELING
 
 /**
- * Planner::buffer_line
+ * Planner::_buffer_line
  *
  * Add a new linear movement to the buffer.
+ * Not apply the leveling.
  *
  *  x,y,z,e   - target position in mm
  *  fr_mm_s   - (target) speed of the move
@@ -1251,6 +1242,7 @@ void plan_set_position(const float &x, const float &y, const float &z, const flo
   }
 #endif  // ENABLE_AUTO_BED_LEVELING
 
+void Planner::_set_position_mm(const float &lx, const float &ly, const float &lz, const float &e) {
   long nx = position[X_AXIS] = lround(lx * axis_steps_per_mm[X_AXIS]),
        ny = position[Y_AXIS] = lround(ly * axis_steps_per_mm[Y_AXIS]),
        nz = position[Z_AXIS] = lround(lz * axis_steps_per_mm[Z_AXIS]),
@@ -1260,6 +1252,22 @@ void plan_set_position(const float &x, const float &y, const float &z, const flo
 
   memset(previous_speed, 0, sizeof(previous_speed));
 }
+
+void Planner::set_position_mm_kinematic(const float position[NUM_AXIS]) {
+  #if PLANNER_LEVELING
+    float pos[XYZ] = { position[X_AXIS], position[Y_AXIS], position[Z_AXIS] };
+    apply_leveling(pos);
+  #else
+    const float * const pos = position;
+  #endif
+  #if IS_KINEMATIC
+    inverse_kinematics(pos);
+    _set_position_mm(delta[A_AXIS], delta[B_AXIS], delta[C_AXIS], position[E_AXIS]);
+  #else
+    _set_position_mm(pos[X_AXIS], pos[Y_AXIS], pos[Z_AXIS], position[E_AXIS]);
+  #endif
+}
+
 
 /**
  * Sync from the stepper positions. (e.g., after an interrupted move)
@@ -1286,12 +1294,7 @@ void Planner::reset_acceleration_rates() {
 // Recalculate position, steps_to_mm if axis_steps_per_mm changes!
 void Planner::refresh_positioning() {
   LOOP_XYZE(i) steps_to_mm[i] = 1.0 / axis_steps_per_mm[i];
-  #if IS_KINEMATIC
-    inverse_kinematics(current_position);
-    set_position_mm(delta[A_AXIS], delta[B_AXIS], delta[C_AXIS], current_position[E_AXIS]);
-  #else
-    set_position_mm(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
-  #endif
+  set_position_mm_kinematic(current_position);
   reset_acceleration_rates();
 }
 

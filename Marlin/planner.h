@@ -43,6 +43,12 @@
 class Planner;
 extern Planner planner;
 
+#if IS_KINEMATIC
+  // for inline buffer_line_kinematic
+  extern float delta[ABC];
+  void inverse_kinematics(const float logical[XYZ]);
+#endif
+
 /**
  * struct block_t
  *
