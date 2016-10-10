@@ -4441,7 +4441,7 @@ inline void gcode_M42() {
           pin_state[pin - first_pin] = digitalRead(pin);
       }
 
-      #if ENABLED(EMERGENCY_PARSER)
+      #if ENABLED(EMERGENCY_PARSER) && DISABLED(ULTIPANEL)
         wait_for_user = true;
       #endif
 
@@ -4459,7 +4459,7 @@ inline void gcode_M42() {
           }
         }
 
-        #if ENABLED(EMERGENCY_PARSER)
+        #if ENABLED(EMERGENCY_PARSER) && DISABLED(ULTIPANEL)
           if (!wait_for_user) break;
         #endif
 
