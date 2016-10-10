@@ -288,15 +288,15 @@ static bool thermal_runaway = false;
      */
     static void updatePID();
 
-    static void autotempShutdown() {
-      #if ENABLED(AUTOTEMP)
+    #if ENABLED(AUTOTEMP)
+      static void autotempShutdown() {
         if (planner.autotemp_enabled) {
           planner.autotemp_enabled = false;
           if (degTargetHotend(EXTRUDER_IDX) > planner.autotemp_min)
             setTargetHotend(0, EXTRUDER_IDX);
         }
-      #endif
-    }
+      }
+    #endif
 
     #if ENABLED(BABYSTEPPING)
 
