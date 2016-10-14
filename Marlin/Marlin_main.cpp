@@ -2036,7 +2036,8 @@ static void retract_z_probe() {
     //                                : ((c < b) ? b : (a < c) ? a : c);
   }
 
-  #define EXTRAPOLATE_FROM_EDGE
+  //Enable this if your SCARA uses 180° of total area
+  //#define EXTRAPOLATE_FROM_EDGE
 
   #if ENABLED(EXTRAPOLATE_FROM_EDGE)
     #if ABL_GRID_POINTS_X < ABL_GRID_POINTS_Y
