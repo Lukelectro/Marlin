@@ -290,7 +290,7 @@
 #define BANG_MAX 255 // limits current to nozzle while in bang-bang mode; 255=full current
 #define PID_MAX BANG_MAX // limits current to nozzle while PID is active (see PID_FUNCTIONAL_RANGE below); 255=full current
 #if ENABLED(PIDTEMP)
-  //#define PID_AUTOTUNE_MENU // Add PID Autotune to the LCD "Temperature" menu to run M303 and apply the result.
+  #define PID_AUTOTUNE_MENU // Add PID Autotune to the LCD "Temperature" menu to run M303 and apply the result.
   //#define PID_DEBUG // Sends debug data to the serial port.
   //#define PID_OPENLOOP 1 // Puts PID in open loop. M104/M140 sets the output power from 0 to PID_MAX
   //#define SLOW_PWM_HEATERS // PWM with very low frequency (roughly 0.125Hz=8s) and minimum state time of approximately 1s useful for heaters driven by a relay
@@ -302,9 +302,16 @@
 
   // If you are using a pre-configured hotend then you can use one of the value sets by uncommenting it
   // Ultimaker
-  #define  DEFAULT_Kp 22.2
-  #define  DEFAULT_Ki 1.08
-  #define  DEFAULT_Kd 114
+  //#define  DEFAULT_Kp 22.2
+  //#define  DEFAULT_Ki 1.08
+  //#define  DEFAULT_Kd 114
+
+  //MM90_N1_JHEADMK5, autotune results
+  #define  DEFAULT_Kp 22.69
+  #define  DEFAULT_Ki 3.25
+  #define  DEFAULT_Kd 39.59
+
+
 
   // MakerGear
   //#define  DEFAULT_Kp 7.0
@@ -463,13 +470,13 @@
  * Default Axis Steps Per Unit (steps/mm)
  * Override with M92
  */
-#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 4000, 500 }
+#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 2560, 535 } // Z steps per unit and Esteps adjusted for MM90_N1
 
 /**
  * Default Max Feed Rate (mm/s)
  * Override with M203
  */
-#define DEFAULT_MAX_FEEDRATE          { 300, 300, 5, 25 }
+#define DEFAULT_MAX_FEEDRATE          { 300, 300, 3, 25 } // Lower Z feedrate for MM90_N1
 
 /**
  * Default Max Acceleration (change/s) change = mm/s
@@ -1083,7 +1090,7 @@
 // This option overrides the default number of encoder pulses needed to
 // produce one step. Should be increased for high-resolution encoders.
 //
-//#define ENCODER_PULSES_PER_STEP 1
+#define ENCODER_PULSES_PER_STEP 2
 
 //
 // Use this option to override the number of step signals required to
