@@ -705,7 +705,7 @@
 #define Z_MIN_POS 0
 #define X_MAX_POS 200
 #define Y_MAX_POS 200
-#define Z_MAX_POS 200
+#define Z_MAX_POS 215 // Obviously a little too much, to correct with Z-offset
 
 //===========================================================================
 //========================= Filament Runout Sensor ==========================
