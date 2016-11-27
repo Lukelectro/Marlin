@@ -476,7 +476,7 @@
  * Default Max Feed Rate (mm/s)
  * Override with M203
  */
-#define DEFAULT_MAX_FEEDRATE          { 300, 300, 3, 25 } // Lower Z feedrate for MM90_N1
+#define DEFAULT_MAX_FEEDRATE          { 300, 300, 10, 25 } // Higher Z max feedrate, trapezium
 
 /**
  * Default Max Acceleration (change/s) change = mm/s
@@ -845,7 +845,7 @@
 
 // Homing speeds (mm/m)
 #define HOMING_FEEDRATE_XY (50*60)
-#define HOMING_FEEDRATE_Z  (4*60)
+#define HOMING_FEEDRATE_Z  (8*60) // WAS 4*60, now 8*60 
 
 //=============================================================================
 //============================= Additional Features ===========================
