@@ -55,9 +55,12 @@
 #if DISABLED(PIDTEMPBED)
   #define BED_CHECK_INTERVAL 5000 // ms between checks in bang-bang control
   #if ENABLED(BED_LIMIT_SWITCHING)
-    #define BED_HYSTERESIS 2 // Only disable heating if T>target+BED_HYSTERESIS and enable heating if T>target-BED_HYSTERESIS
+    #define BED_HYSTERESIS 10 // Only disable heating if T>target+BED_HYSTERESIS and enable heating if T>target-BED_HYSTERESIS
   #endif
 #endif
+// BED_HYSTERESIS was 2 by default but this gives false positives in cold environment with object cooling enabled, so now it's 10
+// Worst case your bed gets 10 degrees above set value, acceptable.
+
 
 /**
  * Thermal Protection protects your printer from damage and fire if a

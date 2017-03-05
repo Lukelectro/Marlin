@@ -86,7 +86,7 @@
 // User-specified version info of this build to display in [Pronterface, etc] terminal window during
 // startup. Implementation of an idea by Prof Braino to inform user that any changes made to this
 // build by the user have been successfully uploaded into firmware.
-#define STRING_CONFIG_H_AUTHOR "(lucas, MM90_N1_RAMPS)" // Who made the changes.
+#define STRING_CONFIG_H_AUTHOR "(Lucas, MM90_R2)" // Who made the changes.
 #define SHOW_BOOTSCREEN
 #define STRING_SPLASH_LINE1 SHORT_BUILD_VERSION // will be shown during bootup in line 1
 #define STRING_SPLASH_LINE2 WEBSITE_URL         // will be shown during bootup in line 2
@@ -135,11 +135,11 @@
 
 // Optional custom name for your RepStrap or other custom machine
 // Displayed in the LCD "Ready" message
-#define CUSTOM_MACHINE_NAME "MM90_N1"
+#define CUSTOM_MACHINE_NAME "MM90_R2"
 
 // Define this to set a unique identifier for this printer, (Used by some programs to differentiate between machines)
 // You can use an online service to generate a random UUID. (eg http://www.uuidgenerator.net/version4)
-//#define MACHINE_UUID "00000000-0000-0000-0000-000000000000"
+#define MACHINE_UUID "a767fba2-10bf-4dfb-85f2-0e0d1f35f13b"
 
 // This defines the number of extruders
 // :[1,2,3,4]
@@ -470,13 +470,13 @@
  * Default Axis Steps Per Unit (steps/mm)
  * Override with M92
  */
-#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 535 } // Z steps per unit (400 for trapezium, 2560 for M8) and Esteps adjusted for MM90_N1
+#define DEFAULT_AXIS_STEPS_PER_UNIT   { 160, 160, 1600, 1400 } //  for MM90_R2
 
 /**
  * Default Max Feed Rate (mm/s)
  * Override with M203
  */
-#define DEFAULT_MAX_FEEDRATE          { 300, 300, 10, 25 } // Higher Z max feedrate, trapezium
+#define DEFAULT_MAX_FEEDRATE          { 300, 300, 4, 25 } // Higher Z max feedrate, trapezium
 
 /**
  * Default Max Acceleration (change/s) change = mm/s
@@ -484,7 +484,7 @@
  *
  * Maximum start speed for accelerated moves: { X, Y, Z, E }
  */
-#define DEFAULT_MAX_ACCELERATION      { 3000, 3000, 100, 10000 }
+#define DEFAULT_MAX_ACCELERATION      { 1500, 1500, 3, 10000 }
 
 /**
  * Default Acceleration (change/s) change = mm/s
@@ -494,7 +494,7 @@
  *   M204 R    Retract Acceleration
  *   M204 T    Travel Acceleration
  */
-#define DEFAULT_ACCELERATION          3000    // X, Y, Z and E acceleration for printing moves
+#define DEFAULT_ACCELERATION          1500    // X, Y, Z and E acceleration for printing moves
 #define DEFAULT_RETRACT_ACCELERATION  3000    // E acceleration for retracts
 #define DEFAULT_TRAVEL_ACCELERATION   3000    // X, Y, Z acceleration for travel (non printing) moves
 
@@ -507,7 +507,7 @@
  */
 #define DEFAULT_XJERK                 20.0
 #define DEFAULT_YJERK                 20.0
-#define DEFAULT_ZJERK                  0.4
+#define DEFAULT_ZJERK                  0.2
 #define DEFAULT_EJERK                  5.0
 
 
@@ -705,7 +705,7 @@
 #define Z_MIN_POS 0
 #define X_MAX_POS 200
 #define Y_MAX_POS 200
-#define Z_MAX_POS 215 // Obviously a little too much, to correct with Z-offset
+#define Z_MAX_POS 215 // Obviously a little too much, to correct with Z-offset (Z-14.50 for MM90_R2)
 
 //===========================================================================
 //========================= Filament Runout Sensor ==========================
@@ -1128,7 +1128,7 @@
 //
 // Add individual axis homing items (Home X, Home Y, and Home Z) to the LCD menu.
 //
-#define INDIVIDUAL_AXIS_HOMING_MENU
+//#define INDIVIDUAL_AXIS_HOMING_MENU
 
 //
 // SPEAKER/BUZZER
