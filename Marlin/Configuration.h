@@ -417,31 +417,35 @@ d * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #define DELTA_SEGMENTS_PER_SECOND 200
 
   // NOTE NB all values for DELTA_* values MUST be floating point, so always have a decimal point in them
+  // helper image: http://www.buildlog.net/blog/wp-content/uploads/2013/01/delta_terms.jpg
 
   // Center-to-center distance of the holes in the diagonal push rods.
-  #define DELTA_DIAGONAL_ROD 215.0 // mm
+  #define DELTA_DIAGONAL_ROD 220.0 // mm (Measured: 220mm)
 
   // Horizontal offset from middle of printer to smooth rod center.
-  #define DELTA_SMOOTH_ROD_OFFSET 135.5 // mm (Adjusted for kosseljanhein) 195.5? eerder 135.?
+  #define DELTA_SMOOTH_ROD_OFFSET 174.5 // mm (Adjusted for kosseljanhein) 195.5? measured 173.0. 
+  //tuned/calibrated/adjusted against dish/dome TO 174.5
+  
 
   // Horizontal offset of the universal joints on the end effector.
-  #define DELTA_EFFECTOR_OFFSET 23.0 // mm
+  #define DELTA_EFFECTOR_OFFSET 40.0 // mm (was 23, Measured: more like 40mm)
 
   // Horizontal offset of the universal joints on the carriages.
-  #define DELTA_CARRIAGE_OFFSET 30 // mm
+  #define DELTA_CARRIAGE_OFFSET 33.0 // mm (was 30, measured: 33mm)
 
   // Horizontal distance bridged by diagonal push rods when effector is centered.
   #define DELTA_RADIUS (DELTA_SMOOTH_ROD_OFFSET-(DELTA_EFFECTOR_OFFSET)-(DELTA_CARRIAGE_OFFSET))
 
   // Print surface diameter/2 minus unreachable space (avoid collisions with vertical towers).
-  #define DELTA_PRINTABLE_RADIUS 70.0 //90? Maar dan knalt 'ie tegen de belts.
+  #define DELTA_PRINTABLE_RADIUS 70.0 // was 90? Maar dan knalt 'ie tegen de belts.
+  // 20cm diameter bed, radios = 10cm = 100mm. - 30mm om niet tegen belts te knallen)
 
   // Delta calibration menu
   // uncomment to add three points calibration menu option.
   // See http://minow.blogspot.com/index.html#4918805519571907051
   // If needed, adjust the X, Y, Z calibration coordinates
   // in ultralcd.cpp@lcd_delta_calibrate_menu()
-  #define DELTA_CALIBRATION_MENU
+//  #define DELTA_CALIBRATION_MENU
 
   //#define DELTA_ENDSTOP_ADJ { 0, 0, 0 }
 
@@ -909,8 +913,8 @@ d * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // Manually set the home position. Leave these undefined for automatic settings.
 // For DELTA this is the top-center of the Cartesian print volume.
 //#define MANUAL_X_HOME_POS 0
-//#define MANUAL_Y_HOME_POS 0
-#define MANUAL_Z_HOME_POS 250 // Distance between the nozzle to printbed after homing
+//#define MANUAL_Y_HOME_POS 0:
+#define MANUAL_Z_HOME_POS 266.5 // Distance between the nozzle to printbed after homing (Safe:250, too much:270, real:266.5?)
 
 // Use "Z Safe Homing" to avoid homing with a Z probe outside the bed area.
 //
