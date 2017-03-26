@@ -512,8 +512,8 @@ d * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * Default Axis Steps Per Unit (steps/mm)
  * Override with M92
  */
-#define DEFAULT_AXIS_STEPS_PER_UNIT   {100, 100, 100, 760*1.1}  // default steps per unit for Kossel:80 (GT2, 20 tooth)
-
+#define DEFAULT_AXIS_STEPS_PER_UNIT   {100, 100, 100, 97}  // default steps per unit for Kossel:80 (GT2, 20 tooth) or 100 (GT2 16 tooth)
+// Esteps adjusted for direct drive extruder
 /**
  * Default Max Feed Rate (mm/s)
  * Override with M203
