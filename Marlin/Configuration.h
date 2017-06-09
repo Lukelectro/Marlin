@@ -702,9 +702,9 @@
 // Travel limits after homing (units are in mm)
 #define X_MIN_POS 0
 #define Y_MIN_POS 0
-#define Z_MIN_POS 0
-#define X_MAX_POS 200
-#define Y_MAX_POS 200
+#define Z_MIN_POS 0   // this is somehow ignored, can move z below zero. Is usefull sometimes though, be carefull.
+#define X_MAX_POS 190 // glass is 20x20cm but clips take space too...
+#define Y_MAX_POS 190
 #define Z_MAX_POS 215 // Obviously a little too much, to correct with Z-offset
 
 //===========================================================================
