@@ -86,7 +86,7 @@
 // User-specified version info of this build to display in [Pronterface, etc] terminal window during
 // startup. Implementation of an idea by Prof Braino to inform user that any changes made to this
 // build by the user have been successfully uploaded into firmware.
-#define STRING_CONFIG_H_AUTHOR "(lucas, MM90_N1_RAMPS)" // Who made the changes.
+#define STRING_CONFIG_H_AUTHOR "(lucas, HM90_R1)" // Who made the changes.
 #define SHOW_BOOTSCREEN
 #define STRING_SPLASH_LINE1 SHORT_BUILD_VERSION // will be shown during bootup in line 1
 #define STRING_SPLASH_LINE2 WEBSITE_URL         // will be shown during bootup in line 2
@@ -135,7 +135,7 @@
 
 // Optional custom name for your RepStrap or other custom machine
 // Displayed in the LCD "Ready" message
-#define CUSTOM_MACHINE_NAME "MM90_N1"
+#define CUSTOM_MACHINE_NAME "HM90_R1"
 
 // Define this to set a unique identifier for this printer, (Used by some programs to differentiate between machines)
 // You can use an online service to generate a random UUID. (eg http://www.uuidgenerator.net/version4)
@@ -187,7 +187,7 @@
  *
  * :{0:'No power switch',1:'ATX',2:'X-Box 360'}
  */
-#define POWER_SUPPLY 0
+#define POWER_SUPPLY 1
 
 #if POWER_SUPPLY > 0
   // Enable this option to leave the PSU off at startup.
@@ -306,10 +306,11 @@
   //#define  DEFAULT_Ki 1.08
   //#define  DEFAULT_Kd 114
 
-  //MM90_N1_JHEADMK5, autotune results
-  #define  DEFAULT_Kp 22.69
-  #define  DEFAULT_Ki 3.25
-  #define  DEFAULT_Kd 39.59
+// HM90_R1 autotune
+#define  DEFAULT_Kp 34.03
+#define  DEFAULT_Ki 3.76
+#define  DEFAULT_Kd 76.93
+
 
 
 
@@ -470,13 +471,13 @@
  * Default Axis Steps Per Unit (steps/mm)
  * Override with M92
  */
-#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 535 } // Z steps per unit (400 for trapezium, 2560 for M8) and Esteps adjusted for MM90_N1
+#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 2560, 535 } // Z steps per unit (400 for trapezium, 2560 for M8) and Esteps adjusted for MM90_N1
 
 /**
  * Default Max Feed Rate (mm/s)
  * Override with M203
  */
-#define DEFAULT_MAX_FEEDRATE          { 300, 300, 10, 25 } // Higher Z max feedrate, trapezium
+#define DEFAULT_MAX_FEEDRATE          { 300, 300, 5, 25 } //
 
 /**
  * Default Max Acceleration (change/s) change = mm/s
