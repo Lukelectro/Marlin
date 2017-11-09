@@ -703,8 +703,8 @@
 #define X_MIN_POS 0
 #define Y_MIN_POS 0
 #define Z_MIN_POS 0   // this is somehow ignored, can move z below zero. Is usefull sometimes though, be carefull.
-#define X_MAX_POS 190 // glass is 20x20cm but clips take space too...
-#define Y_MAX_POS 190
+#define X_MAX_POS 200 // glass is 20x20cm but clips take space too... So 190*190 usable, but should be defined in slicer, not here
+#define Y_MAX_POS 200 // by defining it 20x20 here, the full movement range can be used, e.g. for nozzle wipe outside of bed.
 #define Z_MAX_POS 215 // Obviously a little too much, to correct with Z-offset
 
 //===========================================================================
