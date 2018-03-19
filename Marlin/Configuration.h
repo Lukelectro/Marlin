@@ -477,7 +477,7 @@
  * Default Max Feed Rate (mm/s)
  * Override with M203
  */
-#define DEFAULT_MAX_FEEDRATE          { 300, 300, 5, 25 } //
+#define DEFAULT_MAX_FEEDRATE          { 300, 300, 20, 25 } //
 
 /**
  * Default Max Acceleration (change/s) change = mm/s
