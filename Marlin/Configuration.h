@@ -471,7 +471,7 @@
  * Default Axis Steps Per Unit (steps/mm)
  * Override with M92
  */
-#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 535 } // Z steps per unit (400 for trapezium, 2560 for M8) and Esteps adjusted for MM90_N1
+#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 355 } // Z steps per unit (400 for trapezium, 2560 for M8) and Esteps adjusted for HM90_R1
 
 /**
  * Default Max Feed Rate (mm/s)
