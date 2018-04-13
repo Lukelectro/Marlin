@@ -536,7 +536,7 @@
  * Override with M92
  *                                      X, Y, Z, E0 [, E1[, E2[, E3[, E4]]]]
  */
-#define DEFAULT_AXIS_STEPS_PER_UNIT   {80,80,400,576.7}  // Modified, but check extruder / set in EEPROM
+#define DEFAULT_AXIS_STEPS_PER_UNIT   {80,80,400, 357.61}  // Modified, but check extruder / set in EEPROM
 
 /**
  * Default Max Feed Rate (mm/s)
