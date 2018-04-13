@@ -536,14 +536,14 @@
  * Override with M92
  *                                      X, Y, Z, E0 [, E1[, E2[, E3[, E4]]]]
  */
-#define DEFAULT_AXIS_STEPS_PER_UNIT   {80,80,400,576.7}  // Modified, but check extruder / set in EEPROM
+#define DEFAULT_AXIS_STEPS_PER_UNIT   {160,160,1600,1320}  // Modified, but check extruder / set in EEPROM
 
 /**
  * Default Max Feed Rate (mm/s)
  * Override with M203
  *                                      X, Y, Z, E0 [, E1[, E2[, E3[, E4]]]]
  */
-#define DEFAULT_MAX_FEEDRATE          { 300, 300, 15, 25 }    // (mm/sec) (Z higher, because trapezium!)
+#define DEFAULT_MAX_FEEDRATE          { 300, 300, 5, 25 }    // (mm/sec)
 
 /**
  * Default Max Acceleration (change/s) change = mm/s
@@ -551,7 +551,7 @@
  * Override with M201
  *                                      X, Y, Z, E0 [, E1[, E2[, E3[, E4]]]]
  */
-#define DEFAULT_MAX_ACCELERATION      { 3000, 3000, 100, 10000 }
+#define DEFAULT_MAX_ACCELERATION      { 3000, 3000, 50, 10000 }
 
 /**
  * Default Acceleration (change/s) change = mm/s
@@ -796,7 +796,7 @@
 #define Z_MIN_POS 0
 #define X_MAX_POS X_BED_SIZE
 #define Y_MAX_POS Y_BED_SIZE
-#define Z_MAX_POS 185 // to be corrected with home offset (Whitin 2cm with M428 or lcd menu)
+#define Z_MAX_POS 215 // to be corrected with home offset (Whitin 2cm with M428 or lcd menu)
 
 /**
  * Software Endstops
