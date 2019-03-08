@@ -388,9 +388,14 @@
   //#define DEFAULT_Kd 440
 
   //E3D with 30MM fan
-  #define DEFAULT_Kp 24.77
-  #define DEFAULT_Ki 1.84
-  #define DEFAULT_Kd 83.61
+//  #define DEFAULT_Kp 24.77
+//  #define DEFAULT_Ki 1.84
+//  #define DEFAULT_Kd 83.61
+
+  #define DEFAULT_Kp 17.36
+  #define DEFAULT_Ki 0.94
+  #define DEFAULT_Kd 80.33
+
 
 #endif // PIDTEMP
 
@@ -546,7 +551,7 @@
   #define DELTA_PRINTABLE_RADIUS 118.0 // mm was 70, is 120
 
   // Center-to-center distance of the holes in the diagonal push rods.
-  #define DELTA_DIAGONAL_ROD 238.98 // mm (was 178 but then it does not print acurately)
+  #define DELTA_DIAGONAL_ROD 278 // mm (278 is actual lenght, but might change in calibration to make it print right)
 
   // height from z=0 to home position
   #define DELTA_HEIGHT 274.56 // get this value from auto calibrate
@@ -554,7 +559,7 @@
   #define DELTA_ENDSTOP_ADJ { 0.0, 0.0, 0.0 } // get these from auto calibrate
 
   // Horizontal distance bridged by diagonal push rods when effector is centered.
-  #define DELTA_RADIUS 120.0 //mm  Get this value from auto calibrate
+  #define DELTA_RADIUS 142.0 //mm  Get this value from auto calibrate
 
   // Trim adjustments for individual towers
   // tower angle corrections for X and Y tower / rotate XYZ so Z tower angle = 0
@@ -686,8 +691,7 @@
 
 // delta speeds must be the same on xyz
 #define DEFAULT_XYZ_STEPS_PER_UNIT ((XYZ_FULL_STEPS_PER_ROTATION) * (XYZ_MICROSTEPS) / double(XYZ_BELT_PITCH) / double(XYZ_PULLEY_TEETH))
-#define DEFAULT_AXIS_STEPS_PER_UNIT   { DEFAULT_XYZ_STEPS_PER_UNIT, DEFAULT_XYZ_STEPS_PER_UNIT, DEFAULT_XYZ_STEPS_PER_UNIT, 100 }  // default steps per unit for Kossel (GT2, 20 tooth)
-
+#define DEFAULT_AXIS_STEPS_PER_UNIT   { DEFAULT_XYZ_STEPS_PER_UNIT, DEFAULT_XYZ_STEPS_PER_UNIT, DEFAULT_XYZ_STEPS_PER_UNIT, 132 }  // default steps per unit for Kossel (GT2, 20 tooth), E tuned
 /**
  * Default Max Feed Rate (mm/s)
  * Override with M203
